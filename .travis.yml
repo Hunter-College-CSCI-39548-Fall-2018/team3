@@ -1,0 +1,19 @@
+os:
+  - linux
+# this means you're just running bash
+language: generic
+sudo: required
+dist: trusty
+# install any packages that you might need
+install:
+  - sudo apt-get install nodejs
+  - sudo pip install flask
+# run any set of arbitrary shell commands before your build
+before_script:
+  - echo 'i run before the build'
+# run any set of arbitrary shell commands as your build
+script:
+  - echo 'this is my build'
+# run any set of arbitrary shell commands if your build succeeds
+after_success:
+  - echo 'this runs if the build succeeds'
