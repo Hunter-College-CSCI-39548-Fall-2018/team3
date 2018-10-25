@@ -23,7 +23,7 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
-          
+
         }
       },
       {
@@ -53,9 +53,16 @@ module.exports = {
   },
   devServer: {
   host: 'localhost',
-        port: 8000,
-        contentBase: path.join(__dirname, 'public'),
+  port: 8000,
+  contentBase: path.join(__dirname, 'public'),
+  proxy: {
+    "/test/*": {
+      target: "http://localhost:3000",
+      secure: false,
+
     },
+  },
+},
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html',
