@@ -1,19 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter, Route } from 'react-router-dom'
 
-
+import Home from './Components/Home'
 class App extends React.Component {
 
 	render(){
-		const element = <h1>hi</h1>;
-		return(element)
+		return(
+			<BrowserRouter>
+				<Route path='/hi' component={Home} ></Route>
+			</BrowserRouter>
+		)
 	}
 }
 ReactDOM.render(
 	(
 		<App />
-		// React.createElement('div',null,'HEllo world')
-
 
 ), document.getElementById('root'));
 

@@ -3,7 +3,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
 
-const host = "http://localhost:8000";
+const host = "http://localhost:5000";
 module.exports = {
   mode: "development",
     entry: [
@@ -53,7 +53,7 @@ module.exports = {
   },
   devServer: {
   host: 'localhost',
-  port: 8000,
+  port: 5000,
   contentBase: path.join(__dirname, 'public'),
   proxy: {
     "/test/*": {
