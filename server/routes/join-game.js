@@ -11,9 +11,9 @@ module.exports = (app, rooms) => {
     app.post('/enter-room', (req, res) => {
         console.log(req.body)
         if(req.body.room){
-            
+
             //check if room exists
-            if(rooms[req.body.room] == undefined){
+            if(rooms[req.body.room] === undefined){
                 console.log("invalid key")
                 // res.redirect('/enter-room')
                 return false
@@ -34,7 +34,9 @@ module.exports = (app, rooms) => {
     // })
 
     app.post('/enter-name', (req, res) => {
-        if(req.body.name){
+        console.log(req.body.nickname);
+        if(req.body.nickname){
+          /*
             //if name exists in room
             if(!rooms[req.cookies.room].hasPlayer(req.body.name)){
 
@@ -46,12 +48,20 @@ module.exports = (app, rooms) => {
                     secure: false,
                     overwrite: true
                 })
-                res.redirect('/lobby')
+
             }else{
-                res.redirect('/enter-name')
+                let data = {
+                  "redirect":"enter-name"
+                }
+                res.json(data)
             }
+            */
+            let data = {
+              "redirect":"lobby"
+            }
+            res.json(data)
         }
     })
 
-    
+
 }

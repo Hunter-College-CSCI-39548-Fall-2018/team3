@@ -48,11 +48,8 @@
     "liowebrtc": "^0.1.14",
     "micro": "latest",
     "moment": "^2.22.2",
-<<<<<<< HEAD
     "randomstring": "^1.1.5",
-=======
     "now": "^11.4.6",
->>>>>>> fe116b6fcaa6ff7af28f53fd829661e5d6edacb2
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-moment": "^0.7.9",
