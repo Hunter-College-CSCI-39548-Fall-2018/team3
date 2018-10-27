@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
 import Main from './Components/Main'
 import Home from './Components/Home'
+import Home from './Components/EnterName'
 class App extends React.Component {
 
 	render(){
@@ -13,6 +14,8 @@ class App extends React.Component {
 					<Route path='/' component={Main} ></Route>
 
 					<Route path='/hi' component={Home} ></Route>
+
+					<Route path='/enter-name' component={EnterName} ></Route>
 				</div>
 
 			</BrowserRouter>

@@ -9,7 +9,8 @@
     "start": "concurrently \"npm run client-express\" \"npm run client-react\"",
     "prestart:prod": "webpack --mode production --config config/webpack.prod.config.js --env.NODE_ENV=production --progress",
     "start:prod": "node server",
-    "build": "webpack --mode production --config config/webpack.prod.config.js --env.NODE_ENV=production --progress"
+    "build": "webpack --mode production --config config/webpack.prod.config.js --env.NODE_ENV=production --progress",
+    "deploy:prod":"now --public"
   },
   "repository": {
     "type": "git",
