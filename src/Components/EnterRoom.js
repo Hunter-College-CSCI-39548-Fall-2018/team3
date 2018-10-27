@@ -1,15 +1,17 @@
 import React from 'react'
-import { Redirect } from 'react-router-dom'
+import { Redirect, Route } from 'react-router-dom'
 
 class EnterRoom extends React.Component{
     constructor(props){
         super(props)
         this.room = React.createRef()
-        this.redirect = React.createRef()
         this.handleEnterRoom = this.handleEnterRoom.bind(this)
+
+        this.state = {redirect: false}
     }
     
     handleEnterRoom(event){
+        //get input value from state (reference)
         let room = this.room.current.value
         let obj = {"room":room}
         console.log("this is room", obj)
@@ -17,11 +19,13 @@ class EnterRoom extends React.Component{
             method: 'POST',
             body: JSON.stringify(obj),
             headers: { "Content-Type": 'application/json' },
-        }).then(redirect => {
+        }).then((redirect) => {
+            
+            //set state (whether or not you should redirect to next page)
             if(redirect){
-                
+                this.setState({redirect: true})
             }
-        }).catch(err => {
+        }).catch((err) => {
             console.log(err)
         })
     }
@@ -29,6 +33,11 @@ class EnterRoom extends React.Component{
     render(){
         return(
             <div>
+                {/* if redirect state true then redirect otherwise render original page */}
+                <Route path='/p' render={() => {
+                   this.state.redirect ? (<Redirect to='/p'/>) : (<EnterRoom/>)
+                }}/>
+                
                 <h1>Enter room to join</h1>
 
                 <input ref={this.room} type='text' name='room'/>

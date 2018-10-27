@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
-import Main from './Components/Main'
 import Home from './Components/Home'
 import EnterRoom from './Components/EnterRoom'
 import EnterName from './Components/EnterName'
@@ -14,9 +13,9 @@ class App extends React.Component {
 		return(
 			<BrowserRouter>
 				<Switch>
-					<Route path='/enterRoom' component={EnterRoom}></Route>
+					<Route path='/enter-room' component={EnterRoom}></Route>
 					<Route path='/p' component={Home}></Route>
-					<Route path= '/enterName' component={EnterName}></Route>
+					<Route path= '/enter-name' component={EnterName}></Route>
 					<Route path= '/lobby' component={Lobby}></Route>
 				</Switch>
 

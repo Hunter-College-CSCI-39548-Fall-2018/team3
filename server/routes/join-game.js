@@ -16,7 +16,7 @@ module.exports = (app, rooms) => {
             if(rooms[req.body.room] === undefined){
                 console.log("invalid key")
                 // res.redirect('/enter-room')
-                return false
+                res.json(false)
             }
 
             //set cookie for room user is joinings
@@ -25,7 +25,7 @@ module.exports = (app, rooms) => {
                 overwrite: true
             })
             // res.redirect('/enter-name')
-            return true
+            res.json(true)
         }
     })
 
