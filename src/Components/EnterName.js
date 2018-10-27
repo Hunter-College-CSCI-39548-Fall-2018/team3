@@ -1,12 +1,13 @@
 import React from 'react'
-import { Redirect } from 'react-router-dom'
+import { Redirect, Route } from 'react-router-dom'
 
 class EnterName extends React.Component{
     constructor(props){
         super(props)
         this.nickname = React.createRef()
-        this.redirect = React.createRef()
         this.handleEnterName = this.handleEnterName.bind(this)
+
+        this.state = {redirct: false}
     }
 
     handleEnterName(event){
@@ -22,17 +23,20 @@ class EnterName extends React.Component{
             headers: { "Content-Type": 'application/json' },
         }).then(redirect => {
             if(redirect){
-
+                this.setState({redirect: true})
             }
         }).catch(err => {
             console.log(err)
         })
-
     }
 
     render(){
         return(
             <div>
+                <Route path='/lobby' render={() => {
+                    this.state.redirect ? (<Redirect to='/lobby'/>) : (<EnterName/>)
+                }}/>
+                
                 <h1>Enter your nickname</h1>
 
                 <input ref={this.nickname} type='text' name='nickname'/>

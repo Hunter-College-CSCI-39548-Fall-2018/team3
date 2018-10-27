@@ -14,13 +14,13 @@ class EnterRoom extends React.Component{
         //get input value from state (reference)
         let room = this.room.current.value
         let obj = {"room":room}
-        console.log("this is room", obj)
+
         fetch('http://localhost:3000/enter-room', {
             method: 'POST',
             body: JSON.stringify(obj),
             headers: { "Content-Type": 'application/json' },
         }).then((redirect) => {
-            
+
             //set state (whether or not you should redirect to next page)
             if(redirect){
                 this.setState({redirect: true})
@@ -39,7 +39,7 @@ class EnterRoom extends React.Component{
                 }}/>
                 
                 <h1>Enter room to join</h1>
-
+                
                 <input ref={this.room} type='text' name='room'/>
                 <button id='enter-room' type='button' onClick={this.handleEnterRoom}>Enter</button>
             </div>
