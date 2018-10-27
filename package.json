@@ -1,5 +1,5 @@
 {
-  "name": "tutorial",
+  "name": "Biscuit",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -9,7 +9,11 @@
     "start": "concurrently \"npm run client-express\" \"npm run client-react\"",
     "prestart:prod": "webpack --mode production --config config/webpack.prod.config.js --env.NODE_ENV=production --progress",
     "start:prod": "node server",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production --config config/webpack.prod.config.js --env.NODE_ENV=production --progress"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Hunter-College-CSCI-39548-Fall-2018/team3.git"
   },
   "keywords": [],
   "author": "",
@@ -42,8 +46,13 @@
     "create-react-class": "^15.6.3",
     "express": "^4.16.3",
     "liowebrtc": "^0.1.14",
+    "micro": "latest",
     "moment": "^2.22.2",
+<<<<<<< HEAD
     "randomstring": "^1.1.5",
+=======
+    "now": "^11.4.6",
+>>>>>>> fe116b6fcaa6ff7af28f53fd829661e5d6edacb2
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-moment": "^0.7.9",
