@@ -12,9 +12,9 @@ module.exports = {
       path.resolve('src')+'/App.jsx'
     ],
     output: {
-        path: path.resolve(__dirname, 'public'),
         filename: 'bundler.js',
-        publicPath: '/',
+        path: path.resolve(__dirname, '../dist'),
+        publicPath: '/'
     },
   module: {
     rules: [
