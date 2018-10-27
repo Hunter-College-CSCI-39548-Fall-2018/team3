@@ -2,9 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
-import Main from './Components/Main'
 import Home from './Components/Home'
-import EnterRoom from './Components/EnterRoom'
+import EnterRoom from './Components/EnterRoom';
 class App extends React.Component {
 // express has precedence over react- 
 // if 
@@ -12,7 +11,7 @@ class App extends React.Component {
 		return(
 			<BrowserRouter>
 				<Switch>
-					<Route path='/hi' component={EnterRoom}></Route>
+					<Route path='/enter-room' component={EnterRoom}></Route>
 					<Route path='/p' component={Home}></Route>
 					
 					<Route path= '/test' component={Home}></Route>
