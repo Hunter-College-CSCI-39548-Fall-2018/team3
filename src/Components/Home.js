@@ -10,20 +10,22 @@ class Home extends React.Component{
 
     render(){
         return(
-          <h1> What you want </h1>
+          <div>
+            <h1> What you want </h1>
 
-          <p>The about page and stuff whatever you want to add</p>
+            <p>The about page and stuff whatever you want to add</p>
 
-          <br/>
+            <br/>
 
-          <a href='/create-game'><button id='create-game'>Create a Game</button></a>
+            <a href='/create-game'><button id='create-game'>Create a Game</button></a>
 
-          <br/>
+            <br/>
 
-          <a href='/enter-room'><button id='join-room'>Join a Room</button></a>
-          <br/>
-          <a href='/test-game'><button>Test Game</button></a>
-          <a href='/test-player'><button>Test Player</button></a>
+            <a href='/enter-room'><button id='join-room'>Join a Room</button></a>
+            <br/>
+            <a href='/test-game'><button>Test Game</button></a>
+            <a href='/test-player'><button>Test Player</button></a>
+          </div>
         )
     }
 }
