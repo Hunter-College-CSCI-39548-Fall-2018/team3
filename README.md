@@ -2,7 +2,7 @@
 
 The main repo for the Biscuit project.
 
-Install:
+Install all dependencies:
 
 ```bash
 npm install
