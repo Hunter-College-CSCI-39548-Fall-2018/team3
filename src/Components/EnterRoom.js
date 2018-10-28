@@ -34,8 +34,8 @@ class EnterRoom extends React.Component{
         return(
             <div>
                 {/* if redirect state true then redirect otherwise render original page */}
-                <Route path='/p' render={() => {
-                   this.state.redirect ? (<Redirect to='/p'/>) : (<EnterRoom/>)
+                <Route path='/enter-name' render={() => {
+                   this.state.redirect ? (<Redirect to='/enter-name'/>) : (<EnterRoom/>)
                 }}/>
                 
                 <h1>Enter room to join</h1>
