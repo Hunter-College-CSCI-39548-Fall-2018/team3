@@ -19,19 +19,18 @@ class EnterRoom extends React.Component{
             method: 'POST',
             body: JSON.stringify(obj),
             headers: { "Content-Type": 'application/json' },
+            credentials: 'include'
+
         }).then((res) => {
             if(res.ok){
+                //parse through response's json object first to get value
                 res.json()
                 .then((body) =>{
-                    console.log('this is the response', body)
                     //set state (whether or not you should redirect to next page)
-                    if(body){
+                    if(body)
                         this.setState({redirect: true})
-                        console.log("state of redirect:",this.state.redirect)
-                    }
                 })
-            }
-          
+            }     
         }).catch((err) => {
             console.log(err)
         })

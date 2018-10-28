@@ -21,19 +21,11 @@ module.exports = (app, rooms) => {
                 //set cookie for room user is joinings
                 res.cookie('room', req.body.room, {
                     secure: false,
-                    overwrite: true
+                    overwrite: true,
                 })
                 console.log('completely find key')
                 res.send(true)
             }
-
-            //set cookie for room user is joinings
-            res.cookie('room', req.body.room, {
-                secure: false,
-                overwrite: true
-            })
-            // res.redirect('/enter-name')
-            res.json(true)
         }
     })
 
@@ -41,10 +33,11 @@ module.exports = (app, rooms) => {
     //     res.render('enter-name')
     // })
 
-    app.post('/api/enter-name', (req, res) => {
+    app.post('/enter-name', (req, res) => {
         console.log(req.body.nickname);
         if(req.body.nickname){
-          /*
+            console.log("room stored in cookies: ", req.cookies.room)
+
             //if name exists in room
             if(!rooms[req.cookies.room].hasPlayer(req.body.name)){
 
@@ -57,17 +50,13 @@ module.exports = (app, rooms) => {
                     overwrite: true
                 })
 
+                res.json(true)
             }else{
-                let data = {
-                  "redirect":"enter-name"
-                }
-                res.json(data)
+                //player exists in room, tell client not to redirect
+                res.json(false)
             }
-            */
-            let data = {
-              "redirect":"lobby"
-            }
-            res.json(data)
+            
+          
         }
     })
 

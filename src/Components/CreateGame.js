@@ -24,11 +24,17 @@ class CreateGame extends React.Component{
             method: 'POST',
             body: JSON.stringify(obj),
             headers: { "Content-Type": 'application/json' },
-        }).then((redirect) => {
-            
-            //set state (whether or not you should redirect to next page)
-            if(redirect){
-                this.setState({redirect: true})
+        }).then((res) => {
+            if(res.ok){
+                res.json()
+                .then((body) =>{
+                    console.log('this is the response', body)
+                    //set state (whether or not you should redirect to next page)
+                    if(body){
+                        this.setState({redirect: true})
+                        console.log("state of redirect:",this.state.redirect)
+                    }
+                })
             }
         }).catch((err) => {
             console.log(err)
@@ -36,29 +42,29 @@ class CreateGame extends React.Component{
     }
 
     render(){
-        return(
-            <div>
-                {/* if redirect state true then redirect otherwise render original page */}
-                <Route exact path='/' render={() => {
-                   this.state.redirect ? (<Redirect to='/'/>) : (<CreateGame/>)
-                }}/>
-                
-                <h1> Create Game </h1>
+        if(this.state.redirect){
+            return (<Redirect to='/lobby'/>)
+        }else{
+            return(
+                <div>
+                    
+                    <h1> Create Game </h1>
 
-                <label>players per team</label>
-                <input ref={this.players_per_team} type='text' name='players_per_team'/>
-                <br/>
-                <label>number of teams</label>
+                    <label>players per team</label>
+                    <input ref={this.players_per_team} type='text' name='players_per_team'/>
+                    <br/>
+                    <label>number of teams</label>
 
-                <input ref={this.numOfteams} type='text' name='numOfteams'/>
-                <br/>
-                <label>number of icons</label>
+                    <input ref={this.numOfteams} type='text' name='numOfteams'/>
+                    <br/>
+                    <label>number of icons</label>
 
-                <input ref={this.numOfIcons} type='text' name='numOfIcons'/>
-                <button id='create-room' type='button' onClick={this.handleCreateGame}> Enter </button>
-            </div>
-           
-        )
+                    <input ref={this.numOfIcons} type='text' name='numOfIcons'/>
+                    <button id='create-room' type='button' onClick={this.handleCreateGame}> Enter </button>
+                </div>
+            
+            )
+        }
     }
 }
 

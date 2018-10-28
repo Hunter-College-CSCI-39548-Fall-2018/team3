@@ -3,7 +3,12 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 
-app.use(cors())
+const corsOptions = {
+    credentials: true,
+    origin: true
+}
+
+app.use(cors(corsOptions))
 app.use(cookieParser())
 
 const PORT = process.env.PORT || 3000

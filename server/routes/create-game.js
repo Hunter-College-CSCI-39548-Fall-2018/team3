@@ -8,7 +8,7 @@ module.exports = (app, rooms) => {
     // })
 
     // Submit all settings to the lobby
-    app.post('/api/create-game', (req, res) => {
+    app.post('/create-game', (req, res) => {
         var room = new Room()
 
         //do stuff with options
@@ -27,12 +27,6 @@ module.exports = (app, rooms) => {
             //console.log(info.numOfTeams)
         }
 
-        // for (var key in info) {
-        //     // do something with key|value
-        //     console.log(info[key])
-        // }
-        // console.log(info)
-
         //set user to owner of the game
         res.cookie('game_owner', 1, {
             secure: false
@@ -49,7 +43,9 @@ module.exports = (app, rooms) => {
 
 
         console.log(rooms)
+
+        res.json(true)
         // res.redirect('lobby')
-        res.redirect('create-game')
+        // res.redirect('create-game')
     })
 }
