@@ -7,7 +7,7 @@ class CreateGame extends React.Component{
         this.players_per_team = React.createRef()
         this.numOfteams = React.createRef()
         this.numOfIcons = React.createRef()
-        // this.state = {redirect: false}
+        this.state = {redirect: false}
 
         this.handleCreateGame = this.handleCreateGame.bind(this)
 
@@ -20,7 +20,7 @@ class CreateGame extends React.Component{
         let numOfIcons = this.numOfIcons.current.value
         let obj = {"players_per_team":players_per_team, "numOfteams":numOfteams, "numOfIcons":numOfIcons}
         console.log(obj)
-        fetch('http://localhost:3000/create-room', {
+        fetch('http://localhost:3000/create-game', {
             method: 'POST',
             body: JSON.stringify(obj),
             headers: { "Content-Type": 'application/json' },
@@ -45,10 +45,15 @@ class CreateGame extends React.Component{
                 
                 <h1> Create Game </h1>
 
+                <label>players per team</label>
                 <input ref={this.players_per_team} type='text' name='players_per_team'/>
                 <br/>
+                <label>number of teams</label>
+
                 <input ref={this.numOfteams} type='text' name='numOfteams'/>
                 <br/>
+                <label>number of icons</label>
+
                 <input ref={this.numOfIcons} type='text' name='numOfIcons'/>
                 <button id='create-room' type='button' onClick={this.handleCreateGame}> Enter </button>
             </div>

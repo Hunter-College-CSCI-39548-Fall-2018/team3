@@ -9,7 +9,7 @@ module.exports = (app, rooms) => {
     // })
 
     app.post('/enter-room', (req, res) => {
-        console.log(req.body)
+        console.log(req.body.room)
         if(req.body.room){
 
             //check if room exists
@@ -17,8 +17,9 @@ module.exports = (app, rooms) => {
                 console.log("invalid key")
                 // res.redirect('/enter-room')
                 res.json(false)
+                return
             }
-
+            
             //set cookie for room user is joinings
             res.cookie('room', req.body.room, {
                 secure: false,

@@ -2,9 +2,7 @@ const express = require('express'), app = express()
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
-// Used to load the port in the .env file included
-// require('dotenv').load();
-console.log("file being server yes")
+
 app.use(cors())
 app.use(cookieParser())
 
@@ -13,7 +11,7 @@ const server = app.listen(PORT)
 const io = require('socket.io').listen(server)
 
 app.use(express.static('static'))
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 

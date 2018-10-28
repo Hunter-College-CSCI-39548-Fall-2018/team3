@@ -20,7 +20,7 @@ class EnterRoom extends React.Component{
             body: JSON.stringify(obj),
             headers: { "Content-Type": 'application/json' },
         }).then((redirect) => {
-
+            console.log("will redirect? ", redirect)
             //set state (whether or not you should redirect to next page)
             if(redirect){
                 this.setState({redirect: true})
