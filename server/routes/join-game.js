@@ -15,18 +15,17 @@ module.exports = (app, rooms) => {
             //check if room exists
             if(rooms[req.body.room] === undefined){
                 console.log("invalid key")
-                // res.redirect('/enter-room')
-                res.json(false)
-                return
+                res.send(false)
             }
-            
-            //set cookie for room user is joinings
-            res.cookie('room', req.body.room, {
-                secure: false,
-                overwrite: true
-            })
-            // res.redirect('/enter-name')
-            res.json(true)
+            else{
+                //set cookie for room user is joinings
+                res.cookie('room', req.body.room, {
+                    secure: false,
+                    overwrite: true
+                })
+                console.log('completely find key')
+                res.send(true)
+            }
         }
     })
 

@@ -19,32 +19,40 @@ class EnterRoom extends React.Component{
             method: 'POST',
             body: JSON.stringify(obj),
             headers: { "Content-Type": 'application/json' },
-        }).then((redirect) => {
-            console.log("will redirect? ", redirect)
-            //set state (whether or not you should redirect to next page)
-            if(redirect){
-                this.setState({redirect: true})
+        }).then((res) => {
+            if(res.ok){
+                res.json()
+                .then((body) =>{
+                    console.log('this is the response', body)
+                    //set state (whether or not you should redirect to next page)
+                    if(body){
+                        this.setState({redirect: true})
+                        console.log("state of redirect:",this.state.redirect)
+                    }
+                })
             }
+          
         }).catch((err) => {
             console.log(err)
         })
     }
-
     render(){
-        return(
-            <div>
-                {/* if redirect state true then redirect otherwise render original page */}
-                <Route path='/enter-name' render={() => {
-                   this.state.redirect ? (<Redirect to='/enter-name'/>) : (<EnterRoom/>)
-                }}/>
-                
-                <h1>Enter room to join</h1>
-                
-                <input ref={this.room} type='text' name='room'/>
-                <button id='enter-room' type='button' onClick={this.handleEnterRoom}>Enter</button>
-            </div>
-           
-        )
+        //check if room entered exists or not
+        if(this.state.redirect){
+            return(
+                <Redirect to='/enter-name'/>
+            )
+        }else{
+            return(
+                <div>
+                    <h1>Enter room to join</h1>
+                    
+                    <input ref={this.room} type='text' name='room'/>
+                    <button id='enter-room' type='button' onClick={this.handleEnterRoom}>Enter</button>
+                </div>
+            
+            )
+        }
     }
 }
 
