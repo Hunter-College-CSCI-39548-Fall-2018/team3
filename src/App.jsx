@@ -14,7 +14,7 @@ class App extends React.Component {
 			<BrowserRouter>
 				<Switch>
 					<Route path='/enter-room' component={EnterRoom}></Route>
-					<Route path='/' component={Home}></Route>
+					<Route path='/' exact component={Home}></Route>
 					<Route path='/enter-name' component={EnterName}></Route>
 					<Route path='/lobby' component={Lobby}></Route>
 				</Switch>

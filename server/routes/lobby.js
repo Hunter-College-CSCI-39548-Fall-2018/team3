@@ -11,7 +11,7 @@ module.exports = (app, io, rooms) => {
     //         //make sure to emit user has joined only once
     //         if(!player.connected){
     //             socket.emit('get-curr-users', curr_users)
-                
+                    
     //             //save state of users in lobby
     //             player.socketid = socket.id
     //             player.connected = true
