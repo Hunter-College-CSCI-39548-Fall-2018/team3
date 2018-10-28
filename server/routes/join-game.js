@@ -26,6 +26,14 @@ module.exports = (app, rooms) => {
                 console.log('completely find key')
                 res.send(true)
             }
+
+            //set cookie for room user is joinings
+            res.cookie('room', req.body.room, {
+                secure: false,
+                overwrite: true
+            })
+            // res.redirect('/enter-name')
+            res.json(true)
         }
     })
 
@@ -33,7 +41,7 @@ module.exports = (app, rooms) => {
     //     res.render('enter-name')
     // })
 
-    app.post('/enter-name', (req, res) => {
+    app.post('/api/enter-name', (req, res) => {
         console.log(req.body.nickname);
         if(req.body.nickname){
           /*

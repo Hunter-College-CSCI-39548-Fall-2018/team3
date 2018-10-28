@@ -2,13 +2,13 @@ const Room = require('./utils/rooms.js')
 
 module.exports = (app, rooms) => {
     var randomstring = require('randomstring')
-    
+
     // app.get('/create-game', (req, res) => {
     //     res.render('create-game')
     // })
 
     // Submit all settings to the lobby
-    app.post('/create-game', (req, res) => {
+    app.post('/api/create-game', (req, res) => {
         var room = new Room()
 
         //do stuff with options
@@ -37,7 +37,7 @@ module.exports = (app, rooms) => {
         res.cookie('game_owner', 1, {
             secure: false
         })
-        
+
         room.setSettings(info)
 
         //generate code and then set key in room object
@@ -50,6 +50,6 @@ module.exports = (app, rooms) => {
 
         console.log(rooms)
         // res.redirect('lobby')
-        // res.redirect('create-game') 
+        res.redirect('create-game')
     })
 }

@@ -1,11 +1,22 @@
 import React from 'react'
-import io from 'socket.io-client'
-
+import io from 'socket.io-client';
 
 class Lobby extends React.Component{
     constructor(props){
         super(props)
-        this.socket = io('localhost:3000')
+
+        this.io = io.connect('http://localhost:3000/', {
+          transports: ['websocket'],
+          upgrade: false,
+        });
+
+    }
+
+    componentDidMount(){
+      const socket = io.connect('http://localhost:3000/', {
+        transports: ['websocket'],
+        upgrade: false,
+      });
     }
 
 

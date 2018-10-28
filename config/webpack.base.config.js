@@ -3,14 +3,23 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
 
-const host = "http://localhost:5000";
+const host = "http://localhost:5000/";
+console.log(process.env.ENV);
+
+const environment = process.env.ENV;
+let entryPoints = [];
+
+if(environment == "development"){
+  entryPoints.push('webpack-dev-server/client?' + host);
+
+}
+
+entryPoints.push('webpack/hot/only-dev-server');
+entryPoints.push(path.resolve('src')+'/App.jsx');
+
 module.exports = {
-  mode: "development",
-    entry: [
-  'webpack-dev-server/client?' + host,
-  'webpack/hot/only-dev-server',
-      path.resolve('src')+'/App.jsx'
-    ],
+  mode: environment,
+    entry: entryPoints,
     output: {
         filename: 'bundler.js',
         path: path.resolve(__dirname, '../dist'),
@@ -56,7 +65,7 @@ module.exports = {
   port: 5000,
   contentBase: path.join(__dirname, 'public'),
   proxy: {
-    "/test/*": {
+    "*": {
       target: "http://localhost:3000",
       secure: false,
 
