@@ -2,6 +2,7 @@ const express = require('express'), app = express()
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
+const path = require('path')
 
 const corsOptions = {
     credentials: true,
@@ -23,6 +24,8 @@ app.use(bodyParser.json())
 app.set('views', __dirname + '../src/views')
 var rooms = {}
 
+// This line is required to serve the React files in Express
+app.use(express.static(path.join(__dirname, '..', 'dist')));
 require('./routes/create-game')(app, rooms)
 require('./routes/join-game')(app, rooms)
 require('./routes/lobby')(app, io, rooms)
