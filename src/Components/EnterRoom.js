@@ -20,7 +20,7 @@ class EnterRoom extends React.Component{
             body: JSON.stringify(obj),
             headers: { "Content-Type": 'application/json' },
         }).then((redirect) => {
-
+            console.log("will redirect? ", redirect)
             //set state (whether or not you should redirect to next page)
             if(redirect){
                 this.setState({redirect: true})
@@ -34,8 +34,8 @@ class EnterRoom extends React.Component{
         return(
             <div>
                 {/* if redirect state true then redirect otherwise render original page */}
-                <Route path='/p' render={() => {
-                   this.state.redirect ? (<Redirect to='/p'/>) : (<EnterRoom/>)
+                <Route path='/enter-name' render={() => {
+                   this.state.redirect ? (<Redirect to='/enter-name'/>) : (<EnterRoom/>)
                 }}/>
                 
                 <h1>Enter room to join</h1>

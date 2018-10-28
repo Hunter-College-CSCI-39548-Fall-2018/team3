@@ -8,8 +8,13 @@ module.exports = (app, rooms) => {
     //     res.render('enter-room')
     // })
 
+<<<<<<< HEAD
     app.post('/api/enter-room', (req, res) => {
         console.log(req.body)
+=======
+    app.post('/enter-room', (req, res) => {
+        console.log(req.body.room)
+>>>>>>> 4a23c09adfd05d763a98b40ffff13fab46674699
         if(req.body.room){
 
             //check if room exists
@@ -17,8 +22,9 @@ module.exports = (app, rooms) => {
                 console.log("invalid key")
                 // res.redirect('/enter-room')
                 res.json(false)
+                return
             }
-
+            
             //set cookie for room user is joinings
             res.cookie('room', req.body.room, {
                 secure: false,
