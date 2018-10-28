@@ -7,8 +7,10 @@ class CreateGame extends React.Component{
         this.players_per_team = React.createRef()
         this.numOfteams = React.createRef()
         this.numOfIcons = React.createRef()
+        // this.state = {redirect: false}
+
         this.handleCreateGame = this.handleCreateGame.bind(this)
-        this.state = {redirect: false}
+
     }
 
     handleCreateGame(event){
@@ -37,18 +39,22 @@ class CreateGame extends React.Component{
         return(
             <div>
                 {/* if redirect state true then redirect otherwise render original page */}
-                <Route path='/' render={() => {
+                <Route exact path='/' render={() => {
                    this.state.redirect ? (<Redirect to='/'/>) : (<CreateGame/>)
                 }}/>
                 
                 <h1> Create Game </h1>
 
                 <input ref={this.players_per_team} type='text' name='players_per_team'/>
+                <br/>
                 <input ref={this.numOfteams} type='text' name='numOfteams'/>
+                <br/>
                 <input ref={this.numOfIcons} type='text' name='numOfIcons'/>
-                <button id='create-room' type='button' onClick={this.handleCreateRoom}> Enter </button>
+                <button id='create-room' type='button' onClick={this.handleCreateGame}> Enter </button>
             </div>
            
         )
     }
 }
+
+export default CreateGame
