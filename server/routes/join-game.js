@@ -8,7 +8,7 @@ module.exports = (app, rooms) => {
     //     res.render('enter-room')
     // })
 
-    app.post('/enter-room', (req, res) => {
+    app.post('/api/enter-room', (req, res) => {
         console.log(req.body)
         if(req.body.room){
 
@@ -33,7 +33,7 @@ module.exports = (app, rooms) => {
     //     res.render('enter-name')
     // })
 
-    app.post('/enter-name', (req, res) => {
+    app.post('/api/enter-name', (req, res) => {
         console.log(req.body.nickname);
         if(req.body.nickname){
           /*
