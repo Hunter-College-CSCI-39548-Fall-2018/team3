@@ -50,10 +50,6 @@ module.exports = (app, rooms) => {
 
         console.log(rooms)
         // res.redirect('lobby')
-<<<<<<< HEAD
         res.redirect('create-game')
-=======
-        // res.redirect('create-game') 
->>>>>>> 4a23c09adfd05d763a98b40ffff13fab46674699
     })
 }

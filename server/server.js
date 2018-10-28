@@ -2,14 +2,10 @@ const express = require('express'), app = express()
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
-<<<<<<< HEAD
 const path = require('path');
 // Used to load the port in the .env file included
 // require('dotenv').load();
 console.log("file being server yes")
-=======
-
->>>>>>> 4a23c09adfd05d763a98b40ffff13fab46674699
 app.use(cors())
 app.use(cookieParser())
 
@@ -18,9 +14,8 @@ const server = app.listen(PORT)
 const io = require('socket.io').listen(server)
 
 app.use(express.static('static'))
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
-
 
 // This is what the socket.io syntax is like, we will work this later
 io.on('connection', socket => {
