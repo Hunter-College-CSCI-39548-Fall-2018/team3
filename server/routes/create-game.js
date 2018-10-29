@@ -3,10 +3,6 @@ const Room = require('./utils/rooms.js')
 module.exports = (app, rooms) => {
     var randomstring = require('randomstring')
 
-    // app.get('/create-game', (req, res) => {
-    //     res.render('create-game')
-    // })
-
     // Submit all settings to the lobby
     app.post('/create-game', (req, res) => {
         var room = new Room()
@@ -19,12 +15,10 @@ module.exports = (app, rooms) => {
 
         if(req.body.numOfteams){
             info["numOfTeams"] = req.body.numOfteams
-            //console.log(info.numOfTeams)
         }
 
         if(req.body.numOfIcons){
             info["numOfIcons"] = req.body.numOfIcons
-            //console.log(info.numOfTeams)
         }
 
         //set user to owner of the game
@@ -45,7 +39,5 @@ module.exports = (app, rooms) => {
         console.log(rooms)
 
         res.json(true)
-        // res.redirect('lobby')
-        // res.redirect('create-game')
     })
 }
