@@ -1,6 +1,7 @@
 module.exports = (app, rooms) => {
 
     app.post('/enter-room', (req, res) => {
+
         console.log("Joined room", req.body.room)
         if(req.body.room){
 
@@ -10,12 +11,24 @@ module.exports = (app, rooms) => {
                 res.json(false)
             }
             else{
-                res.clearCookie('room')
+                res.cookie('test', "somevalue", {
+                    secure: false
+                })
+
                 //set cookie for room user is joinings
                 res.cookie('room', req.body.room, {
                     secure: false,
-                    overwrite: true,
+                    // overwrite: true,
                 })
+
+                //to signify that user who is joining is not game owner
+                res.cookie('game_owner', 0 , {
+                    secured: false,
+                    overwrite: true
+                })
+
+                console.log(req.cookies)
+
                 console.log('completely find key')
 
                 if(req.cookies.room){
@@ -32,18 +45,21 @@ module.exports = (app, rooms) => {
             console.log("room stored in cookies: ", req.cookies.room)
             
             //if name exists in room
-            if(!rooms[req.cookies.room].hasPlayer(req.body.name)){
+            if(!rooms[req.cookies.room].hasPlayer(req.body.nickname)){
 
                 //map a player to a room- only name and if connected for now
-                var val = {name: req.body.name, connected: false, socketid: 0}
-                rooms[req.cookies.room].addPlayer(req.body.name, val)
+                var val = {name: req.body.nickname, connected: false, socketid: 0}
+                rooms[req.cookies.room].addPlayer(req.body.nickname, val)
+
+                if(rooms[req.cookies.room].hasPlayer(req.body.nickname)){
+                    console.log('successfully added player to room')
+                }
 
                 res.clearCookie('player')
-                res.cookie('player', req.body.name, {
+                res.cookie('player', req.body.nickname, {
                     secure: false,
-                    overwrite: true
+                    // overwrite: true
                 })
-                
                 if(req.cookies.player){
                     console.log("Player cookie was successfully made")
                     res.json(true)

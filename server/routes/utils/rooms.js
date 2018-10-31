@@ -25,9 +25,12 @@ class Room{
   addPlayer(player, value){
     // this.players.push(player)
     this.players[player] = value
+    // console.log("player in room?",this.players.hasOwnProperty(player))
+
   }
 
   hasPlayer(player){
+    console.log(this.players)
     return this.players.hasOwnProperty(player)
   }
 
