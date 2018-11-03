@@ -11,10 +11,6 @@ module.exports = (app, rooms) => {
                 res.json(false)
             }
             else{
-                res.cookie('test', "somevalue", {
-                    secure: false
-                })
-
                 //set cookie for room user is joinings
                 res.cookie('room', req.body.room, {
                     secure: false,
@@ -27,14 +23,11 @@ module.exports = (app, rooms) => {
                     overwrite: true
                 })
 
-                console.log(req.cookies)
 
                 console.log('completely find key')
-
-                if(req.cookies.room){
-                    console.log("Room cookie was successfully made")
-                    res.json(true)
-                }
+                console.log("Cookies: ", req.cookies)
+                res.json(true)
+                
             }
         }
     })
@@ -42,8 +35,7 @@ module.exports = (app, rooms) => {
     app.post('/enter-name', (req, res) => {
         console.log("Nickname is", req.body.nickname);
         if(req.body.nickname){
-            console.log("room stored in cookies: ", req.cookies.room)
-            
+
             //if name exists in room
             if(!rooms[req.cookies.room].hasPlayer(req.body.nickname)){
 
@@ -60,10 +52,11 @@ module.exports = (app, rooms) => {
                     secure: false,
                     // overwrite: true
                 })
-                if(req.cookies.player){
-                    console.log("Player cookie was successfully made")
-                    res.json(true)
-                }
+                
+                
+                console.log("Player cookie was successfully made")
+                res.json(true)
+                
             }else{
                 //player exists in room, tell client not to redirect
                 res.json(false)

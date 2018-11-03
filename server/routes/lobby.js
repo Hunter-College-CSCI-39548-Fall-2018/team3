@@ -10,12 +10,13 @@ module.exports = (app, io, rooms) => {
             var name = req.cookies.player
             var room = req.cookies.room
 
+            console.log("if player connected", player.connected)
             //make sure to emit user has joined only once
             if(!player.connected){
                 curr_users.push(name)
                 socket.emit('get-curr-users', curr_users)
 
-                //save state of users isn lobby
+                //save state of users in lobby
                 player.socketid = socket.id
                 player.connected = true
 
@@ -26,6 +27,8 @@ module.exports = (app, io, rooms) => {
                 console.log('joined the room:', room)
                 socket.to(room).emit('new-player', name)
             }
+
+            // res.send(200)
         })
 
         // var player = req.cookies.player

@@ -22,10 +22,10 @@ module.exports = (app, rooms) => {
         }
 
         //set user to owner of the game
-        // res.cookie('game_owner', 1, {
-        //     secure: false,
-        //     overwrite: true
-        // })
+        res.cookie('game_owner', 1, {
+            secure: false,
+            overwrite: true
+        })
 
         room.setSettings(info)
 
