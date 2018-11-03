@@ -10,7 +10,7 @@
     "prestart:prod": "webpack --mode production --config config/webpack.prod.config.js --env.NODE_ENV=production --progress",
     "start:prod": "node server",
     "build": "webpack --mode production --config config/webpack.prod.config.js --env.NODE_ENV=production --progress",
-    "deploy:prod":"now --public"
+    "deploy:prod": "now --public"
   },
   "repository": {
     "type": "git",
