@@ -22,6 +22,7 @@ class App extends React.Component {
 					<Route path='/enter-name' component={EnterName}></Route>
 					<Route exact path='/lobby' component={Lobby}></Route>
 					<Route path='/create-game' component={CreateGame}></Route>
+					<Route path='/game' component={Game}></Route>
 				</Switch>
 			</BrowserRouter>
 		)

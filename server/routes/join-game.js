@@ -16,7 +16,7 @@ module.exports = (app, rooms) => {
                     secure: false,
                     // overwrite: true,
                 })
-
+                
                 //to signify that user who is joining is not game owner
                 res.cookie('game_owner', 0 , {
                     secured: false,
