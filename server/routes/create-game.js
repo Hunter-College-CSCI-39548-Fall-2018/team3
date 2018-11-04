@@ -21,17 +21,24 @@ module.exports = (app, rooms) => {
             info["numOfIcons"] = req.body.numOfIcons
         }
 
+        res.clearCookie('player')
         //set user to owner of the game
         res.cookie('game_owner', 1, {
             secure: false,
             overwrite: true
         })
 
+
         room.setSettings(info)
 
         //generate code and then set key in room object
         var key = randomstring.generate(6)
         room.setKey(key)
+
+        res.cookie('room', key, {
+            secure: false,
+            overwrite: true
+        })
 
         //map room key to room object
         rooms[room.key] = room

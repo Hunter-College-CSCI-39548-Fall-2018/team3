@@ -34,10 +34,7 @@ class Lobby extends React.Component{
 
       socket.on('new-player', (name) => {
         let player = ""
-        console.log('attempting to add new users')
-
         console.log('received new player')
-        // div.append(" " + name)
         player += (" " + name)
 
         this.setState({players: this.state.players + player})
@@ -45,7 +42,7 @@ class Lobby extends React.Component{
       // var sock = new SockObject(socket)
 
       // //listen for players joining and append them to a div
-      
+      socket.on('test', (msg => console.log(msg)))
     }
 
     render(){

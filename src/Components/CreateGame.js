@@ -44,9 +44,9 @@ class CreateGame extends React.Component{
     }
 
     render(){
-        // if(this.state.redirect){
-            // return (<Redirect to='/lobby'/>)
-        // }else{
+        if(this.state.redirect){
+            return (<Redirect to='/lobby'/>)
+        }else{
             return(
                 <div>
 
@@ -66,7 +66,7 @@ class CreateGame extends React.Component{
                 </div>
 
             )
-        // }
+        }
     }
 }
 
