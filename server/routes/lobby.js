@@ -6,6 +6,7 @@ module.exports = (app, io, rooms) => {
         io.sockets.on('connection', (socket) => {
             console.log("is room in cookie", req.cookies)
             if(req.cookies.game_owner == '0'){
+                socket.emit('test', "poop")
                 var player = rooms[req.cookies.room].players[req.cookies.player]
 
                 var name = req.cookies.player
@@ -28,6 +29,10 @@ module.exports = (app, io, rooms) => {
                     console.log('joined the room:', room)
                     socket.to(room).emit('new-player', name)
                 }
+            }
+            else if(req.cookies.game_owner == '1'){
+                //just so game owner is in the room and can see what's going on
+                socket.join(req.cookies.room)
             }
 
             
