@@ -1,10 +1,15 @@
 import React from 'react'
 import io from 'socket.io-client';
+import Cookies from 'js-cookie'
 class Lobby extends React.Component{
     constructor(props){
       super(props)
 
-      this.state = {players: ""}
+      this.state = {
+        players: "",
+        room: ""
+      }
+
     }
 
     componentDidMount(){
@@ -43,12 +48,15 @@ class Lobby extends React.Component{
 
       // //listen for players joining and append them to a div
       socket.on('test', (msg => console.log(msg)))
+      let room = Cookies.get('room')
+      console.log("room cookie ", room)
+      this.setState({room: room})
     }
 
     render(){
       return(
         <div>
-          <div id='code'>code: </div>
+          <div id='code'>room code: <span>{this.state.room}</span></div>
           <div id='players'>players: {this.state.players}</div>
         </div>
       )

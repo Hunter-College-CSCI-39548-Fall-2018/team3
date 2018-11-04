@@ -27,13 +27,13 @@ module.exports = (app, rooms) => {
                 console.log('completely find key')
                 console.log("Cookies: ", req.cookies)
                 res.json(true)
-                
+
             }
         }
     })
 
     app.post('/enter-name', (req, res) => {
-        console.log("Nickname is", req.body.nickname);
+        //console.log("Nickname is", req.body.nickname);
         if(req.body.nickname){
 
             //if name exists in room
@@ -42,6 +42,14 @@ module.exports = (app, rooms) => {
                 //map a player to a room- only name and if connected for now
                 var val = {name: req.body.nickname, connected: false, socketid: 0}
                 rooms[req.cookies.room].addPlayer(req.body.nickname, val)
+
+                for(let i = 0; i < 15; ++i){
+                  val = {name: "player"+i, connected: false, socketid: 0}
+                  rooms[req.cookies.room].addPlayer(val.name, val)
+                }
+
+
+
 
                 if(rooms[req.cookies.room].hasPlayer(req.body.nickname)){
                     console.log('successfully added player to room')
@@ -52,17 +60,21 @@ module.exports = (app, rooms) => {
                     secure: false,
                     // overwrite: true
                 })
-                
-                
+                rooms[req.cookies.room].createTeams();
+                rooms[req.cookies.room].shuffleTeams();
+
+                console.log(rooms[req.cookies.room])
+
+
                 console.log("Player cookie was successfully made")
                 res.json(true)
-                
+
             }else{
                 //player exists in room, tell client not to redirect
                 res.json(false)
             }
-            
-          
+
+
         }
     })
 
