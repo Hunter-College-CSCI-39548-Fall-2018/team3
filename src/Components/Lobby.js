@@ -24,10 +24,9 @@ class Lobby extends React.Component{
       socket.on('get-curr-users', (curr_users) => {
         let players = ""
         console.log('attempting to add current users')
-        for(var i = 0; i < curr_users.length; ++i){
-            // div.append(" " + curr_users[i])
 
-            players += (" " + curr_users[i])
+        for(let key of curr_users){
+          players += (" " + key)
         }
 
         this.setState({players: players})

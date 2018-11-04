@@ -24,6 +24,7 @@ class CreateGame extends React.Component{
             method: 'POST',
             body: JSON.stringify(obj),
             headers: { "Content-Type": 'application/json' },
+            credentials: 'include'
         }).then((res) => {
             if(res.ok){
                 res.json()
