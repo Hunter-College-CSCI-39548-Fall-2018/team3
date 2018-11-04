@@ -24,6 +24,7 @@ class CreateGame extends React.Component{
             method: 'POST',
             body: JSON.stringify(obj),
             headers: { "Content-Type": 'application/json' },
+            credentials: 'include'
         }).then((res) => {
             if(res.ok){
                 res.json()
@@ -43,9 +44,9 @@ class CreateGame extends React.Component{
     }
 
     render(){
-        if(this.state.redirect){
-            return (<Redirect to='/lobby'/>)
-        }else{
+        // if(this.state.redirect){
+            // return (<Redirect to='/lobby'/>)
+        // }else{
             return(
                 <div>
 
@@ -65,7 +66,7 @@ class CreateGame extends React.Component{
                 </div>
 
             )
-        }
+        // }
     }
 }
 

@@ -10,7 +10,9 @@ import CreateGame from './Components/CreateGame'
 
 class App extends React.Component {
 // express has precedence over react-
-// if
+// if a route defined in express has same name in react, will go to express route
+
+	
 	render(){
 		return(
 			<BrowserRouter>
@@ -18,7 +20,7 @@ class App extends React.Component {
 					<Route path='/enter-room' component={EnterRoom}></Route>
 					<Route path='/' exact component={Home}></Route>
 					<Route path='/enter-name' component={EnterName}></Route>
-					<Route path='/lobby' component={Lobby}></Route>
+					<Route exact path='/lobby' component={Lobby}></Route>
 					<Route path='/create-game' component={CreateGame}></Route>
 				</Switch>
 			</BrowserRouter>
