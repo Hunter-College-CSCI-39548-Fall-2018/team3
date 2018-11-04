@@ -5,7 +5,10 @@ const cors = require('cors')
 const path = require('path')
 
 const corsOptions = {
+    //Access-Control-Allow-Credentials
     credentials: true,
+    //Access-Control-Allow-Origin
+    //true just specifies request origin 
     origin: true
 }
 
@@ -20,8 +23,6 @@ app.use(express.static('static'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-
-app.set('views', __dirname + '../src/views')
 var rooms = {}
 
 // This line is required to serve the React files in Express
