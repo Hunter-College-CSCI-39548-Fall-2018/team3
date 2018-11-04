@@ -18,9 +18,7 @@ module.exports = (app, io, rooms) => {
                     socket.emit('get-curr-users', curr_users)
 
                     //save state of users in lobby
-                    player.socketid = socket.id
                     player.connected = true
-
 
                     //join when get to lobby
                     //rooms are forgotten after reroute
@@ -37,13 +35,7 @@ module.exports = (app, io, rooms) => {
             
 
         })
-
+        
         res.sendStatus(200)
-
-        // var player = req.cookies.player
-        // var code = req.cookies.code;
-        // console.log("this is the room code " + res.cookie.code);
-
-        // res.render('lobby', {/*code:req.cookies.code, */player: req.cookies.player})
     })
 }

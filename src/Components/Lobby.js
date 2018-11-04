@@ -39,9 +39,7 @@ class Lobby extends React.Component{
 
         this.setState({players: this.state.players + player})
       })
-      // var sock = new SockObject(socket)
 
-      // //listen for players joining and append them to a div
     }
 
     render(){

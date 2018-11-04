@@ -76,9 +76,9 @@ class Home extends React.Component{
             </Menu>
 
             <br/>
-            <a href='/test-game'><button>Test Game</button></a>
+            <a href='/game'><button>Test Game</button></a>
             <a href='/test-player'><button>Test Player</button></a>
-
+                
             <Footer>
 
             </Footer>
