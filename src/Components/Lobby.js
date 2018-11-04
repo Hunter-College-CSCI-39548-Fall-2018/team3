@@ -42,7 +42,6 @@ class Lobby extends React.Component{
       // var sock = new SockObject(socket)
 
       // //listen for players joining and append them to a div
-      socket.on('test', (msg => console.log(msg)))
     }
 
     render(){

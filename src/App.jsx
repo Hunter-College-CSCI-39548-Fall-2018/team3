@@ -7,6 +7,7 @@ import EnterRoom from './Components/EnterRoom'
 import EnterName from './Components/EnterName'
 import Lobby from './Components/Lobby'
 import CreateGame from './Components/CreateGame'
+import Game from './Components/Game'
 
 class App extends React.Component {
 // express has precedence over react-

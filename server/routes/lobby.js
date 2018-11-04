@@ -6,7 +6,6 @@ module.exports = (app, io, rooms) => {
         io.sockets.on('connection', (socket) => {
             console.log("is room in cookie", req.cookies)
             if(req.cookies.game_owner == '0'){
-                socket.emit('test', "poop")
                 var player = rooms[req.cookies.room].players[req.cookies.player]
 
                 var name = req.cookies.player
