@@ -2,7 +2,7 @@ module.exports = (app, rooms) => {
 
     app.post('/enter-room', (req, res) => {
 
-        console.log("Joined room", req.body.room)
+        //console.log("Joined room", req.body.room)
         if(req.body.room){
 
             //check if room exists
@@ -43,14 +43,6 @@ module.exports = (app, rooms) => {
                 var val = {name: req.body.nickname, connected: false, socketid: 0}
                 rooms[req.cookies.room].addPlayer(req.body.nickname, val)
 
-                for(let i = 0; i < 15; ++i){
-                  val = {name: "player"+i, connected: false, socketid: 0}
-                  rooms[req.cookies.room].addPlayer(val.name, val)
-                }
-
-
-
-
                 if(rooms[req.cookies.room].hasPlayer(req.body.nickname)){
                     console.log('successfully added player to room')
                 }
@@ -61,9 +53,14 @@ module.exports = (app, rooms) => {
                     // overwrite: true
                 })
                 rooms[req.cookies.room].createTeams();
-                rooms[req.cookies.room].shuffleTeams();
+                  for(let i = 0; i < 15; ++i){
+                    val = {name: "player"+i, connected: false, socketid: 0}
+                    rooms[req.cookies.room].addPlayer(val.name, val)
+                  }
+                  rooms[req.cookies.room].shuffleTeams();
 
-                console.log(rooms[req.cookies.room])
+
+                //console.log(rooms[req.cookies.room])
 
 
                 console.log("Player cookie was successfully made")

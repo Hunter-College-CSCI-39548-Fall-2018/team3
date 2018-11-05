@@ -1,6 +1,7 @@
 import React from 'react'
 import io from 'socket.io-client';
 import Cookies from 'js-cookie'
+
 class Lobby extends React.Component{
     constructor(props){
       super(props)
