@@ -39,7 +39,7 @@ class Game extends React.Component{
         console.log(command)
         socket.emit('input-command', command)
     }
-
+    
     //in the event of wrong or right command, do something
     handleEvents = () => {
         let socket = this.state.socket
@@ -53,7 +53,7 @@ class Game extends React.Component{
             this.setState({sequence: seq})
         })
 
-        socket.on('wrong-command', (seq) => {
+        socket.on('wrong-command', () => {
             //some penalty here
             console.log("you suck")
         })

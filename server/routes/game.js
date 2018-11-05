@@ -1,3 +1,5 @@
+const Room = require('./utils/rooms.js')
+
 module.exports = (app, io, rooms) => {
     app.get('/game', (req, res) => {
         console.log("called game route")
@@ -7,8 +9,16 @@ module.exports = (app, io, rooms) => {
         let i = 0
         let game_started = false
 
+        let room = new Room()
+        room.createTeams(2)
+        
+        room.addPlayer("moo", {socketid: socket.id})
+
         io.sockets.on('connection', (socket)=>{
             console.log("socket connected")
+
+            //join the room in the cookie later
+            socket.join("room")
 
             if(!game_started) {
                 socket.emit('start-game', seq[0])
@@ -23,7 +33,7 @@ module.exports = (app, io, rooms) => {
                     i++
                     socket.emit('correct-command', seq[i])
                 }else{
-                    socket.emit('wrong-command', seq[i])
+                    socket.emit('wrong-command')
                 }
             })
             
