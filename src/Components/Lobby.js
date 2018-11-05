@@ -12,7 +12,6 @@ class Lobby extends React.Component{
             method: 'GET',
             credentials: 'include'
         })
-        //fetch is asynchronous, so need to set socket state and then do all stuff after
         .then((res) => {
             console.log("res status is", res.status)
             const socket = io.connect('http://localhost:3000/', {
@@ -20,13 +19,12 @@ class Lobby extends React.Component{
                 upgrade: false
             })
 
-            this.setState({socket:socket})
-            this.handleEvents()
+            //everything is asynchronous, so need to set socket state and then do all stuff after using callback
+            this.setState({socket:socket}, () => {
+                this.handleEvents()
+            })
          })
-        .catch((err) => {
-            console.log(err)
-        })
-        console.log("on first render?")
+        .catch((err) =>console.log(err))
     }
 
     handleEvents = () => {
