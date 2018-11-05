@@ -2,6 +2,7 @@ module.exports = (app, io, rooms) => {
     app.get('/game', (req, res) => {
         console.log("called game route")
 
+        //define sequence later
         let seq = ['A', 'C', 'D', 'B']
         let i = 0
         let game_started = false

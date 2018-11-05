@@ -4,7 +4,7 @@ import io from 'socket.io-client'
 class Game extends React.Component{
     constructor(props){
         super(props)
-        this.state = {socket: false, sequence: ""}
+        this.state = {socket: false, sequence: "", turn: false}
     }
 
     componentDidMount(){
@@ -69,6 +69,7 @@ class Game extends React.Component{
                 <button id='D' onClick={this.handleCommand.bind(this,'D')}>D</button>
 
                 <div>{this.state.sequence}</div>
+                <div>{this.state.turn}</div>
             </div>
 
         )
