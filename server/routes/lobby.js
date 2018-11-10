@@ -32,10 +32,10 @@ module.exports = (app, io, rooms) => {
                 socket.join(req.cookies.room)
             }
 
-            
+
 
         })
-        
+
         res.sendStatus(200)
     })
 }
