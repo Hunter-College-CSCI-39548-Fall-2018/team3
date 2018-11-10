@@ -1,46 +1,54 @@
-module.exports = (app, io, connected_members) => {
-    // app.get('/test-player', (req, res) => {
-    //     var game_owner = 0
+const Room = require('./utils/rooms.js')
 
-    //     res.render('test-game', {game_owner: game_owner})
-    // })
+module.exports = (app, io, rooms) => {
+    app.get('/game', (req, res) => {
+        console.log("called game route")
 
-    // app.get('/test-game', (req, res) => {
+        //define sequence later
+        let seq = ['A', 'C', 'D', 'B']
+        let i = 0
+        let game_started = false
 
-    //     // var players = []
-    //     // for(key in connected_members){
-    //     //     if(connected_members[key] == req.cookies.room){
-    //     //         players.push(key)
-    //     //         console.log(players)
-    //     //     }
-    //     // }
-    //     //find game owner
-
-    //     var game_owner = 1/*req.cookies.game_owner*/
-    //     var sequence = "AABBBAADDERPOK"
-
-    //     var curr_seq = -1
-
-    //     function nextInSequence(seq){
-    //         curr_seq++
-    //         console.log("curr seq:", curr_seq)
-
-    //         return seq[curr_seq]
-    //     }
+        let room = new Room()
+        room.createTeams(2)
         
-    //     io.sockets.on('connect', (socket) => {
-    //         socket.on('correct-command', () => {       
+        room.addPlayer("moo", {socketid: socket.id})
 
-    //             //supposed to do only to room, but broadcast for now
-    //             socket.broadcast.emit('next-in-sequence', nextInSequence(sequence))
-    //         })
+        io.sockets.on('connection', (socket)=>{
+            console.log("socket connected")
+
+            //join the room in the cookie later
+            socket.join("room")
+
+            if(!game_started) {
+                socket.emit('start-game', seq[0])
+                game_started = true
+            }
+
+            // socket.on('test', (msg) => console.log(msg))
+            socket.on('input-command', (command) => {
+
+                console.log("got command:", command)
+                if(command == seq[i]){
+                    i++
+                    socket.emit('correct-command', seq[i])
+                }else{
+                    socket.emit('wrong-command')
+                }
+            })
             
-    //         socket.on('wrong-command', () => {
-    //             console.log('response of wrong command at least')
-    //             //some sort of penalty 
-    //         })
-    //     })
-        
-    //     res.render('test-game', {game_owner: game_owner})
-    // })
+        })
+
+        res.sendStatus(200)
+        //not game owner- is player
+        // if(req.cookies.game_owner == '0'){
+        //     io.sockets.on('connection', (socket) => {
+        //         socket.on('get-command', (command) => {
+        //             console.log(command)
+        //         })
+
+        //         socket.on('test', (msg) => console.log(msg))
+        //     })
+        // }
+    })
 }

@@ -59,7 +59,11 @@
     "react-native-openpgp": "^1.0.4",
     "react-router-dom": "^4.3.1",
     "socket.io": "^2.1.1",
+<<<<<<< HEAD
     "underscore": "^1.9.1",
+=======
+    "styled-components": "^4.0.3",
+>>>>>>> dbcbde2e48ab9478ce853bee6e5c558d9dce53fc
     "webrtc-adapter": "^6.3.2"
   }
 }

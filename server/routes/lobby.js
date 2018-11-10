@@ -6,7 +6,6 @@ module.exports = (app, io, rooms) => {
         io.sockets.on('connection', (socket) => {
             console.log("is room in cookie", req.cookies)
             if(req.cookies.game_owner == '0'){
-                socket.emit('test', "poop")
                 var player = rooms[req.cookies.room].players[req.cookies.player]
 
                 var name = req.cookies.player
@@ -19,9 +18,7 @@ module.exports = (app, io, rooms) => {
                     socket.emit('get-curr-users', curr_users)
 
                     //save state of users in lobby
-                    player.socketid = socket.id
                     player.connected = true
-
 
                     //join when get to lobby
                     //rooms are forgotten after reroute
@@ -38,13 +35,7 @@ module.exports = (app, io, rooms) => {
             
 
         })
-
+        
         res.sendStatus(200)
-
-        // var player = req.cookies.player
-        // var code = req.cookies.code;
-        // console.log("this is the room code " + res.cookie.code);
-
-        // res.render('lobby', {/*code:req.cookies.code, */player: req.cookies.player})
     })
 }

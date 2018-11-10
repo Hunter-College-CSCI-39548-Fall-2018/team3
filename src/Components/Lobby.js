@@ -4,54 +4,56 @@ import Cookies from 'js-cookie'
 
 class Lobby extends React.Component{
     constructor(props){
-      super(props)
+    super(props)
 
       this.state = {
         players: "",
-        room: ""
+        room: "",
+        socket: false
       }
 
     }
-
     componentDidMount(){
-      fetch('http://localhost:3000/lobby', {
-        method: 'GET',
-        credentials: 'include'
-      }).catch((err) => {
-        console.log(err)
-      })
+        fetch('http://localhost:3000/lobby', {
+            method: 'GET',
+            credentials: 'include'
+        })
+        .then((res) => {
+            console.log("res status is", res.status)
+            const socket = io.connect('http://localhost:3000/', {
+                transports: ['websocket'],
+                upgrade: false
+            })
 
-      const socket = io.connect('http://localhost:3000/', {
-        transports: ['websocket'],
-        upgrade: false
-      })
-      console.log("on first render?")
+            //everything is asynchronous, so need to set socket state and then do all stuff after using callback
+            this.setState({socket:socket}, () => {
+                this.handleEvents()
+            })
+         })
+        .catch((err) =>console.log(err))
+    }
 
-      socket.on('get-curr-users', (curr_users) => {
-        let players = ""
-        console.log('attempting to add current users')
+    handleEvents = () => {
+        let socket = this.state.socket
 
-        for(let key of curr_users){
-          players += (" " + key)
-        }
+        socket.on('get-curr-users', (curr_users) => {
+            let players = ""
+            console.log('attempting to add current users')
 
-        this.setState({players: players})
-      })
+            for(let key of curr_users){
+                players += (" " + key)
+            }
 
-      socket.on('new-player', (name) => {
-        let player = ""
-        console.log('received new player')
-        player += (" " + name)
+            this.setState({players: players})
+        })
 
-        this.setState({players: this.state.players + player})
-      })
-      // var sock = new SockObject(socket)
+        socket.on('new-player', (name) => {
+          let player = ""
+          console.log('received new player')
+          player += (" " + name)
 
-      // //listen for players joining and append them to a div
-      socket.on('test', (msg => console.log(msg)))
-      let room = Cookies.get('room')
-      console.log("room cookie ", room)
-      this.setState({room: room})
+          this.setState({players: this.state.players + player})
+        })
     }
 
     render(){
@@ -62,6 +64,7 @@ class Lobby extends React.Component{
         </div>
       )
     }
+
 }
 
 export default Lobby
