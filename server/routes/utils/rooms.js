@@ -1,3 +1,5 @@
+const _ = require('underscore')
+
 class Room{
   constructor(){
     this.settings = {}
@@ -25,32 +27,37 @@ class Room{
   addPlayer(player, value){
     // this.players.push(player)
     this.players[player] = value
-    // console.log("player in room?",this.players.hasOwnProperty(player))
 
   }
-
+  
   hasPlayer(player){
     console.log(this.players)
     return this.players.hasOwnProperty(player)
   }
 
   createTeams(){
-    let teams = this.settings.numOfTeams;
+    // let teams = this.settings.numOfTeams;
+    let teams = 2;
     let templateTeam = [];
     for(let i = 0; i < teams; i++){
       this.teams.push(templateTeam);
     }
   }
 
-  shuffleTeams(){
-
-    // Waiting until the players dictionary can be tested first
-    /*
-    for (let i = this.teams.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [this.teams[i], this.teams[j]] = [this.teams[j], this.teams[i]]; // eslint-disable-line no-param-reassign
+  countPlayers(){
+    let count = 0
+    for(let key in this.players){
+      count++
     }
-    */
+    return count
+  }
+
+  shuffleTeams(){
+    //chunk is playes per team
+    var i,j,temparray,chunk = 4;
+    let newArr = _.shuffle(this.players);
+    console.log("new arr",newArr);
+
   }
 }
 

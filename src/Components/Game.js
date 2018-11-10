@@ -39,14 +39,14 @@ class Game extends React.Component{
         console.log(command)
         socket.emit('input-command', command)
     }
-    
+
     //in the event of wrong or right command, do something
     handleEvents = () => {
         let socket = this.state.socket
         console.log("Socket is", socket)
 
         socket.on('start-game', (seq) => {
-            this.setState({sequence: seq})
+            this.setState({sequence: seq})  
         })
 
         socket.on('correct-command', (seq) => {
@@ -57,6 +57,11 @@ class Game extends React.Component{
             //some penalty here
             console.log("you suck")
         })
+    }
+
+    handleShuffle = () => {
+        let socket = this.state.socket
+        socket.emit('shuffle-teams')
     }
 
     render() {
@@ -70,6 +75,8 @@ class Game extends React.Component{
 
                 <div>{this.state.sequence}</div>
                 <div>{this.state.turn}</div>
+
+                <button onClick={this.handleShuffle.bind(this)}>test shuffle teams</button>
             </div>
 
         )

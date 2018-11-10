@@ -1,6 +1,8 @@
 const Room = require('./utils/rooms.js')
 
-module.exports = (app, io, rooms) => {
+module.exports = (app, io, rooms,room) => {
+    let k = 0
+
     app.get('/game', (req, res) => {
         console.log("called game route")
 
@@ -9,17 +11,14 @@ module.exports = (app, io, rooms) => {
         let i = 0
         let game_started = false
 
-        let room = new Room()
-        room.createTeams(2)
-        
-        room.addPlayer("moo", {socketid: socket.id})
-
         io.sockets.on('connection', (socket)=>{
             console.log("socket connected")
+            room.addPlayer(k, {socketid: socket.id})
+            k++
 
             //join the room in the cookie later
             socket.join("room")
-
+            console.log("people in room",rooms["room"].players)
             if(!game_started) {
                 socket.emit('start-game', seq[0])
                 game_started = true
@@ -36,9 +35,15 @@ module.exports = (app, io, rooms) => {
                     socket.emit('wrong-command')
                 }
             })
+
+            socket.on('shuffle-teams', () => {
+                room.shuffleTeams()
+                // console.log("teams are", rooms["room"].teams)
+            })
             
         })
-
+        //after everyone has joined
+        // room.shuffleTeams()
         res.sendStatus(200)
         //not game owner- is player
         // if(req.cookies.game_owner == '0'){

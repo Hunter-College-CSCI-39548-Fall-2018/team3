@@ -24,10 +24,16 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 var rooms = {}
+const Room = require('./routes/utils/rooms')
+
+let room = new Room()
+room.createTeams()
+room.key = "room"
+rooms["room"] = room
 
 // This line is required to serve the React files in Express
 app.use(express.static(path.join(__dirname, '..', 'dist')));
-require('./routes/game')(app, io, rooms)
+require('./routes/game')(app, io, rooms, room)
 require('./routes/create-game')(app, rooms)
 require('./routes/join-game')(app, rooms)
 require('./routes/lobby')(app, io, rooms)
