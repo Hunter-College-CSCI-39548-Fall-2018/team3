@@ -3,9 +3,14 @@ const Room = require('./utils/rooms.js')
 module.exports = (app, io, rooms,room) => {
     let k = 0
 
+    turnCall = (socket) => {
+        
+    }
+
     app.get('/game', (req, res) => {
         console.log("called game route")
 
+        let connected = false
         //define sequence later
         let seq = ['A', 'C', 'D', 'B']
         let i = 0
@@ -13,8 +18,12 @@ module.exports = (app, io, rooms,room) => {
 
         io.sockets.on('connection', (socket)=>{
             console.log("socket connected")
-            room.addPlayer(k, {socketid: socket.id})
-            k++
+            if(!connected){
+                room.addPlayer(k, {socketid: socket.id})
+                k++
+                connected = true
+            }
+            
 
             //join the room in the cookie later
             socket.join("room")
@@ -37,8 +46,14 @@ module.exports = (app, io, rooms,room) => {
             })
 
             socket.on('shuffle-teams', () => {
-                room.shuffleTeams()
+                // room.shuffleTeams()
                 // console.log("teams are", rooms["room"].teams)
+
+                room.teams[0].push(room.players["0"])
+                room.teams[1].push(room.players["1"])
+
+                console.log(room.teams)
+
             })
             
         })

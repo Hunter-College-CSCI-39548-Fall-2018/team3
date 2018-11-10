@@ -26,10 +26,14 @@ app.use(bodyParser.json())
 var rooms = {}
 const Room = require('./routes/utils/rooms')
 
+//--------------------------------------------------------
+//Temporary creation of a random room with players inside
 let room = new Room()
 room.createTeams()
 room.key = "room"
 rooms["room"] = room
+//--------------------------------------------------------
+
 
 // This line is required to serve the React files in Express
 app.use(express.static(path.join(__dirname, '..', 'dist')));
