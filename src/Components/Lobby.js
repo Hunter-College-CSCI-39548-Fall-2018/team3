@@ -6,9 +6,12 @@ class Lobby extends React.Component{
     constructor(props){
     super(props)
 
-      this.state = {socket: false, players: "", teams:[]}
+      this.state = {socket: false, players: "", teams:[], code:""}
     }
     componentDidMount(){
+        let code = Cookies.get("room")
+        this.setState({code:code});
+        this.shuffleBtn.focus();
         fetch('http://localhost:3000/lobby', {
             method: 'GET',
             credentials: 'include'
@@ -31,9 +34,7 @@ class Lobby extends React.Component{
     shuffleTeams = () => {
       let socket = this.state.socket
       socket.emit("shuffleTeams")
-      socket.on("shuffledTeams", (data) => {
-        console.log(data)
-      })
+
     }
 
     handleEvents = () => {
@@ -57,6 +58,17 @@ class Lobby extends React.Component{
 
           this.setState({players: this.state.players + player})
         })
+
+        socket.on("shuffledTeams", (data) => {
+          console.log(data)
+          this.setState({teams: data})
+
+          // for(let i = 0; i < data.length(); i++){
+          //   for(let i = 0; i < data[i].length(); i++){
+          //
+          //   }
+          // }
+        })
     }
 
 
@@ -66,9 +78,17 @@ class Lobby extends React.Component{
     render(){
       return(
         <div>
-          <div id='code'>code: </div>
+          <div id='code'>code:
+            <input type="text"
+              ref={(input) => { this.shuffleBtn = input; }}
+              value={this.state.code} autoFocus/>
+          </div>
           <div id='players'>players: {this.state.players}</div>
           <div><button id="shuffle" onClick={this.shuffleTeams}>Shuffle Teams</button></div>
+
+          <div id="teams">
+            {this.state.teams}
+          </div>
         </div>
       )
     }
