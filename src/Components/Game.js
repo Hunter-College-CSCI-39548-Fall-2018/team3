@@ -50,10 +50,14 @@ class Game extends React.Component{
         })
 
         socket.on('correct-command', (seq) => {
+            console.log("is seqeuecne yes got it")
+
             this.setState({sequence: seq})
         })
 
         socket.on('wrong-command', () => {
+            this.setState({turn: true})
+
             //some penalty here
             console.log("you suck")
         })

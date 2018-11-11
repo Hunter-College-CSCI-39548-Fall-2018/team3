@@ -1,7 +1,8 @@
 const Room = require('./utils/rooms.js')
+let i = 0
+let k = 0
 
 module.exports = (app, io, rooms,room) => {
-    let k = 0
 
     turnCall = (socket) => {
         
@@ -13,7 +14,6 @@ module.exports = (app, io, rooms,room) => {
         let connected = false
         //define sequence later
         let seq = ['A', 'C', 'D', 'B']
-        let i = 0
         let game_started = false
 
         io.sockets.on('connection', (socket)=>{
@@ -29,6 +29,9 @@ module.exports = (app, io, rooms,room) => {
             socket.join("room")
             console.log("people in room",rooms["room"].players)
             if(!game_started) {
+                //get random person to input the command 
+                console.log(room.teams[0][0].socketid)
+                io.to(room.teams[0][0].socketid).emit('your-turn', "x")
                 socket.emit('start-game', seq[0])
                 game_started = true
             }
@@ -39,21 +42,12 @@ module.exports = (app, io, rooms,room) => {
                 console.log("got command:", command)
                 if(command == seq[i]){
                     i++
+                    socket.broadcast.emit('correct-command', seq[i])
                     socket.emit('correct-command', seq[i])
                 }else{
+                    socket.broadcast.emit('wrong-command')
                     socket.emit('wrong-command')
                 }
-            })
-
-            socket.on('shuffle-teams', () => {
-                // room.shuffleTeams()
-                // console.log("teams are", rooms["room"].teams)
-
-                room.teams[0].push(room.players["0"])
-                room.teams[1].push(room.players["1"])
-
-                console.log(room.teams)
-
             })
             
         })

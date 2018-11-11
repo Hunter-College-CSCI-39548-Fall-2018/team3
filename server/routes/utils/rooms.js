@@ -40,7 +40,7 @@ class Room{
     let teams = 2;
     let templateTeam = [];
     for(let i = 0; i < teams; i++){
-      this.teams.push(templateTeam);
+      //this.teams.push(templateTeam);
     }
   }
 
