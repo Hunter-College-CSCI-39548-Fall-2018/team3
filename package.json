@@ -46,6 +46,7 @@
     "cors": "^2.8.4",
     "create-react-class": "^15.6.3",
     "express": "^4.16.3",
+    "js-cookie": "^2.2.0",
     "liowebrtc": "^0.1.14",
     "micro": "latest",
     "moment": "^2.22.2",
@@ -59,6 +60,7 @@
     "react-router-dom": "^4.3.1",
     "socket.io": "^2.1.1",
     "styled-components": "^4.0.3",
+    "underscore": "^1.9.1",
     "webrtc-adapter": "^6.3.2"
   }
 }

@@ -1,3 +1,5 @@
+const _ = require('underscore')
+
 class Room{
   constructor(){
     this.settings = {}
@@ -43,6 +45,12 @@ class Room{
   }
 
   shuffleTeams(){
+    var i,j,temparray,chunk = 4;
+    let newArr = _.shuffle(this.players);
+
+    this.teams = _.chunk(newArr, 4);
+
+    console.log("shuffled teams ", this.teams);
 
     // Waiting until the players dictionary can be tested first
     /*
@@ -51,6 +59,10 @@ class Room{
         [this.teams[i], this.teams[j]] = [this.teams[j], this.teams[i]]; // eslint-disable-line no-param-reassign
     }
     */
+  }
+
+  returnTeams(){
+    return this.teams
   }
 }
 

@@ -32,10 +32,16 @@ module.exports = (app, io, rooms) => {
                 socket.join(req.cookies.room)
             }
 
-            
+            socket.on("shuffleTeams", () => {
+              var currentRoom = rooms[req.cookies.room]
+              currentRoom.shuffleTeams()
+              var newTeams = currentRoom.returnTeams();
+              socket.emit("shuffledTeams", {team: newTeams})
+            })
+
 
         })
-        
+
         res.sendStatus(200)
     })
 }

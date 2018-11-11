@@ -5,13 +5,13 @@ module.exports = (app, io, rooms) => {
         console.log("called game route")
 
         //define sequence later
-        let seq = ['A', 'C', 'D', 'B']
+        let seq = ['A', 'C', 'D', 'B'];
         let i = 0
         let game_started = false
 
         let room = new Room()
         room.createTeams(2)
-        
+
         room.addPlayer("moo", {socketid: socket.id})
 
         io.sockets.on('connection', (socket)=>{
@@ -36,7 +36,7 @@ module.exports = (app, io, rooms) => {
                     socket.emit('wrong-command')
                 }
             })
-            
+
         })
 
         res.sendStatus(200)

@@ -2,7 +2,7 @@ module.exports = (app, rooms) => {
 
     app.post('/enter-room', (req, res) => {
 
-        console.log("Joined room", req.body.room)
+        //console.log("Joined room", req.body.room)
         if(req.body.room){
 
             //check if room exists
@@ -16,7 +16,7 @@ module.exports = (app, rooms) => {
                     secure: false,
                     // overwrite: true,
                 })
-                
+
                 //to signify that user who is joining is not game owner
                 res.cookie('game_owner', 0 , {
                     secured: false,
@@ -27,13 +27,13 @@ module.exports = (app, rooms) => {
                 console.log('completely find key')
                 console.log("Cookies: ", req.cookies)
                 res.json(true)
-                
+
             }
         }
     })
 
     app.post('/enter-name', (req, res) => {
-        console.log("Nickname is", req.body.nickname);
+        //console.log("Nickname is", req.body.nickname);
         if(req.body.nickname){
 
             //if name exists in room
@@ -50,19 +50,28 @@ module.exports = (app, rooms) => {
                 res.clearCookie('player')
                 res.cookie('player', req.body.nickname, {
                     secure: false,
-                    // overwrite: true
+                    overwrite: true
                 })
-                
-                
+
+                rooms[req.cookies.room].createTeams();
+                for(let i = 0; i < 15; ++i){
+                  val = {name: "player"+i, connected: false, socketid: 0}
+                  rooms[req.cookies.room].addPlayer(val.name, val)
+                }
+                // rooms[req.cookies.room].shuffleTeams();
+
+                //console.log(rooms[req.cookies.room])
+
+
                 console.log("Player cookie was successfully made")
                 res.json(true)
-                
+
             }else{
                 //player exists in room, tell client not to redirect
                 res.json(false)
             }
-            
-          
+
+
         }
     })
 

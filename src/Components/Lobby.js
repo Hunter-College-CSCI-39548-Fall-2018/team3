@@ -1,11 +1,12 @@
 import React from 'react'
 import io from 'socket.io-client';
+import Cookies from 'js-cookie';
 
 class Lobby extends React.Component{
     constructor(props){
     super(props)
 
-      this.state = {socket: false, players: ""}
+      this.state = {socket: false, players: "", teams:[]}
     }
     componentDidMount(){
         fetch('http://localhost:3000/lobby', {
@@ -25,6 +26,14 @@ class Lobby extends React.Component{
             })
          })
         .catch((err) =>console.log(err))
+    }
+
+    shuffleTeams = () => {
+      let socket = this.state.socket
+      socket.emit("shuffleTeams")
+      socket.on("shuffledTeams", (data) => {
+        console.log(data)
+      })
     }
 
     handleEvents = () => {
@@ -50,11 +59,16 @@ class Lobby extends React.Component{
         })
     }
 
+
+
+
+
     render(){
       return(
         <div>
           <div id='code'>code: </div>
           <div id='players'>players: {this.state.players}</div>
+          <div><button id="shuffle" onClick={this.shuffleTeams}>Shuffle Teams</button></div>
         </div>
       )
     }
