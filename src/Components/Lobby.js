@@ -49,6 +49,8 @@ class Lobby extends React.Component{
       this.socket.emit("startTime")
     }
 
+    // this.socket.on("startedTime")
+
     render(){
       return(
         <div>
