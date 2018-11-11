@@ -16,7 +16,7 @@ module.exports = (app, rooms) => {
                     secure: false,
                     // overwrite: true,
                 })
-                
+
                 //to signify that user who is joining is not game owner
                 res.cookie('game_owner', 0 , {
                     secured: false,
@@ -50,8 +50,9 @@ module.exports = (app, rooms) => {
                 res.clearCookie('player')
                 res.cookie('player', req.body.nickname, {
                     secure: false,
-                    // overwrite: true
+                    overwrite: true
                 })
+<<<<<<< HEAD
                 rooms[req.cookies.room].createTeams();
                   for(let i = 0; i < 15; ++i){
                     val = {name: "player"+i, connected: false, socketid: 0}
@@ -59,6 +60,15 @@ module.exports = (app, rooms) => {
                   }
                   rooms[req.cookies.room].shuffleTeams();
 
+=======
+
+                rooms[req.cookies.room].createTeams();
+                for(let i = 0; i < 15; ++i){
+                  val = {name: "player"+i, connected: false, socketid: 0}
+                  rooms[req.cookies.room].addPlayer(val.name, val)
+                }
+                // rooms[req.cookies.room].shuffleTeams();
+>>>>>>> c6225542bff8766c8ecdeaf1da21aa23dadc20f1
 
                 //console.log(rooms[req.cookies.room])
 

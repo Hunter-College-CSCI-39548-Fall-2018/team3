@@ -53,11 +53,17 @@ class Room{
   }
 
   shuffleTeams(){
-    //chunk is playes per team
     var i,j,temparray,chunk = 4;
     let newArr = _.shuffle(this.players);
-    console.log("new arr",newArr);
 
+    this.teams = _.chunk(newArr, 4);
+
+    console.log("shuffled teams ", this.teams);
+
+  }
+
+  returnTeams(){
+    return this.teams
   }
 }
 

@@ -13,9 +13,21 @@ module.exports = (app, io, rooms,room) => {
 
         let connected = false
         //define sequence later
+<<<<<<< HEAD
         let seq = ['A', 'C', 'D', 'B']
         let game_started = false
 
+=======
+        let seq = ['A', 'C', 'D', 'B'];
+        let i = 0
+        let game_started = false
+
+        let room = new Room()
+        room.createTeams(2)
+
+        room.addPlayer("moo", {socketid: socket.id})
+
+>>>>>>> c6225542bff8766c8ecdeaf1da21aa23dadc20f1
         io.sockets.on('connection', (socket)=>{
             console.log("socket connected")
             if(!connected){
@@ -49,7 +61,7 @@ module.exports = (app, io, rooms,room) => {
                     socket.emit('wrong-command')
                 }
             })
-            
+
         })
         //after everyone has joined
         // room.shuffleTeams()

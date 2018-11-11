@@ -28,14 +28,24 @@ module.exports = (app, io, rooms) => {
                 }
             }
             else if(req.cookies.game_owner == '1'){
+
                 //just so game owner is in the room and can see what's going on
                 socket.join(req.cookies.room)
+
             }
 
-            
+            socket.on("shuffleTeams", () => {
+              var currentRoom = rooms[req.cookies.room]
+              currentRoom.shuffleTeams()
+              var newTeams = currentRoom.returnTeams();
+              console.log("I am in shuffleTeams socket")
+              console.log(newTeams)
+              socket.emit("shuffledTeams", {team: newTeams})
+            })
+
 
         })
-        
+
         res.sendStatus(200)
     })
 }
