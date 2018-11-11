@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 class Lobby extends React.Component{
     constructor(props){
       super(props)
-
+      this.socket = null;
       this.state = {players: ""}
     }
 
@@ -15,13 +15,13 @@ class Lobby extends React.Component{
         console.log(err)
       })
 
-      const socket = io.connect('http://localhost:3000/', {
+      this.socket = io.connect('http://localhost:3000/', {
         transports: ['websocket'],
         upgrade: false
       })
       console.log("on first render?")
 
-      socket.on('get-curr-users', (curr_users) => {
+      this.socket.on('get-curr-users', (curr_users) => {
         let players = ""
         console.log('attempting to add current users')
 
@@ -32,7 +32,7 @@ class Lobby extends React.Component{
         this.setState({players: players})
       })
 
-      socket.on('new-player', (name) => {
+      this.socket.on('new-player', (name) => {
         let player = ""
         console.log('received new player')
         player += (" " + name)
@@ -44,11 +44,17 @@ class Lobby extends React.Component{
       // //listen for players joining and append them to a div
     }
 
+    startTimer = ()=>{
+      // console.log("The socket is", this.socket)
+      this.socket.emit("startTime")
+    }
+
     render(){
       return(
         <div>
           <div id='code'>code: </div>
           <div id='players'>players: {this.state.players}</div>
+          <button onClick = {this.startTimer}>Start Timer</button>
         </div>
       )
     }

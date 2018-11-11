@@ -1,7 +1,23 @@
 module.exports = (app, io, rooms) => {
     var curr_users = []
+    var time = 10;
+    var start = false;
     app.get('/lobby', (req, res) => {
         console.log("lobby post was called")
+    
+        function startTimer(){
+            if(start === false){
+                start = true;
+                var updated_time = setInterval( () => {
+                    time -=1;
+                    if(time === 0){
+                        clearInterval(updated_time);
+                    }
+                    console.log(time);
+                },
+                1000);
+            }
+        }
 
         io.sockets.on('connection', (socket) => {
             console.log("is room in cookie", req.cookies)
@@ -32,10 +48,11 @@ module.exports = (app, io, rooms) => {
             else if(req.cookies.game_owner == '1'){
                 //just so game owner is in the room and can see what's going on
                 socket.join(req.cookies.room)
+                socket.on('startTime', () => {
+                    //console.log(data)
+                    startTimer();
+                });
             }
-
-            
-
         })
 
         res.sendStatus(200)
