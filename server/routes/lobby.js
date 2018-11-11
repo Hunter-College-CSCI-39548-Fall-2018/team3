@@ -21,7 +21,7 @@ module.exports = (app, io, rooms) => {
 
         io.sockets.on('connection', (socket) => {
             console.log("is room in cookie", req.cookies)
-            if(req.cookies.game_owner == '0'){
+            if(req.cookies.game_owner === '0'){
                 var player = rooms[req.cookies.room].players[req.cookies.player]
 
                 var name = req.cookies.player
@@ -45,9 +45,10 @@ module.exports = (app, io, rooms) => {
                     socket.to(room).emit('new-player', name)
                 }
             }
-            else if(req.cookies.game_owner == '1'){
+            else if(req.cookies.game_owner === '1'){
                 //just so game owner is in the room and can see what's going on
                 socket.join(req.cookies.room)
+                //listen for startTime button from the front end
                 socket.on('startTime', () => {
                     //console.log(data)
                     startTimer();
