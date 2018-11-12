@@ -46,7 +46,7 @@ class EnterRoom extends React.Component{
                 <div>
                     <h1>Enter room to join</h1>
 
-                    <input ref={this.room} type='text' name='room' autofocus/>
+                    <input ref={this.room} type='text' name='room' autoFocus/>
                     <button id='enter-room' type='button' onClick={this.handleEnterRoom}>Enter</button>
                 </div>
 

@@ -50,7 +50,7 @@ class EnterName extends React.Component{
                 <div>
                     <h1>Enter your nickname</h1>
 
-                    <input ref={this.nickname} type='text' name='nickname' autofocus/>
+                    <input ref={this.nickname} type='text' name='nickname' autoFocus/>
                     <button id='enter-name' type='button' onClick={this.handleEnterName}>Next</button>
                 </div>
 

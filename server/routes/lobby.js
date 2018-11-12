@@ -1,3 +1,4 @@
+require('./utils/rooms.js')
 module.exports = (app, io, rooms) => {
     var curr_users = []
     app.get('/lobby', (req, res) => {
@@ -12,7 +13,7 @@ module.exports = (app, io, rooms) => {
                 var room = req.cookies.room
 
                 console.log("if player connected", player.connected)
-                //make sure to emit user has joined only once
+                //make sure to emit user has joined only once 
                 if(!player.connected){
                     curr_users.push(name)
                     socket.emit('get-curr-users', curr_users)

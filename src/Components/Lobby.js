@@ -61,7 +61,7 @@ class Lobby extends React.Component{
 
         socket.on("shuffledTeams", (data) => {
           console.log(data)
-          this.setState({teams: data})
+          this.setState({teams: data.team})
 
           // for(let i = 0; i < data.length(); i++){
           //   for(let i = 0; i < data[i].length(); i++){
@@ -87,7 +87,9 @@ class Lobby extends React.Component{
           <div><button id="shuffle" onClick={this.shuffleTeams}>Shuffle Teams</button></div>
 
           <div id="teams">
-            {this.state.teams}
+            {this.state.teams.map((team,index) => 
+              <div key={index}>
+                {team.map((player,i)=> <span key={i}> {player.name}</span>)}  </div>)}
           </div>
         </div>
       )
