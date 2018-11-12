@@ -2,28 +2,33 @@ module.exports = (app, io, rooms) => {
     var curr_users = []
     var time = 10;
     var start = false;
+    var timeRemaining = 0;
+    
+    // function startTimer(){
+    //     //hasn't been activated before
+    //     if(start === false){
+    //         start = true;   //activated for the first time
+    //         var updated_time = setInterval( () => {
+    //             time -=1;
+    //             if(time === 0){
+    //                 clearInterval(updated_time);
+    //             }
+    //             console.log(time);
+    //             //console.log("updated time", updated_time);3
+    //             // io.socket.emit('timeLeft', time);
+    //         },
+    //         1000);
+    //     }
+    // }
+
     app.get('/lobby', (req, res) => {
         console.log("lobby post was called")
-    
-        function startTimer(){
-            if(start === false){
-                start = true;
-                var updated_time = setInterval( () => {
-                    time -=1;
-                    if(time === 0){
-                        clearInterval(updated_time);
-                    }
-                    console.log(time);
-                },
-                1000);
-            }
-        }
 
         io.sockets.on('connection', (socket) => {
-            console.log("is room in cookie", req.cookies)
+
+            console.log("is room in cookie", req.cookies);
             if(req.cookies.game_owner === '0'){
                 var player = rooms[req.cookies.room].players[req.cookies.player]
-
                 var name = req.cookies.player
                 var room = req.cookies.room
 
@@ -51,8 +56,21 @@ module.exports = (app, io, rooms) => {
                 //listen for startTime button from the front end
                 socket.on('startTime', () => {
                     //console.log(data)
-                    startTimer();
+                    if(start === false){
+                        start = true;   //activated for the first time
+                        var updated_time = setInterval( () => {
+                            time -=1;
+                            if(time === 0){
+                                clearInterval(updated_time);
+                            }
+                            console.log(time);
+                            // console.log("updated time", updated_time);3
+                            socket.emit('timeLeft', time);
+                        },
+                        1000);
+                    }
                 });
+                // socket.on('timeLeft', time);
             }
         })
 

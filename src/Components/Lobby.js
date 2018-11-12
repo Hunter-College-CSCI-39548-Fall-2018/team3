@@ -4,7 +4,8 @@ class Lobby extends React.Component{
     constructor(props){
       super(props)
       this.socket = null;
-      this.state = {players: ""}
+      this.state = {players: "", timeRem: 10}
+      // this.timeRem = 10;
     }
 
     componentDidMount(){
@@ -42,14 +43,15 @@ class Lobby extends React.Component{
       // var sock = new SockObject(socket)
 
       // //listen for players joining and append them to a div
+      this.socket.on('timeLeft', (time) => {
+        this.setState({timeRem: time});
+      });
     }
 
     startTimer = ()=>{
       // console.log("The socket is", this.socket)
-      this.socket.emit("startTime")
+      this.socket.emit("startTime");
     }
-
-    // this.socket.on("startedTime")
 
     render(){
       return(
@@ -57,6 +59,7 @@ class Lobby extends React.Component{
           <div id='code'>code: </div>
           <div id='players'>players: {this.state.players}</div>
           <button onClick = {this.startTimer}>Start Timer</button>
+          <div id = 'timeDisplay'>Time Until Start: {this.state.timeRem} </div>
         </div>
       )
     }
