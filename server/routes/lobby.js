@@ -66,6 +66,7 @@ module.exports = (app, io, rooms) => {
                             console.log(time);
                             // console.log("updated time", updated_time);3
                             socket.emit('timeLeft', time);
+                            socket.broadcast.emit('timeLeft', time);
                         },
                         1000);
                     }

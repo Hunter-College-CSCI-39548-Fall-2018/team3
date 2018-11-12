@@ -5,7 +5,6 @@ class Lobby extends React.Component{
       super(props)
       this.socket = null;
       this.state = {players: "", timeRem: 10}
-      // this.timeRem = 10;
     }
 
     componentDidMount(){
