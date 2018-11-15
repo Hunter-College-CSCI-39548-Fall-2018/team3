@@ -45,6 +45,10 @@ class Game extends React.Component{
         let socket = this.state.socket
         console.log("Socket is", socket)
 
+        socket.on('your-turn', () =>{
+            console.log('it your turn now')
+        })
+
         socket.on('start-game', (seq) => {
             this.setState({sequence: seq})
         })
@@ -68,6 +72,10 @@ class Game extends React.Component{
         socket.emit('shuffle-teams')
     }
 
+    startGame = () => {
+        let socket = this.state.socket
+        socket.emit('start-game')
+    }
     render() {
         return(
             <div>
@@ -77,10 +85,12 @@ class Game extends React.Component{
                 <button id='C' onClick={this.handleCommand.bind(this,'C')}>C</button>
                 <button id='D' onClick={this.handleCommand.bind(this,'D')}>D</button>
 
+
                 <div>{this.state.sequence}</div>
-                <div>is your turn?     {this.state.turn}</div>
+                <div>is your turn? {(this.state.turn).toString()}</div>
 
                 <button onClick={this.handleShuffle.bind(this)}>test shuffle</button>
+                <button onClick={this.startGame.bind(this)}>start game</button>
             </div>
 
         )

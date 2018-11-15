@@ -13,44 +13,44 @@ module.exports = (app, io, rooms,room) => {
 
         let connected = false
         //define sequence later
-<<<<<<< HEAD
         let seq = ['A', 'C', 'D', 'B']
         let game_started = false
 
-=======
-        let seq = ['A', 'C', 'D', 'B'];
-        let i = 0
-        let game_started = false
-
-        let room = new Room()
-        room.createTeams(2)
-
-        room.addPlayer("moo", {socketid: socket.id})
-
->>>>>>> c6225542bff8766c8ecdeaf1da21aa23dadc20f1
         io.sockets.on('connection', (socket)=>{
             console.log("socket connected")
             if(!connected){
                 room.addPlayer(k, {socketid: socket.id})
                 k++
+                socket.join("room")
+                console.log("people in room",rooms["room"].players)
                 connected = true
             }
-            
-
+            socket.on('shuffle-teams', () => {
+                room.shuffleTeams()
+            })
+            socket.on('start-game', () => {
+                if(!game_started) {
+                    //get random person to input the command 
+                    console.log(room.teams[0][0].socketid)
+                    io.to(room.teams[0][0].socketid).emit('your-turn', "x")
+                    socket.broadcast.emit('start-game', seq[0])
+                    socket.emit('start-game', seq[0])
+                    game_started = true
+                }
+            })
             //join the room in the cookie later
-            socket.join("room")
-            console.log("people in room",rooms["room"].players)
-            if(!game_started) {
-                //get random person to input the command 
-                console.log(room.teams[0][0].socketid)
-                io.to(room.teams[0][0].socketid).emit('your-turn', "x")
-                socket.emit('start-game', seq[0])
-                game_started = true
-            }
+            
+            // if(!game_started) {
+            //     //get random person to input the command 
+            //     console.log(room.teams[0][0].socketid)
+            //     io.to(room.teams[0][0].socketid).emit('your-turn', "x")
+            //     socket.emit('start-game', seq[0])
+            //     game_started = true
+            // }
 
             // socket.on('test', (msg) => console.log(msg))
             socket.on('input-command', (command) => {
-
+                
                 console.log("got command:", command)
                 if(command == seq[i]){
                     i++

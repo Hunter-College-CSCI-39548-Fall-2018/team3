@@ -52,23 +52,13 @@ module.exports = (app, rooms) => {
                     secure: false,
                     overwrite: true
                 })
-<<<<<<< HEAD
-                rooms[req.cookies.room].createTeams();
-                  for(let i = 0; i < 15; ++i){
-                    val = {name: "player"+i, connected: false, socketid: 0}
-                    rooms[req.cookies.room].addPlayer(val.name, val)
-                  }
-                  rooms[req.cookies.room].shuffleTeams();
+                // rooms[req.cookies.room].createTeams();
+                //   for(let i = 0; i < 15; ++i){
+                //     val = {name: "player"+i, connected: false, socketid: 0}
+                //     rooms[req.cookies.room].addPlayer(val.name, val)
+                //   }
+                //   rooms[req.cookies.room].shuffleTeams();
 
-=======
-
-                rooms[req.cookies.room].createTeams();
-                for(let i = 0; i < 15; ++i){
-                  val = {name: "player"+i, connected: false, socketid: 0}
-                  rooms[req.cookies.room].addPlayer(val.name, val)
-                }
-                // rooms[req.cookies.room].shuffleTeams();
->>>>>>> c6225542bff8766c8ecdeaf1da21aa23dadc20f1
 
                 //console.log(rooms[req.cookies.room])
 
