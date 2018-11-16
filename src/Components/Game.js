@@ -37,7 +37,11 @@ class Game extends React.Component{
     handleCommand = (command) => {
         let socket = this.state.socket
         console.log(command)
-        socket.emit('input-command', command)
+        if(this.state.turn){
+            socket.emit('input-command', command)
+        }else{
+            console.log("not your turn fool");
+        }
     }
 
     //in the event of wrong or right command, do something
@@ -46,7 +50,7 @@ class Game extends React.Component{
         console.log("Socket is", socket)
 
         socket.on('your-turn', () =>{
-            console.log('it your turn now')
+            this.setState({turn: true})
         })
 
         socket.on('start-game', (seq) => {
@@ -57,6 +61,7 @@ class Game extends React.Component{
             console.log("is seqeuecne yes got it")
 
             this.setState({sequence: seq})
+            this.setState({turn: false})
         })
 
         socket.on('wrong-command', () => {

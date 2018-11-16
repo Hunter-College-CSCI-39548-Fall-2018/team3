@@ -17,12 +17,18 @@ module.exports = (app, io, rooms,room) => {
         let game_started = false
 
         io.sockets.on('connection', (socket)=>{
+            socket.on('disconnect', () => {
+                console.log("someone disconnected");
+                room.removePlayer(socket.id)
+            })
+
+
             console.log("socket connected")
             if(!connected){
                 room.addPlayer(k, {socketid: socket.id})
                 k++
                 socket.join("room")
-                console.log("people in room",rooms["room"].players)
+                console.log("people in room", room.players)
                 connected = true
             }
             socket.on('shuffle-teams', () => {

@@ -16,20 +16,24 @@ class Room{
     this.key = key
   }
 
-  setTeam(teams){
-    this.teams = teams
-  }
-
   setPlayers(players){
     this.players = players
   }
 
   addPlayer(player, value){
-    // this.players.push(player)
     this.players[player] = value
-
   }
   
+  removePlayer(socketid){
+    for (var key in this.players) {
+        if(this.players[key].socketid == socketid){
+            delete this.players[key]
+            break
+        }
+    }
+    console.log("players right now", this.players);
+  }
+
   hasPlayer(player){
     console.log(this.players)
     return this.players.hasOwnProperty(player)
