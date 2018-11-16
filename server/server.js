@@ -27,6 +27,13 @@ var rooms = {}
 
 // This line is required to serve the React files in Express
 app.use(express.static(path.join(__dirname, '..', 'dist')));
+app.get('/*', function(req, res) {
+  res.sendFile(path.join(__dirname, '..', 'dist/index.html'), function(err) {
+    if (err) {
+      res.status(500).send(err)
+    }
+  })
+})
 require('./routes/game')(app, io, rooms)
 require('./routes/create-game')(app, rooms)
 require('./routes/join-game')(app, rooms)
