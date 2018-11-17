@@ -20,7 +20,7 @@ module.exports = (app, io, rooms,room) => {
             console.log("single team in room:", team);
             let team_member = Math.floor(Math.random() * (team.length-1) )
             console.log("person to go is:", team[team_member].socketid);
-
+            
             //team is the team
             //team[i] is the person on the team
             io.to(team[team_member].socketid).emit('your-turn')

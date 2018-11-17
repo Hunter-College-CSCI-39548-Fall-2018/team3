@@ -12,7 +12,7 @@ module.exports = (app, rooms) => {
         if(req.body.players_per_team){
             info["players_per_team"] = req.body.players_per_team
         }
-
+        
         if(req.body.num_teams){
             info["num_teams"] = req.body.num_teams
         }

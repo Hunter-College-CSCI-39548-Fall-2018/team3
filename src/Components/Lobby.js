@@ -18,7 +18,7 @@ class Lobby extends React.Component{
     componentDidMount(){
         let code = Cookies.get("room")
         this.setState({code:code});
-        this.shuffleBtn.focus();
+        // this.shuffleBtn.focus();
         fetch('http://localhost:3000/lobby', {
             method: 'GET',
             credentials: 'include'
