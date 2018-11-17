@@ -31,6 +31,7 @@ class CreateGame extends React.Component{
                 .then((body) =>{
                     console.log('this is the response', body)
                     //set state (whether or not you should redirect to next page)
+                    
                     if(body){
                         this.setState({redirect: true})
                         console.log("state of redirect:",this.state.redirect)
@@ -48,7 +49,7 @@ class CreateGame extends React.Component{
         }else{
             return(
                 <div>
-                    
+
                     <h1> Create Game </h1>
 
                     <label>players per team</label>
@@ -63,7 +64,7 @@ class CreateGame extends React.Component{
                     <input ref={this.numOfIcons} type='text' name='numOfIcons'/>
                     <button id='create-room' type='button' onClick={this.handleCreateGame}> Enter </button>
                 </div>
-            
+
             )
         }
     }

@@ -1,12 +1,25 @@
 import React from 'react'
 import io from 'socket.io-client';
+<<<<<<< HEAD
 import Cookies from 'js-cookie';
+=======
+import Cookies from 'js-cookie'
+>>>>>>> lobby-socket
 
 class Lobby extends React.Component{
     constructor(props){
     super(props)
 
+<<<<<<< HEAD
       this.state = {socket: false, players: "", teams:[], code:""}
+=======
+      this.state = {
+        players: "",
+        room: "",
+        socket: false
+      }
+
+>>>>>>> lobby-socket
     }
     componentDidMount(){
         let code = Cookies.get("room")
@@ -78,11 +91,15 @@ class Lobby extends React.Component{
     render(){
       return(
         <div>
+<<<<<<< HEAD
           <div id='code'>code:
             <input type="text"
               ref={(input) => { this.shuffleBtn = input; }}
               value={this.state.code} autoFocus/>
           </div>
+=======
+          <div id='code'>room code: <span>{this.state.room}</span></div>
+>>>>>>> lobby-socket
           <div id='players'>players: {this.state.players}</div>
           <div><button id="shuffle" onClick={this.shuffleTeams}>Shuffle Teams</button></div>
 
