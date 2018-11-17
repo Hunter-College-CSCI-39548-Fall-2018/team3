@@ -10,7 +10,7 @@
     "prestart:prod": "webpack --mode production --config config/webpack.prod.config.js --env.NODE_ENV=production --progress",
     "start:prod": "node server",
     "build": "webpack --mode production --config config/webpack.prod.config.js --env.NODE_ENV=production --progress",
-    "deploy:prod":"now --public"
+    "deploy:prod": "now --public"
   },
   "repository": {
     "type": "git",
@@ -46,6 +46,7 @@
     "cors": "^2.8.4",
     "create-react-class": "^15.6.3",
     "express": "^4.16.3",
+    "js-cookie": "^2.2.0",
     "liowebrtc": "^0.1.14",
     "micro": "latest",
     "moment": "^2.22.2",
@@ -58,6 +59,8 @@
     "react-native-openpgp": "^1.0.4",
     "react-router-dom": "^4.3.1",
     "socket.io": "^2.1.1",
+    "underscore": "^1.9.1",
+    "styled-components": "^4.0.3",
     "webrtc-adapter": "^6.3.2"
   }
 }

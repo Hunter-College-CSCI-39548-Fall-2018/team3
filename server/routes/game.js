@@ -1,46 +1,122 @@
-module.exports = (app, io, connected_members) => {
-    // app.get('/test-player', (req, res) => {
-    //     var game_owner = 0
+const Room = require('./utils/rooms.js')
+let i = 0
+let k = 0
 
-    //     res.render('test-game', {game_owner: game_owner})
-    // })
+module.exports = (app, io, rooms,room) => {
+    //uncomment later for when you're not testing
+    //var room = rooms[req.cookies.room]
 
-    // app.get('/test-game', (req, res) => {
 
-    //     // var players = []
-    //     // for(key in connected_members){
-    //     //     if(connected_members[key] == req.cookies.room){
-    //     //         players.push(key)
-    //     //         console.log(players)
-    //     //     }
-    //     // }
-    //     //find game owner
-
-    //     var game_owner = 1/*req.cookies.game_owner*/
-    //     var sequence = "AABBBAADDERPOK"
-
-    //     var curr_seq = -1
-
-    //     function nextInSequence(seq){
-    //         curr_seq++
-    //         console.log("curr seq:", curr_seq)
-
-    //         return seq[curr_seq]
-    //     }
-        
-    //     io.sockets.on('connect', (socket) => {
-    //         socket.on('correct-command', () => {       
-
-    //             //supposed to do only to room, but broadcast for now
-    //             socket.broadcast.emit('next-in-sequence', nextInSequence(sequence))
-    //         })
+    /*
+    *   Calls a random player in each team 
+    *   and tells them it is his turn. Only
+    *   that person can input a command
+    */
+    setTurn = () => {
+        console.log("state of teams:", room.teams);
+        for(let team of room.teams){
+            //call one person in each team to input command
+            console.log("teams in room:", room.teams);
+            console.log("single team in room:", team);
+            let team_member = Math.floor(Math.random() * (team.length-1) )
+            console.log("person to go is:", team[team_member].socketid);
             
-    //         socket.on('wrong-command', () => {
-    //             console.log('response of wrong command at least')
-    //             //some sort of penalty 
-    //         })
-    //     })
-        
-    //     res.render('test-game', {game_owner: game_owner})
-    // })
+            //team is the team
+            //team[i] is the person on the team
+            io.to(team[team_member].socketid).emit('your-turn')
+        }
+    }
+
+    /*
+    *   Starts the game by generating random sequence
+    *   and displaying it for the users on screen
+    */
+    startGame = (socket, seq) => {
+        console.log("start game is called");
+        setTurn()
+
+        socket.broadcast.emit('start-game', seq[0])
+        socket.emit('start-game', seq[0])
+    }
+
+    /*
+    *   When players first connect, have them join the room
+    *   through their socket. Rooms are not persistant through
+    *   routes. 
+    */
+    onFirstConnect = (socket) => {
+        console.log("socket connected");
+        room.addPlayer(k, {socketid: socket.id})
+
+        //for testing purposes- gives different name for each iteration of player
+        k++
+
+        //join the room in the cookie later
+        socket.join("room")
+        console.log("people in room", room.players)
+
+    }
+
+    checkCommand = (seq, command) => {
+        return seq == command
+    }
+
+    app.get('/game', (req, res) => {
+        console.log("called game route")
+        let connected = false
+
+        //define sequence later
+        let seq = ['A', 'C', 'D', 'B']
+        let game_started = false
+
+        io.sockets.on('connection', (socket)=>{
+            socket.on('disconnect', () => {
+                console.log("someone disconnected");
+                room.removePlayer(socket.id)
+            })
+
+            if(!connected){
+                onFirstConnect(socket)
+                connected = true
+            }
+
+            socket.on('shuffle-teams', () => {
+                room.shuffleTeams()
+            })
+
+            socket.on('start-game', () => {
+                if(!game_started){
+                    startGame(socket, seq)
+                    game_started = true
+                }
+            })
+
+            socket.on('input-command', (command) => {
+                console.log("got command:", command)
+                if(checkCommand(seq[i], command)){
+                    i++
+                    setTurn()
+                    socket.broadcast.emit('correct-command', seq[i])
+                    socket.emit('correct-command', seq[i])
+                }else{
+                    socket.broadcast.emit('wrong-command')
+                    socket.emit('wrong-command')
+                }
+            })
+        })
+
+        //after everyone has joined
+        // room.shuffleTeams()
+        res.sendStatus(200)
+        //not game owner- is player
+        // if(req.cookies.game_owner == '0'){
+        //     io.sockets.on('connection', (socket) => {
+        //         socket.on('get-command', (command) => {
+        //             console.log(command)
+        //         })
+
+        //         socket.on('test', (msg) => console.log(msg))
+        //     })
+        // }
+    })
 }

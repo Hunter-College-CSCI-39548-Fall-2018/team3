@@ -9,7 +9,7 @@ class EnterRoom extends React.Component{
 
         this.state = {redirect: false}
     }
-    
+
     handleEnterRoom(event){
         //get input value from state (reference)
         let room = this.room.current.value
@@ -30,7 +30,7 @@ class EnterRoom extends React.Component{
                     if(body)
                         this.setState({redirect: true})
                 })
-            }     
+            }
         }).catch((err) => {
             console.log(err)
         })
@@ -45,11 +45,11 @@ class EnterRoom extends React.Component{
             return(
                 <div>
                     <h1>Enter room to join</h1>
-                    
-                    <input ref={this.room} type='text' name='room'/>
+
+                    <input ref={this.room} type='text' name='room' autofocus/>
                     <button id='enter-room' type='button' onClick={this.handleEnterRoom}>Enter</button>
                 </div>
-            
+
             )
         }
     }

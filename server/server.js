@@ -5,7 +5,10 @@ const cors = require('cors')
 const path = require('path')
 
 const corsOptions = {
+    //Access-Control-Allow-Credentials
     credentials: true,
+    //Access-Control-Allow-Origin
+    //true just specifies request origin
     origin: true
 }
 
@@ -20,16 +23,33 @@ app.use(express.static('static'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-
-app.set('views', __dirname + '../src/views')
 var rooms = {}
+const Room = require('./routes/utils/rooms')
+
+//--------------------------------------------------------
+//Temporary creation of a random room with players inside
+let room = new Room()
+room.createTeams()
+room.key = "room"
+rooms["room"] = room
+//--------------------------------------------------------
+
 
 // This line is required to serve the React files in Express
 app.use(express.static(path.join(__dirname, '..', 'dist')));
+
+require('./routes/game')(app, io, rooms, room)
 require('./routes/create-game')(app, rooms)
 require('./routes/join-game')(app, rooms)
 require('./routes/lobby')(app, io, rooms)
-require('./routes/game')(app, io, rooms)
 
+
+app.get('/*', function(req, res) {
+    res.sendFile(path.join(__dirname, '..', 'dist/index.html'), function(err) {
+      if (err) {
+        res.status(500).send(err)
+      }
+    })
+  })
 console.log('Listening on port ' + PORT);
 module.exports = io
