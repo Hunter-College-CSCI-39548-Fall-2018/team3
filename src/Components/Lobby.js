@@ -9,13 +9,12 @@ class Lobby extends React.Component{
       this.state = {
         players: "",
         room: "",
-        teams: "",
+        teams: [],
         code: "",
         socket: false,
         timeRem: 10
       }
-      this.socket = null;
-    
+
     }
     componentDidMount(){
         let code = Cookies.get("room");
@@ -42,7 +41,7 @@ class Lobby extends React.Component{
 
     shuffleTeams = () => {
       let socket = this.state.socket
-      socket.emit("shuffleTeams")
+      socket.emit("shuffle-teams")
 
     }
 
@@ -68,7 +67,7 @@ class Lobby extends React.Component{
           this.setState({players: this.state.players + player})
         })
 
-        socket.on("shuffledTeams", (data) => {
+        socket.on("shuffled-teams", (data) => {
           console.log(data)
           this.setState({teams: data.team})
 
@@ -78,16 +77,19 @@ class Lobby extends React.Component{
           //   }
           // }
         })
+
+        socket.on('time-left', (time) => {
+          this.setState({timeRem: time});
+        });
     }
 
-    this.socket.on('timeLeft', (time) => {
-      this.setState({timeRem: time});
-    });
-  }
+
+
 
   startTimer = ()=>{
+    let socket = this.state.socket
     // console.log("The socket is", this.socket)
-    this.socket.emit("startTime");
+    socket.emit("start-time");
   }
 
 

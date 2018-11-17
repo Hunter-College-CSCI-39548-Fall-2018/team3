@@ -7,7 +7,7 @@ module.exports = (app, rooms) => {
     app.post('/create-game', (req, res) => {
         var room = new Room()
 
-        //do stuff with options
+        //do stuff with options 
         var info = {}
         if(req.body.players_per_team){
             info["playersPerTeam"] = req.body.players_per_team

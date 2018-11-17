@@ -4,7 +4,7 @@ module.exports = (app, io, rooms) => {
     var time = 10;
     var start = false;
     var timeRemaining = 0;
-    
+
     // function startTimer(){
     //     //hasn't been activated before
     //     if(start === false){
@@ -28,13 +28,13 @@ module.exports = (app, io, rooms) => {
         io.sockets.on('connection', (socket) => {
 
             console.log("is room in cookie", req.cookies);
-            if(req.cookies.game_owner === '0'){
+            if(req.cookies.game_owner == '0'){
                 var player = rooms[req.cookies.room].players[req.cookies.player]
                 var name = req.cookies.player
                 var room = req.cookies.room
 
                 console.log("if player connected", player.connected)
-                //make sure to emit user has joined only once  
+                //make sure to emit user has joined only once
                 if(!player.connected){
                     curr_users.push(name)
                     socket.emit('get-curr-users', curr_users)
@@ -50,14 +50,14 @@ module.exports = (app, io, rooms) => {
                 }
             }
 
-            
 
 
-            else if(req.cookies.game_owner === '1'){
+
+            else if(req.cookies.game_owner == '1'){
                 //just so game owner is in the room and can see what's going on
                 socket.join(req.cookies.room)
                 //listen for startTime button from the front end
-                socket.on('startTime', () => {
+                socket.on('start-time', () => {
                     //console.log(data)
                     if(start === false){
                         start = true;   //activated for the first time
@@ -68,8 +68,8 @@ module.exports = (app, io, rooms) => {
                             }
                             console.log(time);
                             // console.log("updated time", updated_time);3
-                            socket.emit('timeLeft', time);
-                            socket.broadcast.emit('timeLeft', time);
+                            socket.emit('time-left', time);
+                            socket.broadcast.emit('time-left', time);
                         },
                         1000);
                     }
@@ -77,13 +77,13 @@ module.exports = (app, io, rooms) => {
                 // socket.on('timeLeft', time);
             }
 
-            socket.on("shuffleTeams", () => {
+            socket.on("shuffle-teams", () => {
                 var currentRoom = rooms[req.cookies.room]
                 currentRoom.shuffleTeams()
                 var newTeams = currentRoom.returnTeams();
                 console.log("I am in shuffleTeams socket")
                 console.log(newTeams)
-                socket.emit("shuffledTeams", {team: newTeams})
+                socket.emit("shuffled-teams", {team: newTeams})
               })
         })
 

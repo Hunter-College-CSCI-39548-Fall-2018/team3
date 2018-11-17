@@ -39,6 +39,5 @@ require('./routes/create-game')(app, rooms)
 require('./routes/join-game')(app, rooms)
 require('./routes/lobby')(app, io, rooms)
 
-
 console.log('Listening on port ' + PORT);
 module.exports = io
