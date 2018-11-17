@@ -31,7 +31,6 @@ class Room{
             break
         }
     }
-    console.log("players right now", this.players);
   }
 
   hasPlayer(player){
@@ -57,10 +56,11 @@ class Room{
   }
 
   shuffleTeams(){
-    var i,j,temparray,chunk = 4;
+    //substitue for number of players per team later
+    var i,j,temparray,chunk = 1;
     let newArr = _.shuffle(this.players);
 
-    this.teams = _.chunk(newArr, 4);
+    this.teams = _.chunk(newArr, chunk);
 
     console.log("shuffled teams ", this.teams);
 
