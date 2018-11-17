@@ -2,7 +2,10 @@ const _ = require('underscore')
 
 class Room{
   constructor(){
-    this.settings = {}
+    this.settings = {
+        
+
+    }
     this.players = {}
     this.key = ""
     this.teams = []
@@ -43,7 +46,7 @@ class Room{
     let teams = 2;
     let templateTeam = [];
     for(let i = 0; i < teams; i++){
-      //this.teams.push(templateTeam);
+      this.teams.push(templateTeam);
     }
   }
 
@@ -57,7 +60,7 @@ class Room{
 
   shuffleTeams(){
     //substitue for number of players per team later
-    var i,j,temparray,chunk = 1;
+    var i,j,temparray,chunk = 2;
     let newArr = _.shuffle(this.players);
 
     this.teams = _.chunk(newArr, chunk);

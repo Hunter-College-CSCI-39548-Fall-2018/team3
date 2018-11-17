@@ -50,6 +50,7 @@ class Game extends React.Component{
         console.log("Socket is", socket)
 
         socket.on('your-turn', () =>{
+            console.log("it's my turn now");
             this.setState({turn: true})
         })
 

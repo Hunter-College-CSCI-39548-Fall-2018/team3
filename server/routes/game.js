@@ -13,11 +13,13 @@ module.exports = (app, io, rooms,room) => {
     *   that person can input a command
     */
     setTurn = () => {
+        console.log("state of teams:", room.teams);
         for(let team of room.teams){
             //call one person in each team to input command
             console.log("teams in room:", room.teams);
             console.log("single team in room:", team);
             let team_member = Math.floor(Math.random() * (team.length-1) )
+            console.log("person to go is:", team[team_member].socketid);
 
             //team is the team
             //team[i] is the person on the team
@@ -29,7 +31,8 @@ module.exports = (app, io, rooms,room) => {
     *   Starts the game by generating random sequence
     *   and displaying it for the users on screen
     */
-    startGame = (seq) => {
+    startGame = (socket, seq) => {
+        console.log("start game is called");
         setTurn()
 
         socket.broadcast.emit('start-game', seq[0])
@@ -47,7 +50,7 @@ module.exports = (app, io, rooms,room) => {
 
         //for testing purposes- gives different name for each iteration of player
         k++
-        
+
         //join the room in the cookie later
         socket.join("room")
         console.log("people in room", room.players)
@@ -73,7 +76,7 @@ module.exports = (app, io, rooms,room) => {
             })
 
             if(!connected){
-                onFirstConnect()
+                onFirstConnect(socket)
                 connected = true
             }
 
@@ -83,7 +86,7 @@ module.exports = (app, io, rooms,room) => {
 
             socket.on('start-game', () => {
                 if(!game_started){
-                    startGame(seq)
+                    startGame(socket, seq)
                     game_started = true
                 }
             })

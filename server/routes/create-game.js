@@ -10,15 +10,15 @@ module.exports = (app, rooms) => {
         //do stuff with options
         var info = {}
         if(req.body.players_per_team){
-            info["playersPerTeam"] = req.body.players_per_team
+            info["players_per_team"] = req.body.players_per_team
         }
 
-        if(req.body.numOfteams){
-            info["numOfTeams"] = req.body.numOfteams
+        if(req.body.num_teams){
+            info["num_teams"] = req.body.num_teams
         }
 
-        if(req.body.numOfIcons){
-            info["numOfIcons"] = req.body.numOfIcons
+        if(req.body.num_icons){
+            info["num_icons"] = req.body.num_icons
         }
 
         res.clearCookie('player')
