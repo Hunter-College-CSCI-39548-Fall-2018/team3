@@ -1,28 +1,24 @@
 import React from 'react'
 import io from 'socket.io-client';
-<<<<<<< HEAD
 import Cookies from 'js-cookie';
-=======
-import Cookies from 'js-cookie'
->>>>>>> lobby-socket
 
 class Lobby extends React.Component{
     constructor(props){
-    super(props)
 
-<<<<<<< HEAD
-      this.state = {socket: false, players: "", teams:[], code:""}
-=======
+      super(props)
       this.state = {
         players: "",
         room: "",
-        socket: false
+        teams: "",
+        code: "",
+        socket: false,
+        timeRem: 10
       }
-
->>>>>>> lobby-socket
+      this.socket = null;
+    
     }
     componentDidMount(){
-        let code = Cookies.get("room")
+        let code = Cookies.get("room");
         this.setState({code:code});
         this.shuffleBtn.focus();
         fetch('http://localhost:3000/lobby', {
@@ -84,6 +80,16 @@ class Lobby extends React.Component{
         })
     }
 
+    this.socket.on('timeLeft', (time) => {
+      this.setState({timeRem: time});
+    });
+  }
+
+  startTimer = ()=>{
+    // console.log("The socket is", this.socket)
+    this.socket.emit("startTime");
+  }
+
 
 
 
@@ -91,23 +97,21 @@ class Lobby extends React.Component{
     render(){
       return(
         <div>
-<<<<<<< HEAD
           <div id='code'>code:
             <input type="text"
               ref={(input) => { this.shuffleBtn = input; }}
               value={this.state.code} autoFocus/>
           </div>
-=======
-          <div id='code'>room code: <span>{this.state.room}</span></div>
->>>>>>> lobby-socket
           <div id='players'>players: {this.state.players}</div>
           <div><button id="shuffle" onClick={this.shuffleTeams}>Shuffle Teams</button></div>
 
           <div id="teams">
-            {this.state.teams.map((team,index) => 
+            {this.state.teams.map((team,index) =>
               <div key={index}>
                 {team.map((player,i)=> <span key={i}> {player.name}</span>)}  </div>)}
           </div>
+          <button onClick = {this.startTimer}>Start Timer</button>
+          <div id = 'timeDisplay'>Time Until Start: {this.state.timeRem} </div>
         </div>
       )
     }
