@@ -37,28 +37,51 @@ class Game extends React.Component{
     handleCommand = (command) => {
         let socket = this.state.socket
         console.log(command)
-        socket.emit('input-command', command)
+        if(this.state.turn){
+            socket.emit('input-command', command)
+        }else{
+            console.log("not your turn fool");
+        }
     }
-    
+
     //in the event of wrong or right command, do something
     handleEvents = () => {
         let socket = this.state.socket
         console.log("Socket is", socket)
+
+        socket.on('your-turn', () =>{
+            console.log("it's my turn now");
+            this.setState({turn: true})
+        })
 
         socket.on('start-game', (seq) => {
             this.setState({sequence: seq})
         })
 
         socket.on('correct-command', (seq) => {
+            console.log("is seqeuecne yes got it")
+
             this.setState({sequence: seq})
+            this.setState({turn: false})
         })
 
         socket.on('wrong-command', () => {
+            this.setState({turn: true})
+
             //some penalty here
             console.log("you suck")
         })
     }
 
+    handleShuffle = () => {
+        let socket = this.state.socket
+        socket.emit('shuffle-teams')
+    }
+
+    startGame = () => {
+        let socket = this.state.socket
+        socket.emit('start-game')
+    }
     render() {
         return(
             <div>
@@ -68,8 +91,12 @@ class Game extends React.Component{
                 <button id='C' onClick={this.handleCommand.bind(this,'C')}>C</button>
                 <button id='D' onClick={this.handleCommand.bind(this,'D')}>D</button>
 
+
                 <div>{this.state.sequence}</div>
-                <div>{this.state.turn}</div>
+                <div>is your turn? {(this.state.turn).toString()}</div>
+
+                <button onClick={this.handleShuffle.bind(this)}>test shuffle</button>
+                <button onClick={this.startGame.bind(this)}>start game</button>
             </div>
 
         )
