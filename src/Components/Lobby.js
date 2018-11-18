@@ -16,7 +16,7 @@ class Lobby extends React.Component{
     componentDidMount(){
         let code = Cookies.get("room")
         this.setState({code:code});
-        // this.shuffleBtn.focus();
+
         fetch('http://localhost:3000/lobby', {
             method: 'GET',
             credentials: 'include'
@@ -36,17 +36,8 @@ class Lobby extends React.Component{
         .catch((err) =>console.log(err))
     }
 
-    shuffleTeams = () => {
-      let socket = this.state.socket
-      socket.emit("shuffleTeams")
-
-    }
-
-    handleEvents = () => {
-        let socket = this.state.socket
-
-        socket.on('get-curr-users', (curr_users) => {
-            let players = ""
+    setCurrUsers = (curr_users) => {
+        let players = ""
             console.log('attempting to add current users')
 
             for(let key in curr_users){
@@ -54,18 +45,23 @@ class Lobby extends React.Component{
             }
 
             this.setState({players: players})
+    }
+
+    handleEvents = () => {
+        let socket = this.state.socket
+
+        socket.on('get-curr-users', (curr_users) => {
+            this.setCurrUsers(curr_users)
         })
 
         socket.on('new-player', (name) => {
-          let player = ""
           console.log('received new player')
-          player += (" " + name)
-
-          this.setState({players: this.state.players + player})
+          this.setState({players: this.state.players + " " + name})
         })
 
-        socket.on('player-disconnected', () => {
-
+        socket.on('player-disconnected', (curr_users) => {
+            console.log("player disocnnected");
+            this.setCurrUsers(curr_users)
         })
 
         let room = Cookies.get('room')
