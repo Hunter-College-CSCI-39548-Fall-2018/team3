@@ -45,6 +45,17 @@ class Lobby extends React.Component{
 
     }
 
+    setCurrUsers = (curr_users) => {
+        let players = ""
+            console.log('attempting to add current users')
+
+            for(let key in curr_users){
+                players += (" " + key)
+            }
+
+            this.setState({players: players})
+    }
+
     handleEvents = () => {
         let socket = this.state.socket
 
@@ -67,6 +78,11 @@ class Lobby extends React.Component{
           this.setState({players: this.state.players + player})
         })
 
+        socket.on('player-disconnected', (curr_users) => {
+            console.log("player disocnnected");
+            this.setCurrUsers(curr_users)
+        })
+
         socket.on("shuffled-teams", (data) => {
           console.log(data)
           this.setState({teams: data.team})
@@ -76,6 +92,10 @@ class Lobby extends React.Component{
           //
           //   }
           // }
+
+          let room = Cookies.get('room')
+        console.log("room cookie ", room)
+        this.setState({room: room})
         })
 
         socket.on('time-left', (time) => {
@@ -86,7 +106,7 @@ class Lobby extends React.Component{
           this.setState({timeRem: time});
         });
 
-        
+
     }
 
 
@@ -98,7 +118,7 @@ class Lobby extends React.Component{
       socket.emit("start-time", {room:this.state.code});
     }
 
-        
+
 
 
 
