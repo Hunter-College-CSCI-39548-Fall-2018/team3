@@ -35,6 +35,7 @@ module.exports = (app, rooms) => {
         var key = randomstring.generate(6)
         room.setKey(key)
 
+        res.clearCookie('room')
         res.cookie('room', key, {
             secure: false,
             overwrite: true

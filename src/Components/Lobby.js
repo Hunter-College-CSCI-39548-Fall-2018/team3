@@ -11,10 +11,8 @@ class Lobby extends React.Component{
         room: "",
         socket: false
       }
-
-
-    //   this.state = {socket: false, players: "", teams:[], code:""}
     }
+
     componentDidMount(){
         let code = Cookies.get("room")
         this.setState({code:code});
@@ -51,7 +49,7 @@ class Lobby extends React.Component{
             let players = ""
             console.log('attempting to add current users')
 
-            for(let key of curr_users){
+            for(let key in curr_users){
                 players += (" " + key)
             }
 
@@ -66,14 +64,14 @@ class Lobby extends React.Component{
           this.setState({players: this.state.players + player})
         })
 
+        socket.on('player-disconnected', () => {
+
+        })
+
         let room = Cookies.get('room')
         console.log("room cookie ", room)
         this.setState({room: room})
     }
-
-
-
-
 
     render(){
       return(

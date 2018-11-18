@@ -11,12 +11,14 @@ module.exports = (app, rooms) => {
                 res.json(false)
             }
             else{
+                res.clearCookie('room')
                 //set cookie for room user is joinings
                 res.cookie('room', req.body.room, {
                     secure: false,
-                    // overwrite: true,
+                    overwrite: true,
                 })
 
+                res.clearCookie('game_owner')
                 //to signify that user who is joining is not game owner
                 res.cookie('game_owner', 0 , {
                     secured: false,
@@ -33,7 +35,6 @@ module.exports = (app, rooms) => {
     })
 
     app.post('/enter-name', (req, res) => {
-        //console.log("Nickname is", req.body.nickname);
         if(req.body.nickname){
 
             //if name exists in room
@@ -52,16 +53,6 @@ module.exports = (app, rooms) => {
                     secure: false,
                     overwrite: true
                 })
-                // rooms[req.cookies.room].createTeams();
-                //   for(let i = 0; i < 15; ++i){
-                //     val = {name: "player"+i, connected: false, socketid: 0}
-                //     rooms[req.cookies.room].addPlayer(val.name, val)
-                //   }
-                //   rooms[req.cookies.room].shuffleTeams();
-
-
-                //console.log(rooms[req.cookies.room])
-
 
                 console.log("Player cookie was successfully made")
                 res.json(true)
