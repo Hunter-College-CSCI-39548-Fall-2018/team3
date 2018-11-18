@@ -1,6 +1,7 @@
 import React from 'react'
 import io from 'socket.io-client'
 import Cookies from 'js-cookie'
+import Redirect from 'react-router-dom'
 
 class Lobby extends React.Component{
     constructor(props){
@@ -9,7 +10,8 @@ class Lobby extends React.Component{
       this.state = {
         players: "",
         room: "",
-        socket: false
+        socket: false,
+        connected: true
       }
     }
 
@@ -64,19 +66,33 @@ class Lobby extends React.Component{
             this.setCurrUsers(curr_users)
         })
 
+        socket.on('force-disconnect', () => {
+            console.log("object");
+            this.setState({connected: false})
+        })
+
         let room = Cookies.get('room')
         console.log("room cookie ", room)
         this.setState({room: room})
     }
 
     render(){
-      return(
-        <div>
-          <div id='code'>code: {this.state.room}</div>
+        if(this.state.connected){
+            return(
+                <div>
+                <div id='code'>code: {this.state.room}</div>
+    
+                <div id='players'>players: {this.state.players}</div>
+                </div>
+            )
+        }
+        else{
+            console.log("disconnected should have what");
 
-          <div id='players'>players: {this.state.players}</div>
-        </div>
-      )
+            //if game owner disconnected, disconnect all players in lobby
+            return(<Redirect exact to='/'/>)
+        }
+        
     }
 
 }

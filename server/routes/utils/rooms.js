@@ -9,6 +9,11 @@ class Room{
     this.players = {}
     this.key = ""
     this.teams = []
+    this.game_owner = "" //track socket id
+  }
+
+  setGameOwner(socketid){
+      this.game_owner = socketid
   }
 
   setSettings(settings){
@@ -29,11 +34,8 @@ class Room{
   
   removePlayer(socketid){
     for (var key in this.players) {
-        console.log("checking sockets:", this.players[key].socketid);
-        console.log("socket to compare", socketid);
         if(this.players[key].socketid == socketid){
             delete this.players[key]
-            console.log("found match");
             break
         }
     }
