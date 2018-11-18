@@ -1,7 +1,7 @@
 import React from 'react'
 import io from 'socket.io-client'
 import Cookies from 'js-cookie'
-import Redirect from 'react-router-dom'
+import {Redirect} from 'react-router-dom'
 
 class Lobby extends React.Component{
     constructor(props){
@@ -67,7 +67,6 @@ class Lobby extends React.Component{
         })
 
         socket.on('force-disconnect', () => {
-            console.log("object");
             this.setState({connected: false})
         })
 
@@ -90,7 +89,7 @@ class Lobby extends React.Component{
             console.log("disconnected should have what");
 
             //if game owner disconnected, disconnect all players in lobby
-            return(<Redirect exact to='/'/>)
+            return(<Redirect to='/'></Redirect>)
         }
         
     }
