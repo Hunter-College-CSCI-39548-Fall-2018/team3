@@ -11,7 +11,8 @@ class Lobby extends React.Component{
         players: "",
         room: "",
         socket: false,
-        connected: true
+        connected: true,
+        start_game: false
       }
     }
 
@@ -75,7 +76,16 @@ class Lobby extends React.Component{
         this.setState({room: room})
     }
 
+    //call this function when the game should start (countdown timer goes down)
+    startGame = () => {
+        this.setState({start_game: true})
+    }
+
     render(){
+        if(this.state.start_game){
+            return(<Redirect to='/game'/>)
+        }
+
         if(this.state.connected){
             return(
                 <div>
@@ -86,10 +96,8 @@ class Lobby extends React.Component{
             )
         }
         else{
-            console.log("disconnected should have what");
-
-            //if game owner disconnected, disconnect all players in lobby
-            return(<Redirect to='/'></Redirect>)
+            //if game owner disconnected, disconnect all players in lobby and redirect
+            return(<Redirect to='/'/>)
         }
         
     }
