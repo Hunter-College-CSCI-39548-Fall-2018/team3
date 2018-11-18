@@ -89,7 +89,7 @@ class Lobby extends React.Component{
   startTimer = ()=>{
     let socket = this.state.socket
     // console.log("The socket is", this.socket)
-    socket.emit("start-time");
+    socket.emit("start-time", {room:this.state.code});
   }
 
 
@@ -105,15 +105,7 @@ class Lobby extends React.Component{
               value={this.state.code} autoFocus/>
           </div>
           <div id='players'>players: {this.state.players}</div>
-          <div><button id="shuffle" onClick={this.shuffleTeams}>Shuffle Teams</button></div>
-
-          <div id="teams">
-            {this.state.teams.map((team,index) =>
-              <div key={index}>
-                {team.map((player,i)=> <span key={i}> {player.name}</span>)}  </div>)}
-          </div>
-          <button onClick = {this.startTimer}>Start Timer</button>
-          <div id = 'timeDisplay'>Time Until Start: {this.state.timeRem} </div>
+         <div id = 'timeDisplay'>Time Until Start: {this.state.timeRem} </div>
         </div>
       )
     }

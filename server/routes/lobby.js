@@ -57,22 +57,12 @@ module.exports = (app, io, rooms) => {
                 //just so game owner is in the room and can see what's going on
                 socket.join(req.cookies.room)
                 //listen for startTime button from the front end
-                socket.on('start-time', () => {
+                socket.on('start-time', (data) => {
+
+                    let currentRoom = rooms[req.cookies.room]
+                    currentRoom.startTimer(socket);
                     //console.log(data)
-                    if(start === false){
-                        start = true;   //activated for the first time
-                        var updated_time = setInterval( () => {
-                            time -=1;
-                            if(time === 0){
-                                clearInterval(updated_time);
-                            }
-                            console.log(time);
-                            // console.log("updated time", updated_time);3
-                            socket.emit('time-left', time);
-                            socket.broadcast.emit('time-left', time);
-                        },
-                        1000);
-                    }
+                    
                 });
                 // socket.on('timeLeft', time);
             }
