@@ -1,43 +1,20 @@
-require('./utils/rooms.js')
 module.exports = (app, io, rooms) => {
-    var curr_users = []
-    var time = 10;
-    var start = false;
-    var timeRemaining = 0;
-
-    // function startTimer(){
-    //     //hasn't been activated before
-    //     if(start === false){
-    //         start = true;   //activated for the first time
-    //         var updated_time = setInterval( () => {
-    //             time -=1;
-    //             if(time === 0){
-    //                 clearInterval(updated_time);
-    //             }
-    //             console.log(time);
-    //             //console.log("updated time", updated_time);3
-    //             // io.socket.emit('timeLeft', time);
-    //         },
-    //         1000);
-    //     }
-    // }
-
     app.get('/lobby', (req, res) => {
         console.log("lobby post was called")
 
         io.sockets.on('connection', (socket) => {
-
-            console.log("is room in cookie", req.cookies);
+            console.log("is room in cookie", req.cookies)
             if(req.cookies.game_owner == '0'){
+                var connected
                 var player = rooms[req.cookies.room].players[req.cookies.player]
+
                 var name = req.cookies.player
                 var room = req.cookies.room
 
                 console.log("if player connected", player.connected)
                 //make sure to emit user has joined only once
                 if(!player.connected){
-                    curr_users.push(name)
-                    socket.emit('get-curr-users', curr_users)
+                    socket.emit('get-curr-users', rooms[req.cookies.room].players)
 
                     //save state of users in lobby
                     player.connected = true
@@ -49,14 +26,10 @@ module.exports = (app, io, rooms) => {
                     socket.to(room).emit('new-player', name)
                 }
             }
-
-
-
-
             else if(req.cookies.game_owner == '1'){
+
                 //just so game owner is in the room and can see what's going on
                 socket.join(req.cookies.room)
-                //listen for startTime button from the front end
                 socket.on('start-time', (data) => {
 
                     let currentRoom = rooms[req.cookies.room]
@@ -64,17 +37,8 @@ module.exports = (app, io, rooms) => {
                     //console.log(data)
                     
                 });
-                // socket.on('timeLeft', time);
-            }
 
-            socket.on("shuffle-teams", () => {
-                var currentRoom = rooms[req.cookies.room]
-                currentRoom.shuffleTeams()
-                var newTeams = currentRoom.returnTeams();
-                console.log("I am in shuffleTeams socket")
-                console.log(newTeams)
-                socket.emit("shuffled-teams", {team: newTeams})
-              })
+            }
         })
 
         res.sendStatus(200)

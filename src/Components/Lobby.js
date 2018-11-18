@@ -81,18 +81,24 @@ class Lobby extends React.Component{
         socket.on('time-left', (time) => {
           this.setState({timeRem: time});
         });
+
+        socket.on('time-left', (time) => {
+          this.setState({timeRem: time});
+        });
+
+        
     }
 
 
 
 
-  startTimer = ()=>{
-    let socket = this.state.socket
-    // console.log("The socket is", this.socket)
-    socket.emit("start-time", {room:this.state.code});
-  }
+    startTimer = ()=>{
+      let socket = this.state.socket
+      // console.log("The socket is", this.socket)
+      socket.emit("start-time", {room:this.state.code});
+    }
 
-
+        
 
 
 
