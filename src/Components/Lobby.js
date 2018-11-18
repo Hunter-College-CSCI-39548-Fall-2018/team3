@@ -19,7 +19,7 @@ class Lobby extends React.Component{
     componentDidMount(){
         let code = Cookies.get("room");
         this.setState({code:code});
-        this.shuffleBtn.focus();
+
         fetch('http://localhost:3000/lobby', {
             method: 'GET',
             credentials: 'include'
@@ -63,7 +63,7 @@ class Lobby extends React.Component{
             let players = ""
             console.log('attempting to add current users')
 
-            for(let key of curr_users){
+            for(let key in curr_users){
                 players += (" " + key)
             }
 
@@ -101,11 +101,6 @@ class Lobby extends React.Component{
         socket.on('time-left', (time) => {
           this.setState({timeRem: time});
         });
-
-        socket.on('time-left', (time) => {
-          this.setState({timeRem: time});
-        });
-
 
     }
 

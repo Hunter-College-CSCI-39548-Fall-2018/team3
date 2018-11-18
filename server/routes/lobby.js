@@ -1,3 +1,5 @@
+const Room = require('./utils/rooms.js')
+
 module.exports = (app, io, rooms) => {
     app.get('/lobby', (req, res) => {
         console.log("lobby post was called")
@@ -13,7 +15,6 @@ module.exports = (app, io, rooms) => {
             })
 
             if(req.cookies.game_owner == '0'){
-                var connected
                 var player = rooms[req.cookies.room].players[req.cookies.player]
 
                 var name = req.cookies.player
