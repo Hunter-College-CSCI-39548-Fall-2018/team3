@@ -5,7 +5,7 @@ module.exports = (app, rooms) => {
 
     // Submit all settings to the lobby
     app.post('/create-game', (req, res) => {
-        var room = new Room()
+        var room = new Room() 
 
         //do stuff with options
         var info = {}

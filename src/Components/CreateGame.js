@@ -8,12 +8,32 @@ class CreateGame extends React.Component{
         this.num_teams = React.createRef()
         this.num_icons = React.createRef()
         this.state = {redirect: false, players_per_team: 1, num_teams: 2, num_icons: 10}
-
+        this.inputs = {
+            players: true,
+            teams: true,
+            icons: true
+        }
         this.handleCreateGame = this.handleCreateGame.bind(this)
 
     }
 
     handleCreateGame(event){
+        console.log(this.inputs)
+        //let allTrue = Object.keys(this.inputs).every(function(k){ return this.inputs[k] === true });
+        //console.log(allTrue)
+        let allTrue = Object.keys(this.inputs).every(k => this.inputs[k]);
+
+        if(!allTrue){
+            document.getElementById("global-error").style.display="block"
+            return
+        }
+        else{
+            document.getElementById("global-error").style.display="none"
+        }
+        console.log(allTrue)
+
+        
+        
         //get input value from state (reference)
         let players_per_team = this.players_per_team.current.value
         let num_teams = this.num_teams.current.value
@@ -55,7 +75,7 @@ class CreateGame extends React.Component{
                 <div>
 
                     <h1> Create Game </h1>
-
+                    <div id="global-error" style={{display:"none"}}>One or more inputs are bad</div>
                     <label>players per team</label>
                     <input ref={this.players_per_team} type='tel' required={true} onChange={ (e) => {
      const numberInput = e.target.value;
@@ -64,6 +84,19 @@ class CreateGame extends React.Component{
      if (numberInput === '' || re.test(numberInput)) {
        this.setState({ players_per_team: e.target.value });
      }
+
+    if(parseInt(numberInput) <= 0 || numberInput === ''){
+        document.getElementById("players-input-error").style.display="block"
+        console.log(this.inputs.players)
+        this.inputs.players = false
+    }
+        
+    else {
+        document.getElementById("players-input-error").style.display="none"
+        this.inputs.players = true
+    }
+        
+    
    }}
    value={ this.state.players_per_team } name='players_per_team'/>
                     <br/>
@@ -78,14 +111,14 @@ class CreateGame extends React.Component{
        this.setState({ num_teams: e.target.value });
      }
      console.log(parseInt(numberInput))
-     if(parseInt(numberInput) < 2 || parseInt(numberInput) > 4){
+     if(parseInt(numberInput) < 2 || parseInt(numberInput) > 4 || numberInput === ''){
          //console.log("i am here")
         document.getElementById("team-input-error").style.display="block"
+        this.inputs.teams = false
      }
-         
-     
      else{
         document.getElementById("team-input-error").style.display="none"
+        this.inputs.teams = true
      }
         
    }}
@@ -102,6 +135,16 @@ class CreateGame extends React.Component{
      if (numberInput === '' || re.test(numberInput)) {
        this.setState({ num_icons: e.target.value });
      }
+
+    if(numberInput === '' || parseInt(numberInput) < 10 || parseInt(numberInput) > 128){
+        //console.log("i am here")
+       document.getElementById("icons-input-error").style.display="block"
+       this.inputs.icons = false
+    }
+    else{
+       document.getElementById("icons-input-error").style.display="none"
+       this.inputs.icons = true
+    }
    }}
    value={ this.state.num_icons } name='num_icons'/>
                     <div id="icons-input-error" style={{display:"none"}}>Number must be between 10 and 128</div>
