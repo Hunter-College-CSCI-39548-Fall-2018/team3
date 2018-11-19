@@ -79,7 +79,7 @@ class CreateGame extends React.Component{
      }
      console.log(parseInt(numberInput))
      if(parseInt(numberInput) < 2 || parseInt(numberInput) > 4){
-         console.log("i am here")
+         //console.log("i am here")
         document.getElementById("team-input-error").style.display="block"
      }
          
