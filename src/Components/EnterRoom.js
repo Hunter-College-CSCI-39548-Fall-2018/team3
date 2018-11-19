@@ -14,8 +14,8 @@ class EnterRoom extends React.Component{
         //get input value from state (reference)
         let room = this.room.current.value
         let obj = {"room":room}
-
-        fetch('http://localhost:3000/enter-room', {
+        let host = 'http://' + location.hostname
+        fetch(host+':3000/enter-room', {
             method: 'POST',
             body: JSON.stringify(obj),
             headers: { "Content-Type": 'application/json' },

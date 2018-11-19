@@ -16,8 +16,8 @@ class EnterName extends React.Component{
         let obj = {"nickname":name}
 
         console.log("this is name", obj)
-
-        fetch('http://localhost:3000/enter-name', {
+        let host = 'http://' + location.hostname
+        fetch(host+':3000/enter-name', {
             method: 'POST',
             body: JSON.stringify(obj),
             headers: { "Content-Type": 'application/json' },

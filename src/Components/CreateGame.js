@@ -19,8 +19,11 @@ class CreateGame extends React.Component{
         let num_teams = this.num_teams.current.value
         let num_icons = this.num_icons.current.value
         let obj = {"players_per_team":players_per_team, "num_teams":num_teams, "num_icons":num_icons}
-        console.log(obj)
-        fetch('http://localhost:3000/create-game', {
+        //console.log(obj)
+        console.log(this.props.location)
+        let host = 'http://' + location.hostname
+        //console.log(host+':3000/create-game')
+        fetch(host+':3000/create-game', {
             method: 'POST',
             body: JSON.stringify(obj),
             headers: { "Content-Type": 'application/json' },

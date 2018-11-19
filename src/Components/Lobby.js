@@ -19,14 +19,14 @@ class Lobby extends React.Component{
     componentDidMount(){
         let code = Cookies.get("room");
         this.setState({code:code});
-
-        fetch('http://localhost:3000/lobby', {
+        let host = 'http://' + location.hostname
+        fetch(host+':3000/lobby', {
             method: 'GET',
             credentials: 'include'
         })
         .then((res) => {
             console.log("res status is", res.status)
-            const socket = io.connect('http://localhost:3000/', {
+            const socket = io.connect(host+':3000', {
                 transports: ['websocket'],
                 upgrade: false
             })

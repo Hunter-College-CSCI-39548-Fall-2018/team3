@@ -5,8 +5,9 @@ const cors = require('cors')
 const path = require('path')
 
 const corsOptions = {
-    //Access-Control-Allow-Credentials
+    //Access-Control-Allow-Credentials 
     credentials: true,
+    origin: '*',
     //Access-Control-Allow-Origin
     //true just specifies request origin 
     origin: true
@@ -16,9 +17,11 @@ app.use(cors(corsOptions))
 app.use(cookieParser())
 
 const PORT = process.env.PORT || 3000
-const server = app.listen(PORT)
+// The reason why I set as 0.0.0.0 is so that
+// Express can be accessed remotely
+const server = app.listen(PORT, '0.0.0.0') 
 const io = require('socket.io').listen(server)
-
+  
 app.use(express.static('static'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())

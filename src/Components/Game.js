@@ -8,13 +8,14 @@ class Game extends React.Component{
     }
 
     componentDidMount(){
-        fetch('http://localhost:3000/game', {
+        let host = 'http://' + location.hostname
+        fetch(host+':3000/game', {
             method: 'GET',
             credentials: 'include'
         })
         .then((res) => {
             console.log("response!", res.status)
-            const socket = io.connect('http://localhost:3000/', {
+            const socket = io.connect(host+':3000/', {
                 transports: ['websocket'],
                 upgrade: false
             })
