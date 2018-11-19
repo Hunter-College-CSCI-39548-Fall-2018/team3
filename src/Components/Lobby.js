@@ -14,6 +14,8 @@ class Lobby extends React.Component{
         socket: false,
         timeRem: 10
       }
+      this.game_owner = Cookies.get("game_owner")
+      console.log(this.game_owner);
 
     }
     componentDidMount(){
@@ -57,6 +59,7 @@ class Lobby extends React.Component{
     }
 
     handleEvents = () => {
+        
         let socket = this.state.socket
 
         socket.on('get-curr-users', (curr_users) => {
@@ -105,7 +108,7 @@ class Lobby extends React.Component{
     }
 
 
-
+    
 
     startTimer = ()=>{
       let socket = this.state.socket
@@ -114,7 +117,7 @@ class Lobby extends React.Component{
     }
 
 
-
+    
 
 
     render(){
@@ -127,6 +130,7 @@ class Lobby extends React.Component{
           </div>
           <div id='players'>players: {this.state.players}</div>
          <div id = 'timeDisplay'>Time Until Start: {this.state.timeRem} </div>
+         {this.game_owner == '1' ? <button onClick={this.startTimer}>Start Timer</button> : ""}
         </div>
       )
     }
