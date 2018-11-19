@@ -8,7 +8,7 @@ const corsOptions = {
     //Access-Control-Allow-Credentials
     credentials: true,
     //Access-Control-Allow-Origin
-    //true just specifies request origin
+    //true just specifies request origin 
     origin: true
 }
 

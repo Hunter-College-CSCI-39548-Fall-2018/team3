@@ -3,12 +3,14 @@ const _ = require('underscore')
 class Room{
   constructor(){
     this.settings = {
-        players_per_team: 0,
+        players_per_team: 1,
         num_teams: 2
     }
     this.players = {}
     this.key = ""
     this.teams = []
+    this.time = 10;
+    this.start = false;
   }
 
   setSettings(settings){
@@ -26,7 +28,7 @@ class Room{
   addPlayer(player, value){
     this.players[player] = value
   }
-  
+
   removePlayer(socketid){
     for (var key in this.players) {
         if(this.players[key].socketid == socketid){
@@ -50,6 +52,23 @@ class Room{
     }
   }
 
+  startTimer(socket){
+    if(this.start === false){
+      this.start = true;   //activated for the first time
+      let updated_time = setInterval( () => {
+          this.time -=1;
+          if(this.time === 0){
+              clearInterval(updated_time);
+          }
+          console.log(this.time);
+          // console.log("updated time", updated_time);3
+          socket.emit('time-left', this.time);
+          socket.broadcast.emit('time-left', this.time);
+      },
+      1000);
+  }
+  }
+
   countPlayers(){
     let count = 0
     for(let key in this.players){
@@ -61,7 +80,7 @@ class Room{
   shuffleTeams(){
     //substitue for number of players per team later
     var i,j,temparray
-    
+    console.log("these are the new players", this.players)
     var chunk = this.settings.players_per_team;
     let newArr = _.shuffle(this.players);
 

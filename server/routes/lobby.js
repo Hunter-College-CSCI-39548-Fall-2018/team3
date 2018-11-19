@@ -1,10 +1,19 @@
+require('./utils/rooms.js')
+
 module.exports = (app, io, rooms) => {
-    var curr_users = []
     app.get('/lobby', (req, res) => {
         console.log("lobby post was called")
 
         io.sockets.on('connection', (socket) => {
             console.log("is room in cookie", req.cookies)
+
+            socket.on('disconnect', () => {
+                let room = rooms[req.cookies.room]
+                room.removePlayer(socket.id)
+                console.log("players in room after disonncet:", room.players);
+                socket.to(req.cookies.room).emit('player-disconnected', room.players)
+            })
+
             if(req.cookies.game_owner == '0'){
                 var player = rooms[req.cookies.room].players[req.cookies.player]
 
@@ -14,8 +23,7 @@ module.exports = (app, io, rooms) => {
                 console.log("if player connected", player.connected)
                 //make sure to emit user has joined only once
                 if(!player.connected){
-                    curr_users.push(name)
-                    socket.emit('get-curr-users', curr_users)
+                    socket.emit('get-curr-users', rooms[req.cookies.room].players)
 
                     //save state of users in lobby
                     player.connected = true
@@ -31,19 +39,15 @@ module.exports = (app, io, rooms) => {
 
                 //just so game owner is in the room and can see what's going on
                 socket.join(req.cookies.room)
+                socket.on('start-time', (data) => {
+
+                    let currentRoom = rooms[req.cookies.room]
+                    currentRoom.startTimer(socket);
+                    //console.log(data)
+
+                });
 
             }
-
-            socket.on("shuffleTeams", () => {
-              var currentRoom = rooms[req.cookies.room]
-              currentRoom.shuffleTeams()
-              var newTeams = currentRoom.returnTeams();
-              console.log("I am in shuffleTeams socket")
-              console.log(newTeams)
-              socket.emit("shuffledTeams", {team: newTeams})
-            })
-
-
         })
 
         res.sendStatus(200)
