@@ -7,7 +7,7 @@ class CreateGame extends React.Component{
         this.players_per_team = React.createRef()
         this.num_teams = React.createRef()
         this.num_icons = React.createRef()
-        this.state = {redirect: false}
+        this.state = {redirect: false, players_per_team: 1, num_teams: 2, num_icons: 10}
 
         this.handleCreateGame = this.handleCreateGame.bind(this)
 
@@ -46,6 +46,7 @@ class CreateGame extends React.Component{
         })
     }
 
+
     render(){
         if(this.state.redirect){
             return (<Redirect to='/lobby'/>)
@@ -56,15 +57,54 @@ class CreateGame extends React.Component{
                     <h1> Create Game </h1>
 
                     <label>players per team</label>
-                    <input ref={this.players_per_team} type='text' name='players_per_team'/>
+                    <input ref={this.players_per_team} type='tel' required={true} onChange={ (e) => {
+     const numberInput = e.target.value;
+     // Only allow numbers for input
+     const re = /^[0-9\b]+$/;
+     if (numberInput === '' || re.test(numberInput)) {
+       this.setState({ players_per_team: e.target.value });
+     }
+   }}
+   value={ this.state.players_per_team } name='players_per_team'/>
                     <br/>
+                    <div id="players-input-error" style={{display:"none"}}>Number must be greater than 0</div>
                     <label>number of teams</label>
 
-                    <input ref={this.num_teams} type='text' name='num_teams'/>
+                    <input ref={this.num_teams}  type='tel' required={true} onChange={ (e) => {
+     const numberInput = e.target.value;
+     // Only allow numbers for input
+     const re = /^[0-9\b]+$/;
+     if (numberInput === '' || re.test(numberInput)) {
+       this.setState({ num_teams: e.target.value });
+     }
+     console.log(parseInt(numberInput))
+     if(parseInt(numberInput) < 2 || parseInt(numberInput) > 4){
+         console.log("i am here")
+        document.getElementById("team-input-error").style.display="block"
+     }
+         
+     
+     else{
+        document.getElementById("team-input-error").style.display="none"
+     }
+        
+   }}
+   value={ this.state.num_teams } name='num_teams'/>
+                    
                     <br/>
+                    <div id="team-input-error" style={{display:"none"}}>Number must be between 2 and 4</div>
                     <label>number of icons</label>
 
-                    <input ref={this.num_icons} type='text' name='num_icons'/>
+                    <input ref={this.num_icons} type='tel' required={true} onChange={ (e) => {
+     const numberInput = e.target.value;
+     // Only allow numbers for input
+     const re = /^[0-9\b]+$/;
+     if (numberInput === '' || re.test(numberInput)) {
+       this.setState({ num_icons: e.target.value });
+     }
+   }}
+   value={ this.state.num_icons } name='num_icons'/>
+                    <div id="icons-input-error" style={{display:"none"}}>Number must be between 10 and 128</div>
                     <button id='create-room' type='button' onClick={this.handleCreateGame}> Enter </button>
                 </div>
 
