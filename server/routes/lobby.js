@@ -1,4 +1,22 @@
 module.exports = (app, io, rooms) => {
+
+    function startTimer(){
+        //hasn't been activated before
+        if(start === false){
+            start = true;   //activated for the first time
+            var updated_time = setInterval( () => {
+                time -=1;
+                if(time === 0){
+                    clearInterval(updated_time);
+                }
+                console.log(time);
+                //console.log("updated time", updated_time);3
+                // io.socket.emit('timeLeft', time);
+            },
+            1000);
+        }
+    }
+
     app.get('/lobby', (req, res) => {
         console.log("lobby post was called")
         var connected = false
@@ -54,6 +72,15 @@ module.exports = (app, io, rooms) => {
                 }
             })
 
+            socket.on('shuffle-teams', () => {
+                var currentRoom = rooms[req.cookies.room]
+              currentRoom.shuffleTeams()
+              var newTeams = currentRoom.returnTeams();
+              console.log("I am in shuffleTeams socket")
+              console.log(newTeams)
+              socket.emit("shuffled-teams", {team: newTeams})
+            })
+
             if(req.cookies.game_owner === '0'){
                 //make sure to emit user has joined only once
                 if(!connected){
@@ -62,6 +89,13 @@ module.exports = (app, io, rooms) => {
                 }
             }
             else if(req.cookies.game_owner === '1'){
+                socket.on('start-time', (data) => {
+
+                    let currentRoom = rooms[req.cookies.room]
+                    currentRoom.startTimer(socket);
+                    //console.log(data)
+
+                });
                 if(!connected){
                     onGameOwnerFirstConnect(socket)
                     connected = true

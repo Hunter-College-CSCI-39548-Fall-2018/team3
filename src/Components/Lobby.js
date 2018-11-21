@@ -9,11 +9,10 @@ class Lobby extends React.Component{
       super(props)
       this.state = {
         players: "",
-        room: "",
         teams: [],
         code: "",
         socket: false,
-        timeRem: 10,
+        timeRem: 3,
         connected: true,
         start_game: false
       }
@@ -47,6 +46,7 @@ class Lobby extends React.Component{
     shuffleTeams = () => {
       let socket = this.state.socket
       socket.emit("shuffle-teams")
+      console.log("I am in shuffleTeams")
 
     }
 
@@ -84,6 +84,8 @@ class Lobby extends React.Component{
           console.log(data)
           this.setState({teams: data.team})
 
+          console.log(this.state.teams)
+
           // for(let i = 0; i < data.length(); i++){
           //   for(let i = 0; i < data[i].length(); i++){
           //
@@ -95,12 +97,17 @@ class Lobby extends React.Component{
 
         socket.on('time-left', (time) => {
           this.setState({timeRem: time});
+          if(time === 0){
+              console.log(time)
+              this.shuffleTeams()
+          }
         });
 
     }
 
     startTimer = ()=>{
       let socket = this.state.socket
+      console.log("I am in start timer")
       // console.log("The socket is", this.socket)
       socket.emit("start-time", {room:this.state.code});
     }
@@ -112,7 +119,6 @@ class Lobby extends React.Component{
 
 
     render(){
-        console.log(this.state.room)
         if(this.state.start_game){
             return(<Redirect to='/game'/>)
         }
@@ -120,11 +126,21 @@ class Lobby extends React.Component{
         if(this.state.connected){
             return(
                 <div>
-                <div id='code'>code: <input type="text" value={this.state.code} autoFocus/></div>
-    
-                <div id='players'>players: {this.state.players}</div>
-                <div id='timeDisplay'>Time Until Start: {this.state.timeRem} </div>
-                {this.game_owner == '1' ? <button onClick={this.startTimer}>Start Timer</button> : ""}
+                    <div id='code'>code: <input type="text" defaultValue={this.state.code} autoFocus/></div>
+        
+                    <div id='players'>players: {this.state.players}</div>
+                    <div id='timeDisplay'>Time Until Start: {this.state.timeRem} </div>
+                    {this.game_owner == '1' ? <button onClick={this.startTimer}>Start Timer</button> : ""}
+
+                    <div id="teams">
+                        {this.state.teams.map((team,index) => 
+                        <span key={index}>{team}
+                        <ul key={index}>
+                            {team.map((player,i)=> <li key={i}> {player.name}</li>)}  
+                        </ul>
+                        </span>
+                        )}
+                    </div>
                 </div>
             )
         }
