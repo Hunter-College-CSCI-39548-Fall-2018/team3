@@ -25,7 +25,7 @@ module.exports = (app, rooms) => {
         //set user to owner of the game
         res.cookie('game_owner', 1, {
             secure: false,
-            overwrite: true
+            overwrite: true,
         })
 
 
@@ -36,6 +36,7 @@ module.exports = (app, rooms) => {
         room.setKey(key)
 
         res.clearCookie('room')
+        console.log("cookie for key has been set", key)
         res.cookie('room', key, {
             secure: false,
             overwrite: true

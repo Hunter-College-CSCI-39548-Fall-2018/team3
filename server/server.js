@@ -26,6 +26,7 @@ app.use(express.static('static'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
+
 var rooms = {}
 const Room = require('./routes/utils/rooms')
 
