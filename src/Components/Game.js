@@ -4,7 +4,12 @@ import io from 'socket.io-client'
 class Game extends React.Component{
     constructor(props){
         super(props)
-        this.state = {socket: false, sequence: "", turn: false}
+        this.state = {
+            socket: false, 
+            sequence: "", 
+            turn: false
+        }
+
     }
 
     componentDidMount(){
@@ -34,6 +39,10 @@ class Game extends React.Component{
         
     }
 
+    dividePageIntoTeams = (num_teams) => {
+        
+    }
+
     //get input command from player
     handleCommand = (command) => {
         let socket = this.state.socket
@@ -49,6 +58,9 @@ class Game extends React.Component{
     handleEvents = () => {
         let socket = this.state.socket
         console.log("Socket is", socket)
+        socket.on('split-page-into-teams', (num_teams) => {
+            dividePageIntoTeams(num_teams)
+        })
 
         socket.on('your-turn', () =>{
             console.log("it's my turn now");
@@ -60,8 +72,6 @@ class Game extends React.Component{
         })
 
         socket.on('correct-command', (seq) => {
-            console.log("is seqeuecne yes got it")
-
             this.setState({sequence: seq})
             this.setState({turn: false})
         })
@@ -72,6 +82,8 @@ class Game extends React.Component{
             //some penalty here
             console.log("you suck")
         })
+
+
     }
 
     handleShuffle = () => {

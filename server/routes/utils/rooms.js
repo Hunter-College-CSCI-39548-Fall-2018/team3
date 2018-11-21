@@ -13,6 +13,10 @@ class Room{
     this.start = false;
   }
 
+  setGameOwner(socketid){
+    this.game_owner = socketid
+  }
+
   setSettings(settings){
     this.settings = settings
   }
