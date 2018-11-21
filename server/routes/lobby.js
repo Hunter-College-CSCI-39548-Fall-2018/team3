@@ -1,4 +1,4 @@
-const Room = require('./utils/rooms.js')
+require('./utils/rooms.js')
 
 module.exports = (app, io, rooms) => {
     app.get('/lobby', (req, res) => {
