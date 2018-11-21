@@ -112,6 +112,7 @@ class Lobby extends React.Component{
 
 
     render(){
+        console.log(this.state.room)
         if(this.state.start_game){
             return(<Redirect to='/game'/>)
         }
@@ -119,7 +120,7 @@ class Lobby extends React.Component{
         if(this.state.connected){
             return(
                 <div>
-                <div id='code'>code: {this.state.room}</div>
+                <div id='code'>code: <input type="text" value={this.state.code} autoFocus/></div>
     
                 <div id='players'>players: {this.state.players}</div>
                 <div id='timeDisplay'>Time Until Start: {this.state.timeRem} </div>
