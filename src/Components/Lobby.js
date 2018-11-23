@@ -83,14 +83,19 @@ class Lobby extends React.Component{
         socket.on("shuffled-teams", (data) => {
           console.log(data)
           this.setState({teams: data.team})
-
+        
+          //debugger;
           console.log(this.state.teams)
-
+        
           // for(let i = 0; i < data.length(); i++){
           //   for(let i = 0; i < data[i].length(); i++){
           //
           //   }
           // }
+          
+          console.log("You are in Team", this.state.teams.findIndex(x => x.name == Cookies.get("player")));
+          debugger;
+          document.getElementById("team-name").style.display="block";
 
           
         })
@@ -126,6 +131,7 @@ class Lobby extends React.Component{
         if(this.state.connected){
             return(
                 <div>
+                    <div id="team-name" style={{display:"none"}}>You are in Team {this.state.teams.findIndex(x => x.name == Cookies.get("player")) + 1}</div>
                     <div id='code'>code: <input type="text" defaultValue={this.state.code} autoFocus/></div>
         
                     <div id='players'>players: {this.state.players}</div>
@@ -134,11 +140,10 @@ class Lobby extends React.Component{
 
                     <div id="teams">
                         {this.state.teams.map((team,index) => 
-                        <span key={index}>{team}
+                        
                         <ul key={index}>
                             {team.map((player,i)=> <li key={i}> {player.name}</li>)}  
                         </ul>
-                        </span>
                         )}
                     </div>
                 </div>

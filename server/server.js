@@ -56,4 +56,7 @@ app.get('/*', function(req, res) {
     })
   })
 console.log('Listening on port ' + PORT);
+
+// Testing fix for nodemon
+process.on('SIGUSR2', () => { process.exit(0); });
 module.exports = io
