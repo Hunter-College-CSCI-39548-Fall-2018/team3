@@ -1,9 +1,5 @@
 import React from 'react'
-<<<<<<< HEAD
-import io from 'socket.io-client'
-=======
 import io from 'socket.io-client';
->>>>>>> ab097aff910b59256e9863f31c3f841cc98a316b
 import Cookies from 'js-cookie'
 
 class Lobby extends React.Component{
@@ -11,18 +7,11 @@ class Lobby extends React.Component{
     super(props)
 
       this.state = {
-<<<<<<< HEAD
-            socket: false, 
-            players: "",
-            room: ""
-        }
-=======
         players: "",
         room: "",
         socket: false
       }
 
->>>>>>> ab097aff910b59256e9863f31c3f841cc98a316b
     }
     componentDidMount(){
         fetch('http://localhost:3000/lobby', {
@@ -74,11 +63,7 @@ class Lobby extends React.Component{
     render(){
       return(
         <div>
-<<<<<<< HEAD
-          <div id='code'>code: {this.state.room}</div>
-=======
           <div id='code'>room code: <span>{this.state.room}</span></div>
->>>>>>> ab097aff910b59256e9863f31c3f841cc98a316b
           <div id='players'>players: {this.state.players}</div>
         </div>
       )
