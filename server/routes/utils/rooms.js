@@ -2,10 +2,19 @@ const _ = require('underscore')
 
 class Room{
   constructor(){
-    this.settings = {}
+    this.settings = {
+        players_per_team: 1,
+        num_teams: 2
+    }
     this.players = {}
     this.key = ""
     this.teams = []
+    this.time = 10;
+    this.start = false;
+  }
+
+  setGameOwner(socketid){
+    this.game_owner = socketid
   }
 
   setSettings(settings){
@@ -16,20 +25,23 @@ class Room{
     this.key = key
   }
 
-  setTeam(teams){
-    this.teams = teams
-  }
-
   setPlayers(players){
     this.players = players
   }
 
   addPlayer(player, value){
-    // this.players.push(player)
     this.players[player] = value
-
   }
-  
+
+  removePlayer(socketid){
+    for (var key in this.players) {
+        if(this.players[key].socketid == socketid){
+            delete this.players[key]
+            break
+        }
+    }
+  }
+
   hasPlayer(player){
     console.log(this.players)
     return this.players.hasOwnProperty(player)
@@ -37,11 +49,28 @@ class Room{
 
   createTeams(){
     // let teams = this.settings.numOfTeams;
-    let teams = 2;
+    let teams = this.settings.num_teams;
     let templateTeam = [];
     for(let i = 0; i < teams; i++){
-      //this.teams.push(templateTeam);
+      this.teams.push(templateTeam);
     }
+  }
+
+  startTimer(socket){
+    if(this.start === false){
+      this.start = true;   //activated for the first time
+      let updated_time = setInterval( () => {
+          this.time -=1;
+          if(this.time === 0){
+              clearInterval(updated_time);
+          }
+          console.log(this.time);
+          // console.log("updated time", updated_time);3
+          socket.emit('time-left', this.time);
+          socket.broadcast.emit('time-left', this.time);
+      },
+      1000);
+  }
   }
 
   countPlayers(){
@@ -53,11 +82,20 @@ class Room{
   }
 
   shuffleTeams(){
-    //chunk is playes per team
-    var i,j,temparray,chunk = 4;
+    //substitue for number of players per team later 
+    var i,j,temparray
+    console.log("these are the new players", this.players)
+    var chunk = this.settings.players_per_team;
     let newArr = _.shuffle(this.players);
-    console.log("new arr",newArr);
 
+    this.teams = _.chunk(newArr, chunk);
+
+    console.log("shuffled teams ", this.teams);
+
+  }
+
+  returnTeams(){
+    return this.teams
   }
 }
 

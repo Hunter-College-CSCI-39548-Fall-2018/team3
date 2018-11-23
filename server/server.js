@@ -5,10 +5,11 @@ const cors = require('cors')
 const path = require('path')
 
 const corsOptions = {
-    //Access-Control-Allow-Credentials
+    //Access-Control-Allow-Credentials 
     credentials: true,
+    origin: '*',
     //Access-Control-Allow-Origin
-    //true just specifies request origin
+    //true just specifies request origin 
     origin: true
 }
 
@@ -16,12 +17,15 @@ app.use(cors(corsOptions))
 app.use(cookieParser())
 
 const PORT = process.env.PORT || 3000
-const server = app.listen(PORT)
+// The reason why I set as 0.0.0.0 is so that
+// Express can be accessed remotely
+const server = app.listen(PORT, '0.0.0.0') 
 const io = require('socket.io').listen(server)
-
+  
 app.use(express.static('static'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+
 
 var rooms = {}
 const Room = require('./routes/utils/rooms')
@@ -37,22 +41,22 @@ rooms["room"] = room
 
 // This line is required to serve the React files in Express
 app.use(express.static(path.join(__dirname, '..', 'dist')));
-<<<<<<< HEAD
+
 require('./routes/game')(app, io, rooms, room)
-=======
-app.get('/*', function(req, res) {
-  res.sendFile(path.join(__dirname, '..', 'dist/index.html'), function(err) {
-    if (err) {
-      res.status(500).send(err)
-    }
-  })
-})
-require('./routes/game')(app, io, rooms)
->>>>>>> ab097aff910b59256e9863f31c3f841cc98a316b
 require('./routes/create-game')(app, rooms)
 require('./routes/join-game')(app, rooms)
 require('./routes/lobby')(app, io, rooms)
 
 
+app.get('/*', function(req, res) {
+    res.sendFile(path.join(__dirname, '..', 'dist/index.html'), function(err) {
+      if (err) {
+        res.status(500).send(err)
+      }
+    })
+  })
 console.log('Listening on port ' + PORT);
+
+// Testing fix for nodemon
+process.on('SIGUSR2', () => { process.exit(0); });
 module.exports = io

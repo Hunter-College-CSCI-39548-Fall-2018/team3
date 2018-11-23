@@ -5,27 +5,27 @@ module.exports = (app, rooms) => {
 
     // Submit all settings to the lobby
     app.post('/create-game', (req, res) => {
-        var room = new Room()
+        var room = new Room() 
 
         //do stuff with options
         var info = {}
         if(req.body.players_per_team){
-            info["playersPerTeam"] = req.body.players_per_team
+            info["players_per_team"] = req.body.players_per_team
         }
 
-        if(req.body.numOfteams){
-            info["numOfTeams"] = req.body.numOfteams
+        if(req.body.num_teams){
+            info["num_teams"] = req.body.num_teams
         }
 
-        if(req.body.numOfIcons){
-            info["numOfIcons"] = req.body.numOfIcons
+        if(req.body.num_icons){
+            info["num_icons"] = req.body.num_icons
         }
 
         res.clearCookie('player')
         //set user to owner of the game
         res.cookie('game_owner', 1, {
             secure: false,
-            overwrite: true
+            overwrite: true,
         })
 
 
@@ -35,6 +35,8 @@ module.exports = (app, rooms) => {
         var key = randomstring.generate(6)
         room.setKey(key)
 
+        res.clearCookie('room')
+        console.log("cookie for key has been set", key)
         res.cookie('room', key, {
             secure: false,
             overwrite: true
