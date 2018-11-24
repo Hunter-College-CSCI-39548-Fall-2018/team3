@@ -9,6 +9,8 @@ module.exports = (app, rooms) => {
 
         //do stuff with options
         var info = {}
+
+        // Insert the settings for the specific Room Object
         if(req.body.players_per_team){
             info["players_per_team"] = req.body.players_per_team
         }
@@ -21,6 +23,9 @@ module.exports = (app, rooms) => {
             info["num_icons"] = req.body.num_icons
         }
 
+        room.setSettings(info)
+
+        // Resstting the player cookie
         res.clearCookie('player')
         //set user to owner of the game
         res.cookie('game_owner', 1, {
@@ -28,8 +33,6 @@ module.exports = (app, rooms) => {
             overwrite: true,
         })
 
-
-        room.setSettings(info)
 
         //generate code and then set key in room object
         var key = randomstring.generate(6)

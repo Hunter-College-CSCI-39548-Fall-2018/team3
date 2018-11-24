@@ -47,7 +47,7 @@ require('./routes/create-game')(app, rooms)
 require('./routes/join-game')(app, rooms)
 require('./routes/lobby')(app, io, rooms)
 
-
+// Necessary as a catch-all to assist with React-routing
 app.get('/*', function(req, res) {
     res.sendFile(path.join(__dirname, '..', 'dist/index.html'), function(err) {
       if (err) {
