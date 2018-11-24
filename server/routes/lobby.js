@@ -28,10 +28,14 @@ module.exports = (app, io, rooms) => {
 
             // tell everyone that player has joined, get current users in lobby
             socket.emit('get-curr-users', rooms[room].players)
+
+            // Add new player to the Room Object
             rooms[room].addPlayer(name, name)
+
             player.socketid = socket.id
             socket.join(room)
 
+            // Notify that a new user has joined
             socket.to(room).emit('new-player', name)
         }
 
@@ -78,7 +82,7 @@ module.exports = (app, io, rooms) => {
               var newTeams = currentRoom.returnTeams();
               //console.log("I am in shuffleTeams socket")
               //console.log(newTeams)
-              socket.emit("shuffled-teams", {team: newTeams})
+              socket.broadcast.emit("shuffled-teams", {team: newTeams})
               console.log(currentRoom)
             })
 

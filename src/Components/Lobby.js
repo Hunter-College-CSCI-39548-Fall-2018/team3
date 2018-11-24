@@ -45,7 +45,10 @@ class Lobby extends React.Component{
 
     shuffleTeams = () => {
       let socket = this.state.socket
-      socket.emit("shuffle-teams")
+      if(Cookies.get("game_owner") === '1'){
+        socket.emit("shuffle-teams")
+      }
+      
       console.log("I am in shuffleTeams")
 
     }
@@ -83,6 +86,7 @@ class Lobby extends React.Component{
         socket.on("shuffled-teams", (data) => {
           console.log(data)
           // Updating the current state of teams after the shuffle
+          
           this.setState({teams: data.team})
         
           //debugger;

@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 3000
 // Express can be accessed remotely
 const server = app.listen(PORT, '0.0.0.0') 
 const io = require('socket.io').listen(server)
-  
+
 app.use(express.static('static'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
