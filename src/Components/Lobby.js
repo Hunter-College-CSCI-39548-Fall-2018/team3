@@ -82,10 +82,11 @@ class Lobby extends React.Component{
 
         socket.on("shuffled-teams", (data) => {
           console.log(data)
+          // Updating the current state of teams after the shuffle
           this.setState({teams: data.team})
         
           //debugger;
-          console.log(this.state.teams)
+        //   console.log(this.state.teams)
         
           // for(let i = 0; i < data.length(); i++){
           //   for(let i = 0; i < data[i].length(); i++){
@@ -93,13 +94,16 @@ class Lobby extends React.Component{
           //   }
           // }
           
-          console.log("You are in Team", this.state.teams.findIndex(x => x.name == Cookies.get("player")));
-          debugger;
+          console.log("You are in Team", this.state.teams.findIndex(x => x == Cookies.get("player")));
+          //debugger;
+
+          // Display the list of all players by team name
           document.getElementById("team-name").style.display="block";
 
           
         })
 
+        // Only execute the shuffleTeams command when the timer is at 0
         socket.on('time-left', (time) => {
           this.setState({timeRem: time});
           if(time === 0){
@@ -112,13 +116,18 @@ class Lobby extends React.Component{
 
     startTimer = ()=>{
       let socket = this.state.socket
-      console.log("I am in start timer")
+      //console.log("I am in start timer")
       // console.log("The socket is", this.socket)
+
+      // Tell the server to start the countdown timer for this room
       socket.emit("start-time", {room:this.state.code});
     }
 
 
     startGame = () => {
+
+        // When the room owner is ready to start the game then
+        // the new state is set for the redirect
         this.setState({start_game: true})
     }
 
@@ -131,7 +140,7 @@ class Lobby extends React.Component{
         if(this.state.connected){
             return(
                 <div>
-                    <div id="team-name" style={{display:"none"}}>You are in Team {this.state.teams.findIndex(x => x.name == Cookies.get("player")) + 1}</div>
+                    <div id="team-name" style={{display:"none"}}>You are in Team {this.state.teams.findIndex(x => x == Cookies.get("player"))}</div>
                     <div id='code'>code: <input type="text" defaultValue={this.state.code} autoFocus/></div>
         
                     <div id='players'>players: {this.state.players}</div>

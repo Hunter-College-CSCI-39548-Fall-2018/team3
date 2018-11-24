@@ -76,9 +76,10 @@ module.exports = (app, io, rooms) => {
                 var currentRoom = rooms[req.cookies.room]
               currentRoom.shuffleTeams()
               var newTeams = currentRoom.returnTeams();
-              console.log("I am in shuffleTeams socket")
-              console.log(newTeams)
+              //console.log("I am in shuffleTeams socket")
+              //console.log(newTeams)
               socket.emit("shuffled-teams", {team: newTeams})
+              console.log(currentRoom)
             })
 
             if(req.cookies.game_owner === '0'){
@@ -88,11 +89,18 @@ module.exports = (app, io, rooms) => {
                     connected = true
                 }
             }
-            else if(req.cookies.game_owner === '1'){
-                socket.on('start-time', (data) => {
 
+            
+            else if(req.cookies.game_owner === '1'){
+                // Only the game owner can start the timer
+                socket.on('start-time', (data) => {
+                    // Get the room object by the cod e name
                     let currentRoom = rooms[req.cookies.room]
+                    
+                    // Start the timer for that specific room
                     currentRoom.startTimer(socket);
+                    
+
                     //console.log(data)
 
                 });

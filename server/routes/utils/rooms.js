@@ -9,7 +9,7 @@ class Room{
     this.players = {}
     this.key = ""
     this.teams = []
-    this.time = 10;
+    this.time = 3;
     this.start = false;
   }
 
@@ -64,7 +64,7 @@ class Room{
           if(this.time === 0){
               clearInterval(updated_time);
           }
-          console.log(this.time);
+          // console.log(this.time);
           // console.log("updated time", updated_time);3
           socket.emit('time-left', this.time);
           socket.broadcast.emit('time-left', this.time);
@@ -84,7 +84,7 @@ class Room{
   shuffleTeams(){
     //substitue for number of players per team later 
     var i,j,temparray
-    console.log("these are the new players", this.players)
+    //console.log("these are the new players", this.players)
     var chunk = this.settings.players_per_team;
     let newArr = _.shuffle(this.players);
 
