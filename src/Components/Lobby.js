@@ -98,7 +98,7 @@ class Lobby extends React.Component{
           //   }
           // }
           
-          console.log("You are in Team", this.state.teams.findIndex(x => x == Cookies.get("player")));
+        //   console.log("You are in Team", this.state.teams.findIndex(x => x == Cookies.get("player")));
           //debugger;
 
           // Display the list of all players by team name
@@ -151,11 +151,11 @@ class Lobby extends React.Component{
                     <div id='timeDisplay'>Time Until Start: {this.state.timeRem} </div>
                     {this.game_owner == '1' ? <button onClick={this.startTimer}>Start Timer</button> : ""}
 
-                    <div id="teams">
+                    <div id="teams" style={{margin:"0 auto", textAlign:"center"}}>
                         {this.state.teams.map((team,index) => 
                         
-                        <ul key={index}>
-                            {team.map((player,i)=> <li key={i}> {player.name}</li>)}  
+                        <ul style={{float:"left", width:"20%", display: "inline-block"}}key={index}>
+                            {team.map((player,i) => <li key={i}> {player} </li>)}  
                         </ul>
                         )}
                     </div>
