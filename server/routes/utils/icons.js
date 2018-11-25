@@ -32,20 +32,54 @@ function generateIcon(num) {
 
 let index;
 let icon;
-var icons = [];
 function generateIcons(number) {
+    var icons = [];
     for(let i = 0; i<number; ++i) {
         index = generateIndex(size);
         icon = generateIcon(index);
-        console.log(icon);
+        // console.log(icon);
         icons.push(icon);
     }
-    while(icons.unique()<number) {
+    while(icons.unique().length<number) {
         index = generateIndex(size);
         icon = generateIcon(index);
         icons.push(icon);
     }
-    return icons;
+    // console.log(icons.unique());
+    return icons.unique();
 }
 
-generateIcons(4);
+// generateIcons(6);
+
+
+index = generateIndex(size);
+let topIcon = generateIcon(index);
+console.log(topIcon);
+let playersIcons = [];  //array of array player icons
+// let playerIcons = [];
+
+// generates the icons for each player
+function generateGameIcons(topIcon, numberOfPlayers) {
+    for(let i = 0; i<numberOfPlayers; ++i){
+        (function(){
+            let playerIcons = generateIcons(15);
+            playersIcons.push(playerIcons);
+        })()
+    }
+    //replace a random choice from a random player
+    var player = Math.floor(Math.random() * numberOfPlayers);
+    var choice = Math.floor(Math.random() * 4);
+    console.log(player, choice, topIcon);
+    console.log("\n before changing", playersIcons);
+    playersIcons[player][choice] = topIcon;
+    console.log("\n after changing");
+    console.log(playersIcons);
+    while(playersIcons[player].unique().length<4) {
+        index = generateIndex(size);
+        icon = generateIcon(index);
+        playersIcons[player].push(icon);
+    }
+    return playersIcons;
+}
+
+generateGameIcons(topIcon, 2);
