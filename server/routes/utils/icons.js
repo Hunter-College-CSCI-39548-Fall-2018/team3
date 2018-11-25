@@ -10,6 +10,12 @@ try {
 
 let size = files.length
 
+Array.prototype.unique = function() {
+    return this.filter(function (value, index, self) { 
+      return self.indexOf(value) === index;
+    });
+}
+
 //generate a random number between 0 and size
 function generateIndex(size) {
     return Math.floor(Math.random() * size);
@@ -30,9 +36,13 @@ var icons = [];
 function generateIcons(number) {
     for(let i = 0; i<number; ++i) {
         index = generateIndex(size);
-        // console.log(index);
         icon = generateIcon(index);
         console.log(icon);
+        icons.push(icon);
+    }
+    while(icons.unique()<number) {
+        index = generateIndex(size);
+        icon = generateIcon(index);
         icons.push(icon);
     }
     return icons;
