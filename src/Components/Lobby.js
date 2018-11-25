@@ -170,7 +170,7 @@ class Lobby extends React.Component{
         if(this.state.connected){
             return(
                 <div>
-                    <div id="team-name" style={{display:"none"}}>You are in Team {this.state.teams.findIndex(x => x == Cookies.get("player"))}</div>
+                    <div id="team-name" style={{display:"none"}}>You are in Team {this.state.teams.findIndex(x => x.name == Cookies.get("player"))}</div>
                     <div id='code'>code: <input type="text" defaultValue={this.state.code} autoFocus/></div>
         
                     <div id='players'>players: {this.state.players}</div>
@@ -183,7 +183,7 @@ class Lobby extends React.Component{
                         {this.state.teams.map((team,index) => 
                         <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
                         <ul style={{float:"left", width:"20%", display: "inline-block"}}key={index}>
-                            {team.map((player,i) => <li key={i}> {player} </li>)}  
+                            {team.map((player,i) => <li key={i}> {player.name} </li>)}  
                         </ul>
                         </div>
                         )}

@@ -30,7 +30,7 @@ module.exports = (app, io, rooms) => {
             socket.emit('get-curr-users', rooms[room].players)
 
             // Add new player to the Room Object
-            rooms[room].addPlayer(name, {socketid: socket.id})
+            rooms[room].addPlayer(name, {name: name, socketid: socket.id})
 
             // player.socketid = socket.id
             socket.join(room)
@@ -81,9 +81,10 @@ module.exports = (app, io, rooms) => {
                 var currentRoom = rooms[req.cookies.room]
               currentRoom.shuffleTeams()
               var newTeams = currentRoom.returnTeams();
+
               //console.log("I am in shuffleTeams socket")
               //console.log(newTeams)
-              socket.broadcast.emit("shuffled-teams", {team: newTeams})
+              socket.broadcast.emit("shuffled-teams", {team: currentRoom.teams})
               console.log(currentRoom)
             })
 
