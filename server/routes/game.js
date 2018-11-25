@@ -13,17 +13,13 @@ module.exports = (app, io, rooms,room) => {
     *   that person can input a command
     */
     setTurn = () => {
-        console.log("state of teams:", room.teams);
         for(let team of room.teams){
             //call one person in each team to input command
-            console.log("teams in room:", room.teams);
-            console.log("single team in room:", team);
             let team_member = Math.floor(Math.random() * (team.players.length-1) )
             
             //team is the team
             //team.players[i] is the person on the team
             io.to(team.players[team_member].socketid).emit('your-turn')
-            console.log("team memerb",team.players[team_member]);
         }
     }
 
@@ -60,7 +56,28 @@ module.exports = (app, io, rooms,room) => {
     checkCommand = (seq, command) => {
         return seq == command
     }
+
+    /*
+    *   Broadcast to everyone in the player's team
+    *   with only the event
+    */
+    broadcastToTeam = (team, event) => {
+        for(let key of team.players){
+            io.to(key.socketid).emit(event)
+        }
+    } 
+
+    /* 
+    *   Broadcast to everyone in the player's team with a message
+    */
+    broadcastToTeam = (team, event, msg) => {
+        for(let key of team.players){
+            io.to(key.socketid).emit(event, msg)
+        }
+    }
+
     var shuffled = false
+    let game_started = false
 
     app.get('/game', (req, res) => {
         console.log("called game route")
@@ -68,7 +85,6 @@ module.exports = (app, io, rooms,room) => {
         
         //define sequence later
         let seq = ['A', 'C', 'D', 'B']
-        let game_started = false
 
         // var l_room = rooms[req.cookies.room]        
         io.sockets.on('connection', (socket)=>{
@@ -93,7 +109,6 @@ module.exports = (app, io, rooms,room) => {
 
             socket.on('shuffle-teams', () => {
                 if(!shuffled){
-                    // room.createTeams()
                     room.shuffleTeams()
                     shuffled = true
                 }
@@ -108,14 +123,14 @@ module.exports = (app, io, rooms,room) => {
             
             socket.on('input-command', (command) => {
                 console.log("got command:", command)
-                if(checkCommand(seq[i], command)){
-                    i++
+                var team = room.whichTeam({socketid: socket.id})
+                if(checkCommand(seq[team.sequence], command)){
+                    team.sequence += 1
+
+                    broadcastToTeam(team, 'correct-command', seq[team.sequence])
                     setTurn()
-                    socket.broadcast.emit('correct-command', seq[i])
-                    socket.emit('correct-command', seq[i])
                 }else{
-                    socket.broadcast.emit('wrong-command')
-                    socket.emit('wrong-command')
+                    broadcastToTeam(team, 'wrong-command')
                 }
             })
         })

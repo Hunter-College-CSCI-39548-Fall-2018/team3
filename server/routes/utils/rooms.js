@@ -24,10 +24,6 @@ class Room{
     this.key = key
   }
 
-  setPlayers(players){
-    this.players = players
-  }
-
   addPlayer(player, value){
     this.players[player] = value
   }
@@ -66,12 +62,20 @@ class Room{
     return count
   }
 
+  whichTeam(player){
+    for(let key of this.teams){
+        if(_.findWhere(key.players, player)){
+            return key
+        }
+    }
+  }
+
   shuffleTeams(){
     var chunk = this.settings.players_per_team;
     let newArr = _.shuffle(this.players);
 
     //_.chunk - second argument takes how many elements in each array 
-    var hold_teams = _.chunk(newArr, 1);
+    var hold_teams = _.chunk(newArr, 2);
 
     let temp = hold_teams.map(team => {
         let obj = {players: [], sequence: 0}
@@ -79,6 +83,9 @@ class Room{
         return obj
     })
     this.teams = temp
+    for(let key of this.teams){
+        console.log("shuffled teams:", key.players);
+    }
   }
 }
 
