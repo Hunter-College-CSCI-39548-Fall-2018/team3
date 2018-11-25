@@ -1,7 +1,7 @@
 import React from 'react'
 import io from 'socket.io-client'
 import Cookies from 'js-cookie'
-import Redirect from 'react-router-dom'
+import {Redirect} from 'react-router-dom'
 
 class Lobby extends React.Component{
     constructor(props){
@@ -11,7 +11,8 @@ class Lobby extends React.Component{
         players: "",
         room: "",
         socket: false,
-        connected: true
+        connected: true,
+        start_game: false
       }
     }
 
@@ -67,7 +68,6 @@ class Lobby extends React.Component{
         })
 
         socket.on('force-disconnect', () => {
-            console.log("object");
             this.setState({connected: false})
         })
 
@@ -76,7 +76,16 @@ class Lobby extends React.Component{
         this.setState({room: room})
     }
 
+    //call this function when the game should start (countdown timer goes down)
+    startGame = () => {
+        this.setState({start_game: true})
+    }
+
     render(){
+        if(this.state.start_game){
+            return(<Redirect to='/game'/>)
+        }
+
         if(this.state.connected){
             return(
                 <div>
@@ -87,10 +96,8 @@ class Lobby extends React.Component{
             )
         }
         else{
-            console.log("disconnected should have what");
-
-            //if game owner disconnected, disconnect all players in lobby
-            return(<Redirect exact to='/'/>)
+            //if game owner disconnected, disconnect all players in lobby and redirect
+            return(<Redirect to='/'/>)
         }
         
     }

@@ -70,7 +70,17 @@ module.exports = (app, io, rooms,room) => {
         let seq = ['A', 'C', 'D', 'B']
         let game_started = false
 
+        // var l_room = rooms[req.cookies.room]        
         io.sockets.on('connection', (socket)=>{
+
+            //if game owner
+            // if(l_room.game_owner === socket.id){
+            //      socket.emit('split-page-into-teams', l_room.settings.num_teams) 
+            // }
+            // else{
+            
+            // }
+
             socket.on('disconnect', () => {
                 console.log("someone disconnected");
                 room.removePlayer(socket.id)
@@ -109,19 +119,7 @@ module.exports = (app, io, rooms,room) => {
                 }
             })
         })
-
-        //after everyone has joined
-        // room.shuffleTeams()
         res.sendStatus(200)
-        //not game owner- is player
-        // if(req.cookies.game_owner == '0'){
-        //     io.sockets.on('connection', (socket) => {
-        //         socket.on('get-command', (command) => {
-        //             console.log(command)
-        //         })
 
-        //         socket.on('test', (msg) => console.log(msg))
-        //     })
-        // }
     })
 }

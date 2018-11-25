@@ -17,6 +17,12 @@ module.exports = (app, io, rooms) => {
             socket.to(room).emit('new-player', name)
         }
 
+        onGameOwnerFirstConnect = (socket) => {
+            rooms[req.cookies.room].setGameOwner(socket.id)
+
+            //just so game owner is in the room and can see what's going on
+            socket.join(req.cookies.room)
+        }
         onPlayerDisconnect = (socket) =>{
             let room = rooms[req.cookies.room]
             room.removePlayer(socket.id)
@@ -26,24 +32,25 @@ module.exports = (app, io, rooms) => {
         }
 
         onGameOwnerDisconnect = (socket) => {
-            console.log("rooms before discoincnncet", rooms);
-
             //disconnect and redirect everyone in room 
             socket.to(req.cookies.room).emit('force-disconnect')
 
-            //remove room object
             delete rooms[req.cookies.room]
-            console.log("state of rooms after everyon edisocnenc", rooms);
+            console.log('state of room after disc', rooms)
         }
 
         io.sockets.on('connection', (socket) => {
-            console.log("is room in cookie", req.cookies)
-
             socket.on('disconnect', () => {
-                if(rooms[req.cookies.room].game_owner === socket.id){
-                    onGameOwnerDisconnect(socket)
-                }else{
-                    onPlayerDisconnect(socket)
+                //when room doesn't exist anymore (after game owner disconnects),
+                //ignore if is game owner or not, just disconnect
+                if(rooms[req.cookies.room]){
+                    if(rooms[req.cookies.room].game_owner === socket.id){
+                        onGameOwnerDisconnect(socket)
+                    }
+                    else{
+                        //if room still exists and player disconnects
+                        onPlayerDisconnect(socket)
+                    }
                 }
             })
 
@@ -56,14 +63,9 @@ module.exports = (app, io, rooms) => {
             }
             else if(req.cookies.game_owner === '1'){
                 if(!connected){
-                    rooms[req.cookies.room].setGameOwner(socket.id)
-
-                    //just so game owner is in the room and can see what's going on
-                    socket.join(req.cookies.room)
-
+                    onGameOwnerFirstConnect(socket)
                     connected = true
                 }
-
             }
         })
 
