@@ -33,6 +33,10 @@ class Room{
     this.players[player] = value
   }
 
+  getGameStatus(){
+    return this.start
+  }
+
   removePlayer(socketid){
     for (var key in this.players) {
         if(this.players[key].socketid == socketid){
