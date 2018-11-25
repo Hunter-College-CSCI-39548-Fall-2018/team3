@@ -48,11 +48,13 @@ class Room{
   }
 
   createTeams(){
+      console.log("calling create teams");
     // let teams = this.settings.numOfTeams;
-    let teams = this.settings.num_teams;
-    let templateTeam = [];
+    let teams = /*this.settings.num_teams*/2;
+    let templateTeam = {players: [], sequence:0};
     for(let i = 0; i < teams; i++){
-      this.teams.push(templateTeam);
+      
+        this.teams.push(templateTeam);
     }
   }
 
@@ -65,20 +67,18 @@ class Room{
   }
 
   shuffleTeams(){
-    //substitue for number of players per team later
-    var i,j,temparray
-    
     var chunk = this.settings.players_per_team;
     let newArr = _.shuffle(this.players);
 
-    this.teams = _.chunk(newArr, chunk);
+    //_.chunk - second argument takes how many elements in each array 
+    var hold_teams = _.chunk(newArr, 1);
 
-    console.log("shuffled teams ", this.teams);
-
-  }
-
-  returnTeams(){
-    return this.teams
+    let temp = hold_teams.map(team => {
+        let obj = {players: [], sequence: 0}
+        obj.players = team
+        return obj
+    })
+    this.teams = temp
   }
 }
 

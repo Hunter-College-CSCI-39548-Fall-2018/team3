@@ -18,12 +18,12 @@ module.exports = (app, io, rooms,room) => {
             //call one person in each team to input command
             console.log("teams in room:", room.teams);
             console.log("single team in room:", team);
-            let team_member = Math.floor(Math.random() * (team.length-1) )
-            console.log("person to go is:", team[team_member].socketid);
+            let team_member = Math.floor(Math.random() * (team.players.length-1) )
             
             //team is the team
-            //team[i] is the person on the team
-            io.to(team[team_member].socketid).emit('your-turn')
+            //team.players[i] is the person on the team
+            io.to(team.players[team_member].socketid).emit('your-turn')
+            console.log("team memerb",team.players[team_member]);
         }
     }
 
@@ -60,11 +60,12 @@ module.exports = (app, io, rooms,room) => {
     checkCommand = (seq, command) => {
         return seq == command
     }
+    var shuffled = false
 
     app.get('/game', (req, res) => {
         console.log("called game route")
         let connected = false
-
+        
         //define sequence later
         let seq = ['A', 'C', 'D', 'B']
         let game_started = false
@@ -81,7 +82,11 @@ module.exports = (app, io, rooms,room) => {
             }
 
             socket.on('shuffle-teams', () => {
-                room.shuffleTeams()
+                if(!shuffled){
+                    // room.createTeams()
+                    room.shuffleTeams()
+                    shuffled = true
+                }
             })
 
             socket.on('start-game', () => {
@@ -90,7 +95,7 @@ module.exports = (app, io, rooms,room) => {
                     game_started = true
                 }
             })
-
+            
             socket.on('input-command', (command) => {
                 console.log("got command:", command)
                 if(checkCommand(seq[i], command)){
