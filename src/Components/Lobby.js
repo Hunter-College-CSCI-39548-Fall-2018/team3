@@ -110,6 +110,7 @@ class Lobby extends React.Component{
         // Only execute the shuffleTeams command when the timer is at 0
         socket.on('time-left', (time) => {
           this.setState({timeRem: time});
+          
           if(time === 0){
               console.log(time)
               this.shuffleTeams()
