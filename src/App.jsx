@@ -8,6 +8,7 @@ import EnterName from './Components/EnterName'
 import Lobby from './Components/Lobby'
 import CreateGame from './Components/CreateGame'
 import Game from './Components/Game'
+import Home2 from './Components/Home2'
 
 class App extends React.Component {
 // express has precedence over react-
@@ -24,6 +25,7 @@ class App extends React.Component {
 					<Route exact path='/lobby' component={Lobby}></Route>
 					<Route path='/create-game' component={CreateGame}></Route>
 					<Route path='/game' component={Game}></Route>
+					<Route path='/home2' component={Home2}></Route>
 				</Switch>
 			</BrowserRouter>
 		)

@@ -113,6 +113,7 @@ class Lobby extends React.Component{
           if(time === 0){
               console.log(time)
               this.shuffleTeams()
+              document.getElementById("kick-player").style.display = "none"
           }
         });
 
@@ -154,10 +155,11 @@ class Lobby extends React.Component{
     render(){
 
         const kickPlayer = this.state.players.split(" ").slice(1).map((player,index) => {
-          return (
+          return (<div key={index}>
             <button key={index} onClick={this.handleKick.bind(this,player)}> 
               {player}
             </button>
+            </div>
           )
         })
 
@@ -174,9 +176,9 @@ class Lobby extends React.Component{
                     <div id='players'>players: {this.state.players}</div>
                     <div id='timeDisplay'>Time Until Start: {this.state.timeRem} </div>
                     {this.game_owner == '1' ? <button onClick={this.startTimer}>Start Timer</button> : ""}
-
-                    {this.game_owner == '1' ? kickPlayer : ""}
-
+                    <div id="kick-player">
+                    {(this.game_owner == '1' ? kickPlayer : "")}
+                    </div>
                     <div id="teams" style={{margin:"0 auto", textAlign:"center"}}>
                         {this.state.teams.map((team,index) => 
                         <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
