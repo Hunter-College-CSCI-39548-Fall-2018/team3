@@ -52,8 +52,8 @@ function generateIcons(number) {
 
 // generateIcons(6);
 
-index = generateIndex(size);
-let topIcon = generateIcon(index);
+let omit = generateIndex(size);
+// let topIcon = generateIcon(index);
 // console.log(topIcon);
 let playersIcons = [];  //array of array player icons
 // let playerIcons = [];
@@ -70,34 +70,41 @@ function generateIconsBlah(num, omit) {
         console.log(icon);
         icons.push(icon);
     }
-    return icons;
+    while(icons.unique().length<num) {
+        index = generateIndex(size);
+        icon = generateIcon(index);
+        icons.push(icon);
+    }
+    // console.log(icons.unique());
+    return icons.unique();
 }
 
-generateIconsBlah(3,0);
+// generateIconsBlah(3,0);
 
 // generates the icons for each player
-function generateGameIcons(topIcon, numberOfPlayers) {
-
+function generateGameIcons(omit, numberOfPlayers) {
     for(let i = 0; i<numberOfPlayers; ++i){
-        (function(){
-            let playerIcons = generateIcons(15);
+        // (function(){
+            let playerIcons = generateIconsBlah(4, omit);
+            console.log(playerIcons);
             playersIcons.push(playerIcons);
-        })()
+        // })()
     }
     //replace a random choice from a random player
     var player = Math.floor(Math.random() * numberOfPlayers);
     var choice = Math.floor(Math.random() * 4);
-    // console.log(player, choice, topIcon);
-    // console.log("\n before changing", playersIcons);
-    playersIcons[player][choice] = topIcon;
-    // console.log("\n after changing");
+    console.log(player, choice, files[omit]);
+    console.log("\n before changing", playersIcons);
+    playersIcons[player][choice] = files[omit];
+    console.log("\n after changing");
     // console.log(playersIcons);
-    while(playersIcons[player].unique().length<4) {
-        index = generateIndex(size);
-        icon = generateIcon(index);
-        playersIcons[player].push(icon);
-    }
+    // while(playersIcons[player].unique().length<4) {
+    //     index = generateIndex(size);
+    //     icon = generateIcon(index);
+    //     playersIcons[player].push(icon);
+    // }
+    console.log(playersIcons);
     return playersIcons;
 }
 
-// generateGameIcons(topIcon, 2);
+generateGameIcons(0, 2);
