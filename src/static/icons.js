@@ -9,16 +9,20 @@ try {
 }
 
 // console.log(files);
-//generate a random number to choose icon
+//generate a random number between 0 and size
 let size = files.length
-
-//read the file and return image
-files[L];
-function chooseIcon() {
-    var L = Math.floor(Math.random()*size);
-    console.log(L);
+let index;
+function generateIndex(size) {
+    return Math.floor(Math.random() * size);
 }
 
-// for(let i in files) {
-//     console.log(files[i] + '\n');
-// }
+index = generateIndex(size);
+console.log(index);
+
+//returns an icon
+function chooseIcon(index) {
+    console.log(files[index]);
+    return files[index];
+}
+
+chooseIcon(index);
