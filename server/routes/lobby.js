@@ -30,9 +30,9 @@ module.exports = (app, io, rooms) => {
             socket.emit('get-curr-users', rooms[room].players)
 
             // Add new player to the Room Object
-            rooms[room].addPlayer(name, name)
+            rooms[room].addPlayer(name, {socketid: socket.id})
 
-            player.socketid = socket.id
+            // player.socketid = socket.id
             socket.join(room)
 
             // Notify that a new user has joined
@@ -48,7 +48,6 @@ module.exports = (app, io, rooms) => {
         onPlayerDisconnect = (socket) =>{
             let room = rooms[req.cookies.room]
             room.removePlayer(socket.id)
-
             //update lobby page for everyone still connected
             socket.to(req.cookies.room).emit('player-disconnected', room.players)
         }
@@ -68,10 +67,12 @@ module.exports = (app, io, rooms) => {
                 if(rooms[req.cookies.room]){
                     if(rooms[req.cookies.room].game_owner === socket.id){
                         onGameOwnerDisconnect(socket)
+                        console.log("GAME OWNER DISCONNECTS:")
                     }
                     else{
                         //if room still exists and player disconnects
                         onPlayerDisconnect(socket)
+                        console.log("PLAYER DISCONNECTS:")
                     }
                 }
             })

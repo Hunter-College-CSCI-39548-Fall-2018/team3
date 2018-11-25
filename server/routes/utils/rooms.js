@@ -39,10 +39,13 @@ class Room{
 
   removePlayer(socketid){
     for (var key in this.players) {
-        if(this.players[key].socketid == socketid){
-            delete this.players[key]
-            break
-        }
+      console.log("HERE is socketid:",this.players[key].socketid)
+      if(this.players[key].socketid === socketid){
+        console.log("THIS IS THE PLAYER THAT GETS DELETE:",this.players[key])
+        console.log("OR:",key)
+        delete this.players[key]
+        break
+      }
     }
   }
 
