@@ -68,7 +68,7 @@ module.exports = {
       template: './src/index.html',
       filename: './index.html'
     }),
-    new ExtractTextPlugin('style.css'),
+    new ExtractTextPlugin('daydream.css'),
     new webpack.HotModuleReplacementPlugin()
   ]
 }
