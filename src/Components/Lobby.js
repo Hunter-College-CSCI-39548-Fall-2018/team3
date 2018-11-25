@@ -153,10 +153,11 @@ class Lobby extends React.Component{
 
                     <div id="teams" style={{margin:"0 auto", textAlign:"center"}}>
                         {this.state.teams.map((team,index) => 
-                        
+                        <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
                         <ul style={{float:"left", width:"20%", display: "inline-block"}}key={index}>
                             {team.map((player,i) => <li key={i}> {player} </li>)}  
                         </ul>
+                        </div>
                         )}
                     </div>
                 </div>
