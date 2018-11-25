@@ -104,10 +104,19 @@ module.exports = (app, io, rooms) => {
                     // Start the timer for that specific room
                     currentRoom.startTimer(socket);
                     
-
                     //console.log(data)
-
                 });
+
+                //socket.join(req.cookies.room)
+                socket.on('kick', (who) => {
+                    console.log("before", rooms[req.cookies.room].players)
+                    delete rooms[req.cookies.room].players[who]
+                    console.log("after", rooms[req.cookies.room].players)
+
+                    socket.emit('updatePlayers',rooms[req.cookies.room].players)
+                    socket.broadcast.emit('updatePlayers',rooms[req.cookies.room].players)
+                })
+
                 if(!connected){
                     onGameOwnerFirstConnect(socket)
                     connected = true
