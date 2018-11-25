@@ -15,11 +15,11 @@ module.exports = (app, io, rooms,room) => {
     setTurn = () => {
         for(let team of room.teams){
             //call one person in each team to input command
-            let team_member = Math.floor(Math.random() * (team.players.length-1) )
+            let rand = Math.floor(Math.random() * (team.players.length-1) )
             
             //team is the team
             //team.players[i] is the person on the team
-            io.to(team.players[team_member].socketid).emit('your-turn')
+            io.to(team.players[rand].socketid).emit('your-turn')
         }
     }
 
@@ -121,16 +121,20 @@ module.exports = (app, io, rooms,room) => {
                 }
             })
             
-            socket.on('input-command', (command) => {
-                console.log("got command:", command)
-                var team = room.whichTeam({socketid: socket.id})
-                if(checkCommand(seq[team.sequence], command)){
-                    team.sequence += 1
+            socket.on('input-command', (info) => {
+                //make sure it listens only to client that emitted
+                if(socket.id === info.socketid){
+                    console.log(socket.id);
+                    console.log("got command:", info.command)
+                    var team = room.whichTeam({socketid: socket.id})
+                    if(checkCommand(seq[team.sequence], info.command)){
+                        team.sequence += 1
 
-                    broadcastToTeam(team, 'correct-command', seq[team.sequence])
-                    setTurn()
-                }else{
-                    broadcastToTeam(team, 'wrong-command')
+                        broadcastToTeam(team, 'correct-command', seq[team.sequence])
+                        setTurn()
+                    }else{
+                        io.to(socket.id).emit('wrong-command')
+                    }
                 }
             })
         })
