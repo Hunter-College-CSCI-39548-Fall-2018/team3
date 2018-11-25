@@ -116,6 +116,15 @@ class Lobby extends React.Component{
           }
         });
 
+        socket.on('updatePlayers', (roomObject) => {
+        console.log("Current Room object", roomObject)
+        let curr_users = ""
+        for (let key in roomObject){
+          curr_users += (" " + key)
+        }
+        this.setState({players : curr_users})
+      })
+
     }
 
     startTimer = ()=>{
@@ -135,8 +144,23 @@ class Lobby extends React.Component{
         this.setState({start_game: true})
     }
 
+    handleKick = (kickPlayer) => {
+      console.log( "Kick Player Name: ", kickPlayer)
+      let socket = this.state.socket
+      socket.emit('kick', kickPlayer)
+      
+    }
 
     render(){
+
+        const kickPlayer = this.state.players.split(" ").slice(1).map((player,index) => {
+          return (
+            <button key={index} onClick={this.handleKick.bind(this,player)}> 
+              {player}
+            </button>
+          )
+        })
+
         if(this.state.start_game){
             return(<Redirect to='/game'/>)
         }
@@ -150,6 +174,8 @@ class Lobby extends React.Component{
                     <div id='players'>players: {this.state.players}</div>
                     <div id='timeDisplay'>Time Until Start: {this.state.timeRem} </div>
                     {this.game_owner == '1' ? <button onClick={this.startTimer}>Start Timer</button> : ""}
+
+                    {this.game_owner == '1' ? kickPlayer : ""}
 
                     <div id="teams" style={{margin:"0 auto", textAlign:"center"}}>
                         {this.state.teams.map((team,index) => 
