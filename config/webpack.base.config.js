@@ -3,7 +3,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
 
-const host = "http://localhost:5000";
+const host = "http://0.0.0.0:5000";
 module.exports = {
   mode: "development",
     entry: [
@@ -68,7 +68,7 @@ module.exports = {
       template: './src/index.html',
       filename: './index.html'
     }),
-    new ExtractTextPlugin('style.css'),
+    new ExtractTextPlugin('daydream.css'),
     new webpack.HotModuleReplacementPlugin()
   ]
 }

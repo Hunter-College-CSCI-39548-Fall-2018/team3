@@ -44,9 +44,9 @@ module.exports = (app, rooms) => {
                 var val = {name: req.body.nickname, connected: false, socketid: 0}
                 rooms[req.cookies.room].addPlayer(req.body.nickname, val)
 
-                if(rooms[req.cookies.room].hasPlayer(req.body.nickname)){
-                    console.log('successfully added player to room')
-                }
+                // if(rooms[req.cookies.room].hasPlayer(req.body.nickname)){
+                //     console.log('successfully added player to room')
+                // }
 
                 res.clearCookie('player')
                 res.cookie('player', req.body.nickname, {
@@ -54,7 +54,7 @@ module.exports = (app, rooms) => {
                     overwrite: true
                 })
 
-                console.log("Player cookie was successfully made")
+                // console.log("Player cookie was successfully made")
                 res.json(true)
 
             }else{

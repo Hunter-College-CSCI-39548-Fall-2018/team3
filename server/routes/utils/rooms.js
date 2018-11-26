@@ -9,8 +9,12 @@ class Room{
     this.players = {}
     this.key = ""
     this.teams = []
-    this.time = 10;
+    this.time = 3;
     this.start = false;
+  }
+
+  setGameOwner(socketid){
+    this.game_owner = socketid
   }
 
   setSettings(settings){
@@ -29,12 +33,19 @@ class Room{
     this.players[player] = value
   }
 
+  getGameStatus(){
+    return this.start
+  }
+
   removePlayer(socketid){
     for (var key in this.players) {
-        if(this.players[key].socketid == socketid){
-            delete this.players[key]
-            break
-        }
+      console.log("HERE is socketid:",this.players[key].socketid)
+      if(this.players[key].socketid === socketid){
+        console.log("THIS IS THE PLAYER THAT GETS DELETE:",this.players[key])
+        console.log("OR:",key)
+        delete this.players[key]
+        break
+      }
     }
   }
 
@@ -60,13 +71,13 @@ class Room{
           if(this.time === 0){
               clearInterval(updated_time);
           }
-          console.log(this.time);
+          // console.log(this.time);
           // console.log("updated time", updated_time);3
           socket.emit('time-left', this.time);
           socket.broadcast.emit('time-left', this.time);
       },
       1000);
-  }
+    }
   }
 
   countPlayers(){
@@ -78,9 +89,9 @@ class Room{
   }
 
   shuffleTeams(){
-    //substitue for number of players per team later
+    //substitue for number of players per team later 
     var i,j,temparray
-    console.log("these are the new players", this.players)
+    //console.log("these are the new players", this.players)
     var chunk = this.settings.players_per_team;
     let newArr = _.shuffle(this.players);
 
