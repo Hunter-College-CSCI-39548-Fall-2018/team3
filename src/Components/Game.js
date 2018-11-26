@@ -13,13 +13,14 @@ class Game extends React.Component{
     }
 
     componentDidMount(){
-        fetch('http://localhost:3000/game', {
+        let host = 'http://' + location.hostname
+        fetch(host+':3000/game', {
             method: 'GET',
             credentials: 'include'
         })
         .then((res) => {
             console.log("response!", res.status)
-            const socket = io.connect('http://localhost:3000/', {
+            const socket = io.connect(host+':3000/', {
                 transports: ['websocket'],
                 upgrade: false
             })
@@ -44,9 +45,11 @@ class Game extends React.Component{
 
     //get input command from player
     handleCommand = (command) => {
+        
         let socket = this.state.socket
-        console.log(command)
+        console.log(socket)
         if(this.state.turn){
+            console.log("inputing omcmadn");
             socket.emit('input-command', {command: command, socketid: socket.id})
         }else{
             console.log("not your turn fool");
