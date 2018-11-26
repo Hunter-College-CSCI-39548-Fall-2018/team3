@@ -2,7 +2,7 @@ const Room = require('./utils/rooms.js')
 
 module.exports = (app, rooms) => {
     var randomstring = require('randomstring')
-
+ 
     // Submit all settings to the lobby
     app.post('/create-game', (req, res) => {
         var room = new Room() 
