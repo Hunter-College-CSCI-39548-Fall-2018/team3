@@ -77,7 +77,7 @@ class Room{
           socket.broadcast.emit('time-left', this.time);
       },
       1000);
-  }
+    }
   }
 
   countPlayers(){

@@ -14,7 +14,8 @@ class Lobby extends React.Component{
         socket: false,
         timeRem: 3,
         connected: true,
-        start_game: false
+        start_game: false,
+        teamNum: 0
       }
       this.game_owner = Cookies.get("game_owner")
       console.log(this.game_owner);
@@ -63,6 +64,27 @@ class Lobby extends React.Component{
 
             this.setState({players: players})
     }
+    // Why doesn't this run?
+    getTeamNum = () => {
+        let index = 0;
+        console.log("im in teamnum")
+        
+        console.log(this.state.teams.length)
+    //   for (var i=0, len=this.state.teams.length; i<len; i++) {
+    //     for (var j=0, len2=this.state.teams[i].length; j<len2; j++) {
+    //         console.log(this.state.teams[i][j], Cookies.get("player"))
+    //       if (this.state.team[i][j].name === Cookies.get("player")) { 
+    //           console.log("i have a match")
+              
+    //           return i
+    //           exit;
+    //       }
+    //     }
+    //   }
+
+      return -1
+    }
+
 
     handleEvents = () => {
         
@@ -82,7 +104,7 @@ class Lobby extends React.Component{
             console.log("player disocnnected");
             this.setCurrUsers(curr_users)
         })
-
+ 
         socket.on("shuffled-teams", (data) => {
           console.log(data)
           // Updating the current state of teams after the shuffle
@@ -107,14 +129,18 @@ class Lobby extends React.Component{
           
         })
 
+        
         // Only execute the shuffleTeams command when the timer is at 0
         socket.on('time-left', (time) => {
           this.setState({timeRem: time});
+          
           if(time === 0){
               console.log(time)
               this.shuffleTeams()
               document.getElementById("kick-player").style.display = "none"
-          }
+                // Why doesn't this run?
+              this.getTeamNum()
+            }
         });
 
         socket.on('updatePlayers', (roomObject) => {
@@ -152,6 +178,10 @@ class Lobby extends React.Component{
       
     }
 
+  
+
+      
+      
     render(){
 
         const kickPlayer = this.state.players.split(" ").slice(1).map((player,index) => {
@@ -170,7 +200,7 @@ class Lobby extends React.Component{
         if(this.state.connected){
             return(
                 <div>
-                    <div id="team-name" style={{display:"none"}}>You are in Team {this.state.teams.findIndex(x => x.name == Cookies.get("player"))}</div>
+                    <div id="team-name" style={{display:"none"}}>You are in Team {this.state.teamNum}</div>
                     <div id='code'>code: <input type="text" defaultValue={this.state.code} autoFocus/></div>
         
                     <div id='players'>players: {this.state.players}</div>
@@ -188,7 +218,11 @@ class Lobby extends React.Component{
                         </div>
                         )}
                     </div>
+                    <a href="/create-game">Create Game</a>
+                    <br />
+                    <a href="/enter-room">Enter Room</a>
                 </div>
+
             )
         }
         else{
