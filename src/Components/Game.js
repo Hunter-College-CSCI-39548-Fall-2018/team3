@@ -45,10 +45,12 @@ class Game extends React.Component{
 
     //get input command from player
     handleCommand = (command) => {
+        
         let socket = this.state.socket
-        console.log(command)
+        console.log(socket)
         if(this.state.turn){
-            socket.emit('input-command', command)
+            console.log("inputing omcmadn");
+            socket.emit('input-command', {command: command, socketid: socket.id})
         }else{
             console.log("not your turn fool");
         }

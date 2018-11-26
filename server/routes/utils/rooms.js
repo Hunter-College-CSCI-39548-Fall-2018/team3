@@ -9,12 +9,13 @@ class Room{
     this.players = {}
     this.key = ""
     this.teams = []
+    this.game_owner = "" //track socket id
     this.time = 3;
     this.start = false;
   }
 
   setGameOwner(socketid){
-    this.game_owner = socketid
+      this.game_owner = socketid
   }
 
   setSettings(settings){
@@ -25,28 +26,22 @@ class Room{
     this.key = key
   }
 
-  setPlayers(players){
-    this.players = players
-  }
-
   addPlayer(player, value){
     this.players[player] = value
   }
-
+  
   getGameStatus(){
     return this.start
   }
 
   removePlayer(socketid){
     for (var key in this.players) {
-      console.log("HERE is socketid:",this.players[key].socketid)
-      if(this.players[key].socketid === socketid){
-        console.log("THIS IS THE PLAYER THAT GETS DELETE:",this.players[key])
-        console.log("OR:",key)
-        delete this.players[key]
-        break
-      }
+        if(this.players[key].socketid == socketid){
+            delete this.players[key]
+            break
+        }
     }
+
   }
 
   hasPlayer(player){
@@ -55,11 +50,13 @@ class Room{
   }
 
   createTeams(){
+      console.log("calling create teams");
     // let teams = this.settings.numOfTeams;
-    let teams = this.settings.num_teams;
-    let templateTeam = [];
+    let teams = /*this.settings.num_teams*/3;
+    let templateTeam = {players: [], sequence:0};
     for(let i = 0; i < teams; i++){
-      this.teams.push(templateTeam);
+      
+        this.teams.push(templateTeam);
     }
   }
 
@@ -88,17 +85,30 @@ class Room{
     return count
   }
 
+  whichTeam(player){
+    for(let key of this.teams){
+        if(_.findWhere(key.players, player)){
+            return key
+        }
+    }
+  }
+
   shuffleTeams(){
-    //substitue for number of players per team later 
-    var i,j,temparray
-    //console.log("these are the new players", this.players)
     var chunk = this.settings.players_per_team;
     let newArr = _.shuffle(this.players);
 
-    this.teams = _.chunk(newArr, chunk);
+    //_.chunk - second argument takes how many elements in each array 
+    var hold_teams = _.chunk(newArr, chunk);
 
-    console.log("shuffled teams ", this.teams);
-
+    let temp = hold_teams.map(team => {
+        let obj = {players: [], sequence: 0}
+        obj.players = team
+        return obj
+    })
+    this.teams = temp
+    for(let key of this.teams){
+        console.log("shuffled teams:", key.players);
+    }
   }
 
   returnTeams(){
