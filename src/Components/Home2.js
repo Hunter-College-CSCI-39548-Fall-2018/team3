@@ -10,22 +10,15 @@ class Home2 extends React.Component{
 
     render(){
         return(
-            <div className="jumbotron bg-primary text-center text-white mb-0 radius-0">
-                <div className="container">
-                    <h1 className="display-3 text-white text-handwriting text-uppercase">Programmers never</h1>
-                    <h1 className="display-1 text-success text-uppercase title-margin-fix">Daydream</h1>
-                    <div>
-                        <a href="#!"
-                            className="btn btn-outline-light btn-lg m-2 btn-hover-text-primary">
-                        <span>A Button</span>
-                        </a>
-                        <a href="#!"
-                            className="btn btn-outline-light btn-hover-text-primary btn-lg m-2">
-                        <span>Another button</span>
-                        </a>
-                    </div>
+
+            <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white" id="header">
+                <h1 id="logo" className="display-4">BISCUIT.</h1>
+                <div className="btn-group">
+                    <a href="#" className="btn btn-primary btn-space">Create a Game</a>
+                    <a href="#" className="btn btn-success">Join a Room</a>
                 </div>
             </div>
+
 
 
         )

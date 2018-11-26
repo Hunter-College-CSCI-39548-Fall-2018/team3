@@ -64,7 +64,7 @@ class Lobby extends React.Component{
 
             this.setState({players: players})
     }
-    // Why doesn't this run?
+    
     getTeamNum = () => {
         let index = 0;
         console.log("im in teamnum")
