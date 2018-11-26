@@ -70,19 +70,18 @@ class Lobby extends React.Component{
         console.log("im in teamnum")
         
         console.log(this.state.teams.length)
-    //   for (var i=0, len=this.state.teams.length; i<len; i++) {
-    //     for (var j=0, len2=this.state.teams[i].length; j<len2; j++) {
-    //         console.log(this.state.teams[i][j], Cookies.get("player"))
-    //       if (this.state.team[i][j].name === Cookies.get("player")) { 
-    //           console.log("i have a match")
+      for (var i=0, len=this.state.teams.length; i<len; i++) {
+        for (var j=0, len2=this.state.teams[i].length; j<len2; j++) {
+            console.log(this.state.teams[i][j], Cookies.get("player"))
+          if (this.state.teams[i][j].name === Cookies.get("player")) { 
+              console.log("i have a match at", i, j)
               
-    //           return i
-    //           exit;
-    //       }
-    //     }
-    //   }
+             
+              this.setState({teamNum: i+1})
+          }
+        }
+      }
 
-      return -1
     }
 
 
@@ -110,7 +109,7 @@ class Lobby extends React.Component{
           // Updating the current state of teams after the shuffle
           
           this.setState({teams: data.team})
-        
+            this.getTeamNum()
           //debugger;
         //   console.log(this.state.teams)
         
@@ -135,11 +134,10 @@ class Lobby extends React.Component{
           this.setState({timeRem: time});
           
           if(time === 0){
-              console.log(time)
+              console.log("time is this value: ", time)
               this.shuffleTeams()
               document.getElementById("kick-player").style.display = "none"
                 // Why doesn't this run?
-              this.getTeamNum()
             }
         });
 
