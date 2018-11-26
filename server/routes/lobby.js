@@ -93,6 +93,8 @@ module.exports = (app, io, rooms) => {
                 //socket.join(req.cookies.room)
                 socket.on('kick', (who) => {
                     console.log("before", rooms[req.cookies.room].players)
+                    socket.emit("redirect-user",rooms[req.cookies.room].players[who]['socketid'])
+                    socket.broadcast.emit("redirect-user",rooms[req.cookies.room].players[who]['socketid'])
                     delete rooms[req.cookies.room].players[who]
                     console.log("after", rooms[req.cookies.room].players)
 
