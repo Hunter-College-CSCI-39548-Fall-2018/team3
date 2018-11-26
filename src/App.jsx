@@ -8,7 +8,10 @@ import EnterName from './Components/EnterName'
 import Lobby from './Components/Lobby'
 import CreateGame from './Components/CreateGame'
 import Game from './Components/Game'
-import Home2 from './Components/Home2'
+
+// Drafts for designing the UI and testing UX
+import HomeDesign from './Components/HomeDesign'
+import CreateGameDesign from './Components/CreateGameDesign'
 
 class App extends React.Component {
 // express has precedence over react-
@@ -25,7 +28,8 @@ class App extends React.Component {
 					<Route exact path='/lobby' component={Lobby}></Route>
 					<Route path='/create-game' component={CreateGame}></Route>
 					<Route path='/game' component={Game}></Route>
-					<Route path='/home2' component={Home2}></Route>
+					<Route path='/home-design' component={HomeDesign}></Route>
+					<Route path='/create-game-design' component={CreateGameDesign}></Route>
 				</Switch>
 			</BrowserRouter>
 		)
