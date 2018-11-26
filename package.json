@@ -16,6 +16,9 @@
     "type": "git",
     "url": "git@github.com:Hunter-College-CSCI-39548-Fall-2018/team3.git"
   },
+  "events": {
+    "restart": "fuser -k 3000/tcp;"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
