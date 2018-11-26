@@ -46,7 +46,7 @@ class Room{
   createTeams(){
       console.log("calling create teams");
     // let teams = this.settings.numOfTeams;
-    let teams = /*this.settings.num_teams*/2;
+    let teams = /*this.settings.num_teams*/3;
     let templateTeam = {players: [], sequence:0};
     for(let i = 0; i < teams; i++){
       
@@ -75,7 +75,7 @@ class Room{
     let newArr = _.shuffle(this.players);
 
     //_.chunk - second argument takes how many elements in each array 
-    var hold_teams = _.chunk(newArr, 2);
+    var hold_teams = _.chunk(newArr, 1);
 
     let temp = hold_teams.map(team => {
         let obj = {players: [], sequence: 0}

@@ -1,26 +1,20 @@
 const Room = require('./utils/rooms.js')
-let i = 0
 let k = 0
 
 module.exports = (app, io, rooms,room) => {
     //uncomment later for when you're not testing
     //var room = rooms[req.cookies.room]
 
-
     /*
-    *   Calls a random player in each team 
+    *   Calls a random player in team 
     *   and tells them it is his turn. Only
     *   that person can input a command
     */
-    setTurn = () => {
-        for(let team of room.teams){
-            //call one person in each team to input command
-            let rand = Math.floor(Math.random() * (team.players.length-1) )
-            
-            //team is the team
-            //team.players[i] is the person on the team
-            io.to(team.players[rand].socketid).emit('your-turn')
-        }
+    setTurn = (team) => {
+        let rand = Math.floor(Math.random() * (team.players.length) )
+        console.log("random number:", rand);
+
+        io.to(team.players[rand].socketid).emit('your-turn')
     }
 
     /*
@@ -29,10 +23,15 @@ module.exports = (app, io, rooms,room) => {
     */
     startGame = (socket, seq) => {
         console.log("start game is called");
-        setTurn()
+        for(let key of room.teams){
+            setTurn(key)
+        }
 
         socket.broadcast.emit('start-game', seq[0])
         socket.emit('start-game', seq[0])
+        console.log("end of clal game");
+
+        // console.log("clients connected:", io.sockets.clients());
     }
 
     /*
@@ -56,16 +55,6 @@ module.exports = (app, io, rooms,room) => {
     checkCommand = (seq, command) => {
         return seq == command
     }
-
-    /*
-    *   Broadcast to everyone in the player's team
-    *   with only the event
-    */
-    broadcastToTeam = (team, event) => {
-        for(let key of team.players){
-            io.to(key.socketid).emit(event)
-        }
-    } 
 
     /* 
     *   Broadcast to everyone in the player's team with a message
@@ -121,21 +110,24 @@ module.exports = (app, io, rooms,room) => {
                 }
             })
             
-            socket.on('input-command', (info) => {
+            socket.on('input-command', (msg) => {
+                console.log("person connected", socket.id);
+                console.log("person emitted", msg.socketid);
                 //make sure it listens only to client that emitted
-                if(socket.id === info.socketid){
-                    console.log(socket.id);
-                    console.log("got command:", info.command)
-                    var team = room.whichTeam({socketid: socket.id})
-                    if(checkCommand(seq[team.sequence], info.command)){
-                        team.sequence += 1
+                // if(socket.id === msg.socketid){
+                //     console.log("gotff command:", msg.command)
+                //     console.log("sffocketid", socket.id);
+                //     // var team = room.whichTeam({socketid: socket.id})
+                //     // if(checkCommand(seq[team.sequence], msg.command)){
+                        
+                //     //     team.sequence += 1
 
-                        broadcastToTeam(team, 'correct-command', seq[team.sequence])
-                        setTurn()
-                    }else{
-                        io.to(socket.id).emit('wrong-command')
-                    }
-                }
+                //     //     broadcastToTeam(team, 'correct-command', seq[team.sequence])
+                //     //     setTurn(team)
+                //     // }else{
+                //     //     io.to(socket.id).emit('wrong-command')
+                //     // }
+                // }
             })
         })
         res.sendStatus(200)
