@@ -64,42 +64,25 @@ class Lobby extends React.Component {
 
     this.setState({players: players})
   }
-
+    
   getTeamNum = () => {
     let index = 0;
-
-<<<<<<< HEAD
-            this.setState({players: players})
-    }
-    
-    getTeamNum = () => {
-        let index = 0;
-        console.log("im in teamnum")
-        
-        console.log(this.state.teams.length)
-      for (var i=0, len=this.state.teams.length; i<len; i++) {
-        for (var j=0, len2=this.state.teams[i].length; j<len2; j++) {
-            console.log(this.state.teams[i][j], Cookies.get("player"))
-          if (this.state.teams[i][j].name === Cookies.get("player")) { 
-              console.log("i have a match at", i, j)
-              
-             
-              this.setState({teamNum: i+1})
-          }
-=======
     console.log("im in teamnum")
-    console.log(this.state.teams.length)
 
-    for (var i=0, len=this.state.teams.length; i<len; i++) {
-      for (var j=0, len2=this.state.teams[i].length; j<len2; j++) {
-        console.log(this.state.teams[i][j], Cookies.get("player"))
-        if (this.state.teams[i][j].name === Cookies.get("player")) { 
-          console.log("i have a match at", i, j)
-          this.setState({teamNum: i+1})
->>>>>>> 74088c8545c07b0b937699e4eb6e8a576e1db655
-        }
+    console.log(this.state.teams.length)
+    for (var i = 0, len = this.state.teams.length; i < len; i++) {
+        for (var j = 0, len2 = this.state.teams[i].length; j < len2; j++) {
+            console.log(this.state.teams[i][j], Cookies.get("player"))
+            if (this.state.teams[i][j].name === Cookies.get("player")) {
+                console.log("i have a match at", i, j)
+
+
+                this.setState({
+                    teamNum: i + 1
+                })
+              }
+          }
       }
-    }
   }
 
 
