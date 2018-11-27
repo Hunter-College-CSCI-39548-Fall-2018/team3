@@ -8,28 +8,32 @@ module.exports = (app, rooms) => {
             //check if room exists
             if(rooms[req.body.room] === undefined){
                 console.log("invalid key")
-                res.json(false)
+                res.json({keyValid:false})
             }
             else{
-                res.clearCookie('room')
-                //set cookie for room user is joinings
-                res.cookie('room', req.body.room, {
-                    secure: false,
-                    overwrite: true,
-                })
+                if (rooms[req.body.room].start === false) {
+                    res.clearCookie('room')
+                    //set cookie for room user is joinings
+                    res.cookie('room', req.body.room, {
+                        secure: false,
+                        overwrite: true,
+                    })
 
-                res.clearCookie('game_owner')
-                //to signify that user who is joining is not game owner
-                res.cookie('game_owner', 0 , {
-                    secured: false,
-                    overwrite: true
-                })
+                    res.clearCookie('game_owner')
+                    //to signify that user who is joining is not game owner
+                    res.cookie('game_owner', 0 , {
+                        secured: false,
+                        overwrite: true
+                    })
 
 
-                console.log('completely find key')
-                console.log("Cookies: ", req.cookies)
-                res.json(true)
-
+                    console.log('completely find key')
+                    console.log("Cookies: ", req.cookies)
+                    res.json({keyValid:true})
+                }
+                else {
+                    res.json({gameStart:true})
+                }
             }
         }
     })

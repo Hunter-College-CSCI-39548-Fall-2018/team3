@@ -65,11 +65,12 @@ class Room{
 
   startTimer(socket){
     if(this.start === false){
-      this.start = true;   //activated for the first time
+         //activated for the first time
       let updated_time = setInterval( () => {
           this.time -=1;
           if(this.time === 0){
               clearInterval(updated_time);
+              this.start = true;
           }
           // console.log(this.time);
           // console.log("updated time", updated_time);3
