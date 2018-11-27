@@ -2,7 +2,7 @@ const Room = require('./utils/rooms.js')
 let k = 0
 
 module.exports = (app, io, rooms,room) => {
-    //uncomment later for when you're not testing
+    //uncomment later for when you're not testing 
     //var room = rooms[req.cookies.room]
 
     /*
@@ -114,20 +114,20 @@ module.exports = (app, io, rooms,room) => {
                 console.log("person connected", socket.id);
                 console.log("person emitted", msg.socketid);
                 //make sure it listens only to client that emitted
-                // if(socket.id === msg.socketid){
-                //     console.log("gotff command:", msg.command)
-                //     console.log("sffocketid", socket.id);
-                //     // var team = room.whichTeam({socketid: socket.id})
-                //     // if(checkCommand(seq[team.sequence], msg.command)){
+                if(socket.id === msg.socketid){
+                    console.log("gotff command:", msg.command)
+                    console.log("sffocketid", socket.id);
+                    var team = room.whichTeam({socketid: socket.id})
+                    if(checkCommand(seq[team.sequence], msg.command)){
                         
-                //     //     team.sequence += 1
+                        team.sequence += 1
 
-                //     //     broadcastToTeam(team, 'correct-command', seq[team.sequence])
-                //     //     setTurn(team)
-                //     // }else{
-                //     //     io.to(socket.id).emit('wrong-command')
-                //     // }
-                // }
+                        broadcastToTeam(team, 'correct-command', seq[team.sequence])
+                        setTurn(team)
+                    }else{
+                        io.to(socket.id).emit('wrong-command')
+                    }
+                }
             })
         })
         res.sendStatus(200)
