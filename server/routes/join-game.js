@@ -43,7 +43,7 @@ module.exports = (app, rooms) => {
             //if name exists in room
             if(!rooms[req.cookies.room].hasPlayer(req.body.nickname)){
 
-                let player = new Player(req.body.nickname)
+                let player = new Player(req.body.nickname, 0)
                 player.connected = false
                 
                 rooms[req.cookies.room].addPlayer(req.body.nickname, player)

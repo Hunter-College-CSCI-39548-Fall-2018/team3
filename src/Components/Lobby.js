@@ -93,24 +93,15 @@ class Lobby extends React.Component {
             this.updateUsers(curr_users)
         })
  
+        socket.on('force-disconnect', () => {
+            this.setState({connected: false})
+        })
         socket.on("shuffled-teams", (data) => {
           console.log(data)
           // Updating the current state of teams after the shuffle
           
           this.setState({teams: data.team})
             this.getTeamNum()
-          //debugger;
-        //   console.log(this.state.teams)
-        
-          // for(let i = 0; i < data.length(); i++){
-          //   for(let i = 0; i < data[i].length(); i++){
-          //
-          //   }
-          // }
-          
-        //   console.log("You are in Team", this.state.teams.findIndex(x => x == Cookies.get("player")));
-          //debugger;
-
           // Display the list of all players by team name
           document.getElementById("team-name").style.display="block";
         })
@@ -140,12 +131,6 @@ class Lobby extends React.Component {
         })   
     }
 
-    startGame = () => {
-        // When the room owner is ready to start the game then
-        // the new state is set for the redirect
-        this.setState({start_game: true})
-    }
-
     startTimer = ()=>{
         const socket = this.state.socket
 
@@ -173,10 +158,6 @@ class Lobby extends React.Component {
                 </div>
             )
         })
-
-        if(this.state.redirect === true){
-            return(<Redirect to='/'/>)
-        }
 
         if(this.state.start_game){
             return(<Redirect to='/game'/>)
@@ -226,7 +207,7 @@ class Lobby extends React.Component {
         else{
             // if anyone disconnected, redirect all players including game owner to home
             return(
-            <Redirect to='/'/>
+                <Redirect to='/'/>
             )
         } 
     }

@@ -1,8 +1,8 @@
 class Player {
-    constructor(){
+    constructor(name, socketid){
         this.room = ""
-        this.name = ""
-        this.socketid = ""
+        this.name = name
+        this.socketid = socketid
         this.game_owner = false
         this.connected = false
     }

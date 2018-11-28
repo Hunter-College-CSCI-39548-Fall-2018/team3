@@ -120,7 +120,6 @@ module.exports = (app, io, rooms,room) => {
             socket.on('input-command', (msg) => {
                 //make sure it listens only to client that emitted
                 if(socket.id === msg.socketid){
-<<<<<<< HEAD
                     var team = room.whichTeam({socketid: socket.id})
 
                     if(checkCommand(seq[team.sequence], msg.command)){
@@ -132,17 +131,6 @@ module.exports = (app, io, rooms,room) => {
                             broadcastToTeam(team, 'correct-command', seq[team.sequence])
                             setTurn(team)
                         }
-=======
-                    console.log("gotff command:", msg.command)
-                    console.log("sffocketid", socket.id);
-                    var team = room.whichTeam({socketid: socket.id})
-                    if(checkCommand(seq[team.sequence], msg.command)){
-                        
-                        team.sequence += 1
-
-                        broadcastToTeam(team, 'correct-command', seq[team.sequence])
-                        setTurn(team)
->>>>>>> 520bbd13e68f553918aa4b2516be20622eb954f0
                     }else{
                         io.to(socket.id).emit('wrong-command')
                     }
