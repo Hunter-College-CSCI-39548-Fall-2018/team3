@@ -25,6 +25,7 @@ class Lobby extends React.Component{
         let code = Cookies.get("room");
         this.setState({code:code});
         let host = 'http://' + location.hostname
+
         fetch(host+':3000/lobby', {
             method: 'GET',
             credentials: 'include'
@@ -44,25 +45,27 @@ class Lobby extends React.Component{
         .catch((err) =>console.log(err))
     }
 
-    shuffleTeams = () => {
-      let socket = this.state.socket
-      if(Cookies.get("game_owner") === '1'){
-        socket.emit("shuffle-teams")
-      }
+    // shuffleTeams = () => {
+    //   let socket = this.state.socket
+    // //   if(Cookies.get("game_owner") === '1'){
+    //     socket.emit("shuffle-teams")
+    // //   }
       
-      console.log("I am in shuffleTeams")
+    // //   console.log("I am in shuffleTeams")
 
-    }
+    // }
 
-    setCurrUsers = (curr_users) => {
+
+    //use this function when you want to update all users on the page after an event
+    updateUsers = (curr_users) => {
         let players = ""
-            console.log('attempting to add current users')
+        console.log('attempting to add current users')
 
-            for(let key in curr_users){
-                players += (" " + key)
-            }
+        for(let key in curr_users){
+            players += (" " + key)
+        }
 
-            this.setState({players: players})
+        this.setState({players: players})
     }
     // Why doesn't this run?
     getTeamNum = () => {
@@ -70,38 +73,37 @@ class Lobby extends React.Component{
         console.log("im in teamnum")
         
         console.log(this.state.teams.length)
-      for (var i=0, len=this.state.teams.length; i<len; i++) {
-        for (var j=0, len2=this.state.teams[i].length; j<len2; j++) {
-            console.log(this.state.teams[i][j], Cookies.get("player"))
-          if (this.state.teams[i][j].name === Cookies.get("player")) { 
-              console.log("i have a match at", i, j)
-              
-             
-              this.setState({teamNum: i+1})
-          }
+        for (var i=0, len=this.state.teams.length; i<len; i++) {
+            for (var j=0, len2=this.state.teams[i].length; j<len2; j++) {
+                
+                console.log(this.state.teams[i][j], Cookies.get("player"))
+                if (this.state.teams[i][j].name === Cookies.get("player")) { 
+                    console.log("i have a match at", i, j)
+                    
+                    
+                    this.setState({teamNum: i+1})
+                }
+            }
         }
-      }
 
     }
 
 
     handleEvents = () => {
-        
         let socket = this.state.socket
 
         socket.on('get-curr-users', (curr_users) => {
-            this.setCurrUsers(curr_users)
+            this.updateUsers(curr_users)
         })
 
         socket.on('new-player', (name) => {
-          let player = ""
-          console.log('received new player')
-          this.setState({players: this.state.players + " " + name})
+            console.log('received new player')
+            this.setState({players: this.state.players + " " + name})
         })
 
         socket.on('player-disconnected', (curr_users) => {
             console.log("player disocnnected");
-            this.setCurrUsers(curr_users)
+            this.updateUsers(curr_users)
         })
  
         socket.on("shuffled-teams", (data) => {
@@ -124,8 +126,6 @@ class Lobby extends React.Component{
 
           // Display the list of all players by team name
           document.getElementById("team-name").style.display="block";
-
-          
         })
 
         
@@ -134,28 +134,21 @@ class Lobby extends React.Component{
           this.setState({timeRem: time});
           
           if(time === 0){
-              console.log("time is this value: ", time)
-              this.shuffleTeams()
-              document.getElementById("kick-player").style.display = "none"
-                // Why doesn't this run?
+                console.log("time is this value: ", time)
+                //   this.shuffleTeams()
+                socket.emit('shuffle-teams')
+                document.getElementById("kick-player").style.display = "none"
+                    // Why doesn't this run?
             }
         });
 
         socket.on('updatePlayers', (roomObject) => {
-        console.log("Current Room object", roomObject)
-        let curr_users = ""
-        for (let key in roomObject){
-          curr_users += (" " + key)
-        }
-        this.setState({players : curr_users})
-      })
-
+            this.updateUsers(roomObject)
+        })
     }
 
     startTimer = ()=>{
       let socket = this.state.socket
-      //console.log("I am in start timer")
-      // console.log("The socket is", this.socket)
 
       // Tell the server to start the countdown timer for this room
       socket.emit("start-time", {room:this.state.code});
@@ -163,7 +156,6 @@ class Lobby extends React.Component{
 
 
     startGame = () => {
-
         // When the room owner is ready to start the game then
         // the new state is set for the redirect
         this.setState({start_game: true})
@@ -175,11 +167,7 @@ class Lobby extends React.Component{
       socket.emit('kick', kickPlayer)
       
     }
-
-  
-
-      
-      
+ 
     render(){
 
         const kickPlayer = this.state.players.split(" ").slice(1).map((player,index) => {
@@ -209,11 +197,11 @@ class Lobby extends React.Component{
                     </div>
                     <div id="teams" style={{margin:"0 auto", textAlign:"center"}}>
                         {this.state.teams.map((team,index) => 
-                        <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
-                        <ul style={{float:"left", width:"20%", display: "inline-block"}}key={index}>
-                            {team.map((player,i) => <li key={i}> {player.name} </li>)}  
-                        </ul>
-                        </div>
+                            <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
+                                <ul style={{float:"left", width:"20%", display: "inline-block"}}key={index}>
+                                    {team.map((player,i) => <li key={i}> {player.name} </li>)}  
+                                </ul>
+                            </div>
                         )}
                     </div>
                     <a href="/create-game">Create Game</a>

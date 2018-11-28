@@ -1,5 +1,6 @@
 import React from 'react'
 import io from 'socket.io-client'
+import Cookies from 'js-cookie';
 
 class Game extends React.Component{
     constructor(props){
@@ -35,17 +36,10 @@ class Game extends React.Component{
 
         })
         .catch(err => console.log("error", err))
-
-        
-    }
-
-    dividePageIntoTeams = (num_teams) => {
-        
     }
 
     //get input command from player
     handleCommand = (command) => {
-        
         let socket = this.state.socket
         console.log(socket)
         if(this.state.turn){
@@ -84,8 +78,6 @@ class Game extends React.Component{
             //some penalty here
             console.log("you suck")
         })
-
-
     }
 
     handleShuffle = () => {
@@ -105,7 +97,7 @@ class Game extends React.Component{
                 <button id='B' onClick={this.handleCommand.bind(this,'B')}>B</button>
                 <button id='C' onClick={this.handleCommand.bind(this,'C')}>C</button>
                 <button id='D' onClick={this.handleCommand.bind(this,'D')}>D</button>
-
+                
 
                 <div>{this.state.sequence}</div>
                 <div>is your turn? {(this.state.turn).toString()}</div>

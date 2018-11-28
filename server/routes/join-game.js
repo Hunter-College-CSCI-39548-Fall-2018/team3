@@ -3,10 +3,7 @@ const Player = require('./utils/player.js')
 module.exports = (app, rooms) => {
 
     app.post('/enter-room', (req, res) => {
-
-        //console.log("Joined room", req.body.room)
         if(req.body.room){
-
             //check if room exists
             if(rooms[req.body.room] === undefined){
                 console.log("invalid key")
@@ -26,7 +23,6 @@ module.exports = (app, rooms) => {
                     secured: false,
                     overwrite: true
                 })
-
 
                 console.log('completely find key')
                 console.log("Cookies: ", req.cookies)

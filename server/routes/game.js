@@ -92,17 +92,7 @@ module.exports = (app, io, rooms,room) => {
         //define sequence later
         let seq = ['A', 'C', 'D', 'B']
 
-        // var l_room = rooms[req.cookies.room]        
         io.sockets.on('connection', (socket)=>{
-
-            //if game owner
-            // if(l_room.game_owner === socket.id){
-            //      socket.emit('split-page-into-teams', l_room.settings.num_teams) 
-            // }
-            // else{
-            
-            // }
-
             socket.on('disconnect', () => {
                 console.log("someone disconnected");
                 room.removePlayer(socket.id)
