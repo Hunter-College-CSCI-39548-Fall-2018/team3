@@ -1,22 +1,4 @@
 module.exports = (app, io, rooms) => {
-
-    function startTimer(){
-        //hasn't been activated before
-        if(start === false){
-            start = true;   //activated for the first time
-            var updated_time = setInterval( () => {
-                time -=1;
-                if(time === 0){
-                    clearInterval(updated_time);
-                }
-                console.log(time);
-                //console.log("updated time", updated_time);3
-                // io.socket.emit('timeLeft', time);
-            },
-            1000);
-        }
-    }
-
     app.get('/lobby', (req, res) => {
         console.log("lobby post was called")
         var connected = false
@@ -48,6 +30,7 @@ module.exports = (app, io, rooms) => {
         onPlayerDisconnect = (socket) =>{
             let room = rooms[req.cookies.room]
             room.removePlayer(socket.id)
+
             //update lobby page for everyone still connected
             socket.to(req.cookies.room).emit('player-disconnected', room.players)
         }
@@ -79,13 +62,10 @@ module.exports = (app, io, rooms) => {
 
             socket.on('shuffle-teams', () => {
                 var currentRoom = rooms[req.cookies.room]
-              currentRoom.shuffleTeams()
-              var newTeams = currentRoom.returnTeams();
-
-              //console.log("I am in shuffleTeams socket")
-              //console.log(newTeams)
-              socket.broadcast.emit("shuffled-teams", {team: currentRoom.teams})
-              console.log(currentRoom)
+                currentRoom.shuffleTeams()
+                var newTeams = currentRoom.returnTeams();
+                socket.broadcast.emit("shuffled-teams", {team: currentRoom.teams})
+                console.log(currentRoom)
             })
 
             if(req.cookies.game_owner === '0'){
@@ -105,8 +85,6 @@ module.exports = (app, io, rooms) => {
                     
                     // Start the timer for that specific room
                     currentRoom.startTimer(socket);
-                    
-                    //console.log(data)
                 });
 
                 //socket.join(req.cookies.room)

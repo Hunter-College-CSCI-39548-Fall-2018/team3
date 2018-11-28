@@ -35,8 +35,8 @@ class Room{
   }
 
   removePlayer(socketid){
-    for (var key in this.players) {
-        if(this.players[key].socketid == socketid){
+    for (let key in this.players) {
+        if(this.players[key].socketid === socketid){
             delete this.players[key]
             break
         }
@@ -79,6 +79,8 @@ class Room{
 
   countPlayers(){
     let count = 0
+
+    //for counting objects
     for(let key in this.players){
       count++
     }

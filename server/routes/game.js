@@ -5,6 +5,15 @@ module.exports = (app, io, rooms,room) => {
     //uncomment later for when you're not testing
     //var room = rooms[req.cookies.room]
 
+
+    /*
+    *   Shuffle icons each turn for all players
+    *   TODO: Michelle fill this out thanks
+    */
+    shuffleIcons = (socket) => {
+
+    }
+
     /*
     *   Calls a random player in team 
     *   and tells them it is his turn. Only
@@ -22,6 +31,10 @@ module.exports = (app, io, rooms,room) => {
     *   and displaying it for the users on screen
     */
     startGame = (socket, seq) => {
+        for(let key of room.players){
+            shuffleIcons(key.socketid)
+        }
+
         console.log("start game is called");
         for(let key of room.teams){
             setTurn(key)
@@ -63,6 +76,10 @@ module.exports = (app, io, rooms,room) => {
         for(let key of team.players){
             io.to(key.socketid).emit(event, msg)
         }
+    }
+
+    endGame = (team) => {
+        //finish for when game ends
     }
 
     var shuffled = false
@@ -111,23 +128,23 @@ module.exports = (app, io, rooms,room) => {
             })
             
             socket.on('input-command', (msg) => {
-                console.log("person connected", socket.id);
-                console.log("person emitted", msg.socketid);
                 //make sure it listens only to client that emitted
-                // if(socket.id === msg.socketid){
-                //     console.log("gotff command:", msg.command)
-                //     console.log("sffocketid", socket.id);
-                //     // var team = room.whichTeam({socketid: socket.id})
-                //     // if(checkCommand(seq[team.sequence], msg.command)){
-                        
-                //     //     team.sequence += 1
+                if(socket.id === msg.socketid){
+                    var team = room.whichTeam({socketid: socket.id})
 
-                //     //     broadcastToTeam(team, 'correct-command', seq[team.sequence])
-                //     //     setTurn(team)
-                //     // }else{
-                //     //     io.to(socket.id).emit('wrong-command')
-                //     // }
-                // }
+                    if(checkCommand(seq[team.sequence], msg.command)){
+                        if(team.sequence >= sequence.length){
+                            endGame(team)
+                        }else{
+                            team.sequence += 1
+
+                            broadcastToTeam(team, 'correct-command', seq[team.sequence])
+                            setTurn(team)
+                        }
+                    }else{
+                        io.to(socket.id).emit('wrong-command')
+                    }
+                }
             })
         })
         res.sendStatus(200)
