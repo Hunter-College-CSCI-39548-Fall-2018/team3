@@ -20,6 +20,8 @@ class Lobby extends React.Component {
         }
 
         this.game_owner = Cookies.get("game_owner")
+        this.player = Cookies.get("player")
+        console.log("player:", this.player);
 
     }
     componentDidMount(){
@@ -95,18 +97,19 @@ class Lobby extends React.Component {
             console.log("player disocnnected");
             this.updateUsers(curr_users)
         })
- 
+        
         socket.on('force-disconnect', () => {
             this.setState({connected: false})
         })
+
         socket.on("shuffled-teams", (data) => {
-          console.log(data)
-          // Updating the current state of teams after the shuffle
-          
-          this.setState({teams: data.team})
-            this.getTeamNum()
-          // Display the list of all players by team name
-          document.getElementById("team-name").style.display="block";
+            console.log(data)
+            // Updating the current state of teams after the shuffle
+            
+            this.setState({teams: data.team})
+                this.getTeamNum()
+            // Display the list of all players by team name
+            document.getElementById("team-name").style.display="block";
         })
 
         
@@ -140,16 +143,18 @@ class Lobby extends React.Component {
         this.setState({start_game: true})
     }
 
-    handleKick = (kickPlayer) => {
+    handleKick = (player) => {
+        console.log("called handle ckick in client", player);
         let socket = this.state.socket
-        socket.emit('kick', kickPlayer)
+
+        socket.emit('kick', player)
     }
     
     render(){
         const kickPlayer = this.state.players.split(" ").slice(1).map((player,index) => {
             return (
                 <div key={index}>
-                    <button key={index} onClick={this.handleKick.bind(this,player)}> 
+                    <button key={index} onClick={this.handleKick.bind(this, player)}> 
                         {player}
                     </button>
                 </div>

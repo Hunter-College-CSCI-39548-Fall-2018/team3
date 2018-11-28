@@ -88,6 +88,9 @@ module.exports = (app, io, rooms) => {
             })
 
             socket.on('kick', (who) => {
+                console.log("call hnadle kcik back end");
+                console.log("what does playe rlook liek", rooms[req.cookies.room].players[who]);
+                socket.to(rooms[req.cookies.room].players[who].socketid).emit('force-disconnect')
                 delete rooms[req.cookies.room].players[who]
 
                 socket.emit('updatePlayers',rooms[req.cookies.room].players)
