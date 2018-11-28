@@ -18,6 +18,9 @@ class Lobby extends React.Component {
             teamNum: 0,
             redirect: false
         }
+
+        this.game_owner = Cookies.get("game_owner")
+
     }
     componentDidMount(){
         let code = Cookies.get("room");
@@ -123,12 +126,6 @@ class Lobby extends React.Component {
         socket.on('updatePlayers', (roomObject) => {
             this.updateUsers(roomObject)
         })
-
-        socket.on('redirect-user',(socketid) => {
-            if (socket['id'] === socketid){
-                this.setState({redirect:true})
-            }
-        })   
     }
 
     startTimer = ()=>{
@@ -148,7 +145,7 @@ class Lobby extends React.Component {
         socket.emit('kick', kickPlayer)
     }
     
-  render(){
+    render(){
         const kickPlayer = this.state.players.split(" ").slice(1).map((player,index) => {
             return (
                 <div key={index}>
