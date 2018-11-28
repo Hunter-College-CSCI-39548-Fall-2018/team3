@@ -3,23 +3,21 @@ import io from 'socket.io-client';
 import Cookies from 'js-cookie';
 import {Redirect} from 'react-router-dom'
 
-class Lobby extends React.Component{
+class Lobby extends React.Component {
+
     constructor(props){
-
-      super(props)
-      this.state = {
-        players: "",
-        teams: [],
-        code: "",
-        socket: false,
-        timeRem: 3,
-        connected: true,
-        start_game: false,
-        teamNum: 0
-      }
-      this.game_owner = Cookies.get("game_owner")
-      console.log(this.game_owner);
-
+        super(props)
+        this.state = {
+            players: "",
+            teams: [],
+            code: "",
+            socket: false,
+            timeRem: 3,
+            connected: true,
+            start_game: false,
+            teamNum: 0,
+            redirect: false
+        }
     }
     componentDidMount(){
         let code = Cookies.get("room");
@@ -45,17 +43,6 @@ class Lobby extends React.Component{
         .catch((err) =>console.log(err))
     }
 
-    // shuffleTeams = () => {
-    //   let socket = this.state.socket
-    // //   if(Cookies.get("game_owner") === '1'){
-    //     socket.emit("shuffle-teams")
-    // //   }
-      
-    // //   console.log("I am in shuffleTeams")
-
-    // }
-
-
     //use this function when you want to update all users on the page after an event
     updateUsers = (curr_users) => {
         let players = ""
@@ -67,6 +54,7 @@ class Lobby extends React.Component{
 
         this.setState({players: players})
     }
+
     // Why doesn't this run?
     getTeamNum = () => {
         let index = 0;
@@ -85,7 +73,6 @@ class Lobby extends React.Component{
                 }
             }
         }
-
     }
 
 
@@ -145,15 +132,13 @@ class Lobby extends React.Component{
         socket.on('updatePlayers', (roomObject) => {
             this.updateUsers(roomObject)
         })
+
+        socket.on('redirect-user',(socketid) => {
+            if (socket['id'] === socketid){
+                this.setState({redirect:true})
+            }
+        })   
     }
-
-    startTimer = ()=>{
-      let socket = this.state.socket
-
-      // Tell the server to start the countdown timer for this room
-      socket.emit("start-time", {room:this.state.code});
-    }
-
 
     startGame = () => {
         // When the room owner is ready to start the game then
@@ -161,23 +146,37 @@ class Lobby extends React.Component{
         this.setState({start_game: true})
     }
 
-    handleKick = (kickPlayer) => {
-      console.log( "Kick Player Name: ", kickPlayer)
-      let socket = this.state.socket
-      socket.emit('kick', kickPlayer)
-      
-    }
- 
-    render(){
+    startTimer = ()=>{
+        const socket = this.state.socket
 
+        // Tell the server to start the countdown timer for this room
+        socket.emit("start-time", {room:this.state.code});
+    }
+
+    startGame = () => {
+        // When the room owner is ready to start the game then the new state is set for the redirect
+        this.setState({start_game: true})
+    }
+
+    handleKick = (kickPlayer) => {
+        let socket = this.state.socket
+        socket.emit('kick', kickPlayer)
+    }
+    
+  render(){
         const kickPlayer = this.state.players.split(" ").slice(1).map((player,index) => {
-          return (<div key={index}>
-            <button key={index} onClick={this.handleKick.bind(this,player)}> 
-              {player}
-            </button>
-            </div>
-          )
+            return (
+                <div key={index}>
+                    <button key={index} onClick={this.handleKick.bind(this,player)}> 
+                        {player}
+                    </button>
+                </div>
+            )
         })
+
+        if(this.state.redirect === true){
+            return(<Redirect to='/'/>)
+        }
 
         if(this.state.start_game){
             return(<Redirect to='/game'/>)
@@ -186,38 +185,51 @@ class Lobby extends React.Component{
         if(this.state.connected){
             return(
                 <div>
-                    <div id="team-name" style={{display:"none"}}>You are in Team {this.state.teamNum}</div>
-                    <div id='code'>code: <input type="text" defaultValue={this.state.code} autoFocus/></div>
-        
-                    <div id='players'>players: {this.state.players}</div>
-                    <div id='timeDisplay'>Time Until Start: {this.state.timeRem} </div>
-                    {this.game_owner == '1' ? <button onClick={this.startTimer}>Start Timer</button> : ""}
-                    <div id="kick-player">
-                    {(this.game_owner == '1' ? kickPlayer : "")}
+                    <div id="team-name" style={{display:"none"}}>
+                        You are in Team {this.state.teamNum}
                     </div>
+
+                    <div id='code'>code: <input type="text" defaultValue={this.state.code} autoFocus/></div>
+
+                    <div id='players'>
+                        players: {this.state.players}
+                    </div>
+
+                    <div id='timeDisplay'>
+                        Time Until Start: {this.state.timeRem}
+                    </div>
+
+                    {this.game_owner == '1' ? <button onClick={this.startTimer}>Start Timer</button> : ""}
+
+                    <div id="kick-player">
+                        {(this.game_owner == '1' ? kickPlayer : "")}
+                    </div>
+
                     <div id="teams" style={{margin:"0 auto", textAlign:"center"}}>
-                        {this.state.teams.map((team,index) => 
-                            <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
+                        {this.state.teams.map((team,index) => {
+                            <div key={index}>
+                                <span style={{float: "left"}}>Team {index+1}</span>
                                 <ul style={{float:"left", width:"20%", display: "inline-block"}}key={index}>
+                                    
                                     {team.map((player,i) => <li key={i}> {player.name} </li>)}  
                                 </ul>
                             </div>
-                        )}
+                        })}
                     </div>
+
                     <a href="/create-game">Create Game</a>
-                    <br />
+                    <br/>
                     <a href="/enter-room">Enter Room</a>
                 </div>
-
             )
         }
         else{
-            //if game owner disconnected, disconnect all players in lobby and redirect
-            return(<Redirect to='/'/>)
-        }
-        
+            // if anyone disconnected, redirect all players including game owner to home
+            return(
+            <Redirect to='/'/>
+            )
+        } 
     }
-
 }
 
 export default Lobby
