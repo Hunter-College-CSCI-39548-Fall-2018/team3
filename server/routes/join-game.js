@@ -42,12 +42,8 @@ module.exports = (app, rooms) => {
             //if name exists in room
             if(!rooms[req.cookies.room].hasPlayer(req.body.nickname)){
 
-                let player = new Player()
-                player.name = req.body.nickname
+                let player = new Player(req.body.nickname)
                 player.connected = false
-
-                //map a player to a room- only name and if connected for now
-                // var val = {name: req.body.nickname, connected: false, socketid: 0}
                 
                 rooms[req.cookies.room].addPlayer(req.body.nickname, player)
 
