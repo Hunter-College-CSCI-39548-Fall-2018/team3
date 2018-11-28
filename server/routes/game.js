@@ -52,17 +52,25 @@ module.exports = (app, io, rooms,room) => {
     *   through their socket. Rooms are not persistant through
     *   routes. 
     */
-    onFirstConnect = (socket) => {
+    onPlayerFirstConnect = (socket) => {
         console.log("socket connected");
+
+        //when actually keep track of real players
+        // let name = req.cookies.player
+        // room.setSocketId(name, socket.id)
+          
         room.addPlayer(k, {socketid: socket.id})
 
         //for testing purposes- gives different name for each iteration of player
         k++
-
+        
         //join the room in the cookie later
         socket.join("room")
         console.log("people in room", room.players)
 
+    }
+    onGameOwnerFirstConnect = (socket) => {
+        room.game_owner = socket.id
     }
 
     checkCommand = (seq, command) => {
@@ -93,13 +101,17 @@ module.exports = (app, io, rooms,room) => {
         let seq = ['A', 'C', 'D', 'B']
 
         io.sockets.on('connection', (socket)=>{
+            if(req.cookies.game_owner === "1"){
+                onGameOwnerFirstConnect(socket)
+            }
+
             socket.on('disconnect', () => {
                 console.log("someone disconnected");
                 room.removePlayer(socket.id)
             })
 
             if(!connected){
-                onFirstConnect(socket)
+                onPlayerFirstConnect(socket)
                 connected = true
             }
 

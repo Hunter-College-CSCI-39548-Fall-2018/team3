@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import Cookies from 'js-cookie'
 
 const Background = styled.div`
     background-color: #C2DFFF;
@@ -45,6 +46,17 @@ class Home extends React.Component{
         super(props)
     }
 
+    testGameAsGameOwner = () => {
+        Cookies.set('game_owner', 1)
+        Cookies.set('room', "test")
+    }
+    
+    testGameAsPlayer = () => {
+        Cookies.set('game_owner', 0)
+        Cookies.set('room', "test")
+        Cookies.set('player', "TEST")
+    }
+
     render(){
         return(
           <Background>
@@ -76,8 +88,14 @@ class Home extends React.Component{
             </Menu>
 
             <br/>
-            <a href='/game'><button>Test Game</button></a>
-            <a href='/test-player'><button>Test Player</button></a>
+            <a href='/game'>
+                <button onClick={this.testGameAsGameOwner.bind(this)}>Test game as game owner</button>
+            </a>
+
+            <a href= '/game'>
+                <button onClick={this.testGameAsPlayer.bind(this)}>Test game as player</button>
+            </a>
+
                 
             <Footer>
 

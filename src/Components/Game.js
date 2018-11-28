@@ -10,7 +10,7 @@ class Game extends React.Component{
             sequence: "", 
             turn: false
         }
-
+        this.game_owner = Cookies.get('game_owner')
     }
 
     componentDidMount(){
@@ -90,22 +90,29 @@ class Game extends React.Component{
         socket.emit('start-game')
     }
     render() {
-        return(
+        const player_controls = (
             <div>
                 {/* replace this with images from cdn eventually */}
                 <button id='A' onClick={this.handleCommand.bind(this,'A')}>A</button>
                 <button id='B' onClick={this.handleCommand.bind(this,'B')}>B</button>
                 <button id='C' onClick={this.handleCommand.bind(this,'C')}>C</button>
                 <button id='D' onClick={this.handleCommand.bind(this,'D')}>D</button>
-                
-
-                <div>{this.state.sequence}</div>
-                <div>is your turn? {(this.state.turn).toString()}</div>
-
+            </div> 
+        )
+        const host_controls = (
+            <div>
+                {this.state.sequence}
                 <button onClick={this.handleShuffle.bind(this)}>test shuffle</button>
                 <button onClick={this.startGame.bind(this)}>start game</button>
             </div>
+            
+        )
 
+        return(
+            <div>
+                {this.game_owner === "1" ? host_controls: player_controls}
+                <div>is your turn? {(this.state.turn).toString()}</div>
+            </div>
         )
     }
 }
