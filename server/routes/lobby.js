@@ -83,18 +83,18 @@ module.exports = (app, io, rooms) => {
             socket.on('shuffle-teams', () => {
                 var currentRoom = rooms[req.cookies.room]
                 currentRoom.shuffleTeams()
-                socket.broadcast.emit("shuffled-teams", {team: currentRoom.teams})
+
+                socket.broadcast.emit("shuffled-teams", currentRoom.teams)
                 console.log(currentRoom)
             })
 
             socket.on('kick', (who) => {
-                console.log("call hnadle kcik back end");
-                console.log("what does playe rlook liek", rooms[req.cookies.room].players[who]);
+                //redirect user back to home, delete user from room object
                 socket.to(rooms[req.cookies.room].players[who].socketid).emit('force-disconnect')
                 delete rooms[req.cookies.room].players[who]
 
-                socket.emit('updatePlayers',rooms[req.cookies.room].players)
-                socket.broadcast.emit('updatePlayers',rooms[req.cookies.room].players)
+                socket.emit('get-curr-users',rooms[req.cookies.room].players)
+                socket.broadcast.emit('get-curr-users',rooms[req.cookies.room].players)
             })
         })
         res.sendStatus(200)

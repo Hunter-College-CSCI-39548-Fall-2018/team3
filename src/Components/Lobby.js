@@ -20,9 +20,6 @@ class Lobby extends React.Component {
         }
 
         this.game_owner = Cookies.get("game_owner")
-        this.player = Cookies.get("player")
-        console.log("player:", this.player);
-
     }
     componentDidMount(){
         let code = Cookies.get("room");
@@ -102,17 +99,15 @@ class Lobby extends React.Component {
             this.setState({connected: false})
         })
 
-        socket.on("shuffled-teams", (data) => {
-            console.log(data)
+        socket.on("shuffled-teams", (team) => {
             // Updating the current state of teams after the shuffle
             
-            this.setState({teams: data.team})
-                this.getTeamNum()
+            this.setState({teams: team})
+            this.getTeamNum()
             // Display the list of all players by team name
             document.getElementById("team-name").style.display="block";
         })
 
-        
         // Only execute the shuffleTeams command when the timer is at 0
         socket.on('time-left', (time) => {
           this.setState({timeRem: time});
@@ -125,12 +120,8 @@ class Lobby extends React.Component {
                     // Why doesn't this run?
             }
         });
-
-        socket.on('updatePlayers', (roomObject) => {
-            this.updateUsers(roomObject)
-        })
     }
-
+    
     startTimer = ()=>{
         const socket = this.state.socket
 
@@ -144,9 +135,7 @@ class Lobby extends React.Component {
     }
 
     handleKick = (player) => {
-        console.log("called handle ckick in client", player);
         let socket = this.state.socket
-
         socket.emit('kick', player)
     }
     
@@ -187,17 +176,15 @@ class Lobby extends React.Component {
                     <div id="kick-player">
                         {(this.game_owner == '1' ? kickPlayer : "")}
                     </div>
-
+    
                     <div id="teams" style={{margin:"0 auto", textAlign:"center"}}>
-                        {this.state.teams.map((team,index) => {
-                            <div key={index}>
-                                <span style={{float: "left"}}>Team {index+1}</span>
+                        {this.state.teams.map((team,index) => 
+                            <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
                                 <ul style={{float:"left", width:"20%", display: "inline-block"}}key={index}>
-                                    
-                                    {team.map((player,i) => <li key={i}> {player.name} </li>)}  
+                                    {team.players.map((player,i) => <li key={i}> {player.name} </li>)}  
                                 </ul>
                             </div>
-                        })}
+                        )}
                     </div>
 
                     <a href="/create-game">Create Game</a>
