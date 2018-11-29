@@ -12,6 +12,8 @@ import Game from './Components/Game'
 // Drafts for designing the UI and testing UX
 import HomeDesign from './Components/HomeDesign'
 import CreateGameDesign from './Components/CreateGameDesign'
+import EnterRoomDesign from './Components/EnterRoomDesign'
+import EnterNameDesign from './Components/EnterNameDesign'
 
 class App extends React.Component {
 // express has precedence over react-
@@ -30,6 +32,8 @@ class App extends React.Component {
 					<Route path='/game' component={Game}></Route>
 					<Route path='/home-design' component={HomeDesign}></Route>
 					<Route path='/create-game-design' component={CreateGameDesign}></Route>
+					<Route path='/enter-room-design' component={EnterRoomDesign}></Route>
+                    <Route path='/enter-name-design' component={EnterNameDesign}></Route>
 				</Switch>
 			</BrowserRouter>
 		)

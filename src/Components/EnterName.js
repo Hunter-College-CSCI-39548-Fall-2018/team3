@@ -59,7 +59,9 @@ class EnterName extends React.Component{
             return(
                 <div>
                     <h1>Enter your nickname</h1>
-
+                    <div id="global-error" className="alert alert-danger" role="alert" style={{display:"none"}}>
+                        One or more inputs are bad
+                    </div>
                     <input ref={this.nickname} type='text' name='nickname' autoFocus/>
                     <button id='enter-name' type='button' onClick={this.handleEnterName}>Next</button>
                     <ul>
