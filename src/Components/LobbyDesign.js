@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 import Cookies from 'js-cookie';
 import {Redirect} from 'react-router-dom'
 
-class Lobby extends React.Component {
+class LobbyDesign extends React.Component {
 
   constructor(props){
     super(props)
@@ -186,41 +186,10 @@ class Lobby extends React.Component {
 
     if(this.state.connected){
       return(
-        <div>
-          <div id="team-name" style={{display:"none"}}>
-            You are in Team {this.state.teamNum}
-          </div>
-
-          <div id='code'>code: <input type="text" defaultValue={this.state.code} autoFocus/>
-          </div>
-
-          <div id='players'>
-            players: {this.state.players}
-          </div>
-
-          <div id='timeDisplay'>
-            Time Until Start: {this.state.timeRem}
-          </div>
-
-          {this.game_owner == '1' ? <button onClick={this.startTimer}>Start Timer</button> : ""}
-
-          <div id="kick-player">
-            {(this.game_owner == '1' ? kickPlayer : "")}
-          </div>
-
-          <div id="teams" style={{margin:"0 auto", textAlign:"center"}}>
-            {this.state.teams.map((team,index) => {
-              <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
-                <ul style={{float:"left", width:"20%", display: "inline-block"}}key={index}>
-                  {team.map((player,i) => <li key={i}> {player.name} </li>)}  
-                </ul>
-              </div>
-            })}
-          </div>
-
-          <a href="/create-game">Create Game</a>
-          <br/>
-          <a href="/enter-room">Enter Room</a>
+        <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
+            <h1 id="logo" className="display-4">
+            {this.state.code}tst
+            </h1>
         </div>
       )
     }
@@ -234,4 +203,4 @@ class Lobby extends React.Component {
 
 }
 
-export default Lobby
+export default LobbyDesign

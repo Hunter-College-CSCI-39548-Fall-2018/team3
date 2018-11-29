@@ -57,25 +57,30 @@ class EnterRoomDesign extends React.Component{
             return(
                 <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
                     <h1 id="logo" className="display-4">
-                        Enter your nickname for the game
+                        Room Code
                     </h1>
-                    <div id="global-error" className="alert alert-danger" role="alert" style={{display:"none"}}>
-                        One or more inputs are bad
+                    <div id="global-error" className="alert alert-danger" role="alert" style={{visibility:"hidden"}}>
+                        The room does not exist
                     </div>
                     <div className="container">
-                    </div>
+                        <div className="row">
+                            <div className="col-md-4"></div>
 
-                    <div className="row">
-                        <div className="col-md-2"></div>
-                        <div className="col-md-8">
-                            <div className="input-group-prepend">
-                                <span className="input-group-text" id="basic-addon1">Players per team</span>
+                            <div className="col-md-4">
+                                <div className="input-group col-mb-3">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text" id="basic-addon1">Code:</span>
+                                    </div>
+                                    <input ref={this.room} type='text' name='room' className="form-control"  autoFocus/>
+                                </div>
                             </div>
-                            <input ref={this.players_per_team} type='tel' className="form-control" placeholder="Your nickname (3-12 characters)" required={true} />
-
                         </div>
                     </div>
+                    <br />
+                    <button id='enter-code' type='button' onClick={this.handleEnterRoom} className="btn btn-success">Next</button>
+
                 </div>
+                
 
             )
         }
