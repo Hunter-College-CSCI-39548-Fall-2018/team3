@@ -50,8 +50,7 @@ class Room{
 
     createTeams(){
         console.log("calling create teams");
-        // let teams = this.settings.numOfTeams;
-        let teams = /*this.settings.num_teams*/3;
+        let teams = this.settings.numOfTeams;
         let templateTeam = {players: [], sequence:0};
         for(let i = 0; i < teams; i++){
         
@@ -117,7 +116,8 @@ class Room{
         //update socketid in team
         if(this.teams.length > 0){
             for(let team of this.teams){
-                for(let user of team){
+                console.log("this is team in rooms object", team);
+                for(let user of team.players){
                     if(user.name === player){
                         user.socketid = socketid
                         return

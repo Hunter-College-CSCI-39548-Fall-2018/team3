@@ -35,8 +35,8 @@ const Room = require('./routes/utils/rooms')
 //Temporary creation of a random room with players inside
 let room = new Room()
 room.createTeams()
-room.key = "room"
-rooms["room"] = room
+room.key = "test"
+rooms["test"] = room
 //--------------------------------------------------------
 
 

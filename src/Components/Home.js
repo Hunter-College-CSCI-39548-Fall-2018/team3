@@ -39,8 +39,7 @@ const Logo = styled.img`
     width: 200px;
     height: 200px;
 `
-
-
+var i = Math.floor(Math.random() * (55) )
 class Home extends React.Component{
     constructor(props){
         super(props)
@@ -49,14 +48,15 @@ class Home extends React.Component{
     testGameAsGameOwner = () => {
         Cookies.set('game_owner', 1)
         Cookies.set('room', "test")
+
     }
     
     testGameAsPlayer = () => {
         Cookies.set('game_owner', 0)
         Cookies.set('room', "test")
-        Cookies.set('player', "TEST")
+        Cookies.set('player', "TEST" + i)
     }
-
+    
     render(){
         return(
           <Background>
@@ -69,8 +69,6 @@ class Home extends React.Component{
                 <p>The about page and stuff whatever you want to add</p> */}
             </LogoSpace>
 
-           
-            
             <Menu>
                 <a href='/create-game'>
                     <Button id='create-game'>
@@ -97,9 +95,9 @@ class Home extends React.Component{
             </a>
 
                 
-            <Footer>
+            {/* <Footer>
 
-            </Footer>
+            </Footer> */}
           </Background>
         )
     }

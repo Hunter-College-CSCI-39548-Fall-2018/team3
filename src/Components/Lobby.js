@@ -58,11 +58,7 @@ class Lobby extends React.Component {
     }
 
     // Why doesn't this run?
-    getTeamNum = () => {
-        let index = 0;
-        console.log("im in teamnum")
-        
-        console.log(this.state.teams.length)
+    getTeamNum = () => {        
         for (var i=0, len=this.state.teams.length; i<len; i++) {
             for (var j=0, len2=this.state.teams[i].length; j<len2; j++) {
                 
