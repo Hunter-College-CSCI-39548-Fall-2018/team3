@@ -6,6 +6,7 @@ const Player = require('./utils/player.js')
 module.exports = (app, io, rooms) => {
     var shuffled = false
     let game_started = false
+    const time_until_start = 5000
 
     app.get('/game', (req, res) => {
         var room = rooms[req.cookies.room]
@@ -131,6 +132,11 @@ module.exports = (app, io, rooms) => {
             //finish for when game ends
         }
 
+        //wait for players to connect before starting the game
+        setTimeout(() => {
+            checkForGhosts()
+        }, time_until_start)
+
         console.log("called game route")
         let connected = false
         
@@ -197,7 +203,6 @@ module.exports = (app, io, rooms) => {
             })
         })
 
-        checkForGhosts()
         res.sendStatus(200)
 
     })
