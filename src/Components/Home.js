@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import Cookies from 'js-cookie'
 
 const Background = styled.div`
     background-color: #C2DFFF;
@@ -38,13 +39,24 @@ const Logo = styled.img`
     width: 200px;
     height: 200px;
 `
-
-
+var i = Math.floor(Math.random() * (55) )
 class Home extends React.Component{
     constructor(props){
         super(props)
     }
 
+    testGameAsGameOwner = () => {
+        Cookies.set('game_owner', 1)
+        Cookies.set('room', "test")
+
+    }
+    
+    testGameAsPlayer = () => {
+        Cookies.set('game_owner', 0)
+        Cookies.set('room', "test")
+        Cookies.set('player', "TEST" + i)
+    }
+    
     render(){
         return(
           <Background>
@@ -57,8 +69,6 @@ class Home extends React.Component{
                 <p>The about page and stuff whatever you want to add</p> */}
             </LogoSpace>
 
-           
-            
             <Menu>
                 <a href='/create-game'>
                     <Button id='create-game'>
@@ -76,12 +86,18 @@ class Home extends React.Component{
             </Menu>
 
             <br/>
-            <a href='/game'><button>Test Game</button></a>
-            <a href='/test-player'><button>Test Player</button></a>
-                
-            <Footer>
+            <a href='/game'>
+                <button onClick={this.testGameAsGameOwner.bind(this)}>Test game as game owner</button>
+            </a>
 
-            </Footer>
+            <a href= '/game'>
+                <button onClick={this.testGameAsPlayer.bind(this)}>Test game as player</button>
+            </a>
+
+                
+            {/* <Footer>
+
+            </Footer> */}
           </Background>
         )
     }

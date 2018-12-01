@@ -11,24 +11,36 @@ class EnterRoom extends React.Component{
     }
 
     handleEnterRoom(event){
-        //get input value from state (reference)
+        //get input value from state (reference) 
         let room = this.room.current.value
         let obj = {"room":room}
-
-        fetch('http://localhost:3000/enter-room', {
+        let host = 'http://' + location.hostname
+        fetch(host+':3000/enter-room', {
+            
             method: 'POST',
             body: JSON.stringify(obj),
             headers: { "Content-Type": 'application/json' },
             credentials: 'include'
 
         }).then((res) => {
+            
             if(res.ok){
                 //parse through response's json object first to get value
                 res.json()
                 .then((body) =>{
+                    console.log(body)
+                    
                     //set state (whether or not you should redirect to next page)
-                    if(body)
+                    console.log(body)
+                    if (body['gameStart'] === true){
+                        document.getElementById("room-error").innerHTML = "Game already started"
+                    }
+                    else if (body['keyValid'] === true){
                         this.setState({redirect: true})
+                    }
+                    else{
+                        document.getElementById("room-error").innerHTML = "Invalid Key"
+                    }
                 })
             }
         }).catch((err) => {
@@ -48,6 +60,8 @@ class EnterRoom extends React.Component{
 
                     <input ref={this.room} type='text' name='room' autoFocus/>
                     <button id='enter-room' type='button' onClick={this.handleEnterRoom}>Enter</button>
+                    <div id="room-error"> </div>
+
                 </div>
 
             )
