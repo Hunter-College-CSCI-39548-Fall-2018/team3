@@ -43,6 +43,17 @@ class Room{
         }
     }
 
+    removePlayerFromTeam(socketid){
+        for(let team of this.teams){
+            for(let i = 0; i < team.players.length; i++){
+                if(team.players[i].socketid === socketid){
+                    team.players.splice(i, 1)
+                    return
+                }
+            }
+        }
+    }
+
     hasPlayer(player){
         console.log(this.players)
         return this.players.hasOwnProperty(player)
@@ -51,7 +62,7 @@ class Room{
     createTeams(){
         console.log("calling create teams");
         let teams = this.settings.numOfTeams;
-        let templateTeam = {players: [], sequence:0};
+        let templateTeam = {players: [], curr_icon: 0};
         for(let i = 0; i < teams; i++){
             this.teams.push(templateTeam);
         }
@@ -100,7 +111,7 @@ class Room{
         var hold_teams = _.chunk(newArr, chunk);
 
         let temp = hold_teams.map(team => {
-            let obj = {players: [], sequence: 0}
+            let obj = {players: [], curr_icon: 0}
             obj.players = team
             return obj
         })

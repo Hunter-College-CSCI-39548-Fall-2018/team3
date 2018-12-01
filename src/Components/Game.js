@@ -2,15 +2,17 @@ import React from 'react'
 import io from 'socket.io-client'
 import Cookies from 'js-cookie';
 import GameOwnerControls from './GameOwnerControls'
+// import PlayerControls from './PlayerControls'
+import {Redirect} from 'react-router-dom'
 
 class Game extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             socket: false,
-            sequence: "",
-            turn: false,
-            teams: []
+            curr_icon: "",
+            teams: [],
+            disconnect: false
         }
         this.game_owner = Cookies.get('game_owner')
     }
@@ -45,39 +47,41 @@ class Game extends React.Component {
     handleCommand = (command) => {
         let socket = this.state.socket
         console.log(socket)
-        if (this.state.turn) {
-            console.log("inputing omcmadn");
-            socket.emit('input-command', { command: command, socketid: socket.id })
-        } else {
-            console.log("not your turn fool");
-        }
+        // if (this.state.turn) {
+        //     console.log("inputing omcmadn");
+        //     socket.emit('input-command', { command: command, socketid: socket.id })
+        // } else {
+        //     console.log("not your turn fool");
+        // }
     }
 
     handleEvents = () => {
         let socket = this.state.socket
         console.log("Socket is", socket)
 
-        socket.on('your-turn', () => {
-            console.log("it's my turn now");
-            this.setState({ turn: true })
-        })
-
         socket.on('game-started', (data) => {
-            console.log("received sequence after start game", data.seq);
-            this.setState({ sequence: data.seq })
+            console.log("received curr_icon after start game", data.icon);
+            this.setState({ curr_icon: data.icon })
             this.setState({ teams: data.teams})
         })
 
-        socket.on('correct-command', (seq) => {
-            this.setState({ sequence: seq })
-            this.setState({ turn: false })
+        socket.on('correct-command', (icon) => {
+            this.setState({ curr_icon: icon })
         })
 
         socket.on('wrong-command', () => {
-            this.setState({ turn: true })
-
             //some penalty here
             console.log("you suck")
+        })
+
+        socket.on('force-disconnect', () => {
+            this.setState({ disconnect: true})
+        })
+
+        socket.on('clear-cookies', () => {
+            Cookies.remove("room")
+            Cookies.remove("name")
+            Cookies.remove("game_owner")
         })
     }
 
@@ -90,9 +94,12 @@ class Game extends React.Component {
         let socket = this.state.socket
         socket.emit('start-game')
     }
-    // socket.emit('h')
 
     render() {
+        if(this.state.disconnect){
+            return (<Redirect to='/'/>)
+        }
+
         const player_controls = (
             <div>
                 {/* replace this with images from cdn eventually */}
@@ -108,15 +115,14 @@ class Game extends React.Component {
                 {
                     this.game_owner === "1" ? 
                     <GameOwnerControls
-                        sequence={this.state.sequence} 
                         teams = {this.state.teams}
                         handleShuffle={this.handleShuffle}
                         startGame={this.startGame}
+                        curr-icon = {this.state.curr_icon} 
+
                     /> 
                     : player_controls
                 }
-
-                <div>is your turn? {(this.state.turn).toString()}</div>
             </div>
         )
     }

@@ -8,7 +8,7 @@ class GameOwnerControls extends React.Component{
     render(){
         return(
             <div>
-                <div id='sequence'>
+                <div id='curr-icon'>
                     {/* {this.props.sequence} */}
                 </div>
                 <button onClick={this.props.handleShuffle.bind(this)}>test shuffle</button>

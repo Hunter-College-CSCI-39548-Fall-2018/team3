@@ -1,15 +1,16 @@
-const Room = require('./utils/rooms.js')
-const Player = require('./utils/player.js')
-
-// let k = 0
-
 module.exports = (app, io, rooms) => {
     var shuffled = false
-    let game_started = false
+    var game_started = false
+
     const time_until_start = 5000
+    const total_icons = 40
+    const end_score = 30
+
+    var sockets_connected = []
 
     app.get('/game', (req, res) => {
         var room = rooms[req.cookies.room]
+        var connected = false
 
         /*
         *   Shuffle icons each turn for all players
@@ -20,29 +21,23 @@ module.exports = (app, io, rooms) => {
         }
 
         /*
-        *   Calls a random player in team 
-        *   and tells them it is his turn. Only
-        *   that person can input a command
+        *   Generate the icon to be inputted on the screen
         */
-        // setTurn = (team) => {
-        //     let rand = Math.floor(Math.random() * (team.players.length) )
-        //     console.log("random number:", rand);
-
-        //     io.to(team.players[rand].socketid).emit('your-turn')
-        // }
-
-        /*
-        *   Starts the game by generating random sequence
-        *   and displaying it for the users on screen
-        */
-
-        clearCookies = () =>{
-            res.clearCookie("player")
-            res.clearCookie("room")
-            res.clearCookie("game_owner")
+        generateCurrIcon = () => {
+            return Math.floor(Math.random() * total_icons)
         }
 
-        startGame = (socket, room, seq) => {
+        clearCookies = (socket) =>{
+            //cant clear cookies server side because sends response first
+            //(cant set headers after they're sent)
+            socket.emit('clear-cookies')
+        }
+
+        /*
+        *   Starts the game by generating random icon
+        *   and displaying it for the users on screen
+        */
+        startGame = (socket, room) => {
             console.log("called start game");
 
             // for(let key of room.players){
@@ -50,9 +45,10 @@ module.exports = (app, io, rooms) => {
             // }
 
             console.log("teams in start game:", room.teams);
+            let curr_icon = generateCurrIcon()
 
-            socket.to(room.key).emit('game-started', {seq:seq[0], teams: room.teams})
-            socket.emit('game-started', {seq:seq[0], teams:room.teams})
+            socket.to(room.key).emit('game-started', {icon: curr_icon, teams: room.teams})
+            socket.emit('game-started', {icon: curr_icon, teams:room.teams})
 
             console.log("end of clal game");
         }
@@ -64,13 +60,15 @@ module.exports = (app, io, rooms) => {
         */
         onPlayerFirstConnect = (socket) => {
             console.log("socket connected");
-            console.log(req.cookies);
+            console.log("cookies ya", req.cookies);
+            console.log("socket id for player", socket.id);
+
+            sockets_connected.push(socket.id)
 
             let name = req.cookies.player
-            console.log("cookie ofr name", name);
 
-            console.log("player obj", room.players[name]);
             //mark that player has connected successfully to the game
+            // console.log("player in room", room.players[name].connected);
             // room.players[name].connected = true
 
             //only for testing purposes- room should be already
@@ -79,22 +77,50 @@ module.exports = (app, io, rooms) => {
             // player.room = req.cookies.room
             // room.addPlayer(req.cookies.player, player)
             
-            room.setSocketId(name, socket.id)
+            // room.setSocketId(name, socket.id)
 
             socket.join(room.key)
             // console.log("people in room", room.players)
         }
-        onGameOwnerFirstConnect = (socket) => {
-            console.log("socket conncected");
-            console.log(req.cookies);
+        onPlayerDisconnect = (socket) => {
+            let team = room.whichTeam(socket.id)
 
-            room.game_owner = socket.id
+            console.log("player removed from room list before:", room.players);
+            console.log("player removed from room teams before:", team.players);
 
-            socket.join(room)
+            //remove player by socket id
+            room.removePlayer(socket.id)
+            room.removePlayerFromTeam(socket.id)
+
+            console.log("player removed from room list after:", room.players);
+            console.log("player removed from room teams after:", team.players);
+
+            clearCookies(socket)        
         }
 
-        checkCommand = (seq, command) => {
-            return seq == command
+        onGameOwnerFirstConnect = (socket) => {
+            console.log("socket id for game owner", socket.id);
+
+            sockets_connected.push(socket.id)
+
+            room.game_owner = socket.id
+            socket.join(room)
+        }
+        onGameOwnerDisconnect = (socket) => {
+            console.log("players in room on game disc before:", room.players);
+            console.log("teams in room on game dsc before:", room.teams);
+
+            //disconnect and redirect everyone in room
+            socket.to(room.key).emit('force-disconnect')
+            delete room
+
+            console.log("does gam eexst after disc", rooms);
+
+            clearCookies(socket)
+        }
+
+        checkCommand = (curr_icon, command) => {
+            return curr_icon == command
         }
 
         /* 
@@ -108,7 +134,7 @@ module.exports = (app, io, rooms) => {
 
         /*
         *   If anyone has not connected to the game, kick them out
-        *   of the room
+        *   of the room. Removes by name, not socket id
         */
         checkForGhosts = () => {
             //remove disconnected player from players list
@@ -120,9 +146,9 @@ module.exports = (app, io, rooms) => {
 
             //remove disconnected player from team
             for(let team of room.teams){
-                for(let player of team.players){
-                    if(!player.connected){
-                        delete player
+                for(let i = 0; i < team.players.length; i++){
+                    if(!team.players[i].connected){
+                        team.players.splice(i, 1)
                     }
                 }
             }
@@ -138,29 +164,35 @@ module.exports = (app, io, rooms) => {
         }, time_until_start)
 
         console.log("called game route")
-        let connected = false
-        
-        //define sequence later
-        let seq = ['A', 'C', 'D', 'B']
-        
+                
         io.sockets.on('connection', (socket)=>{
-
-            if(req.cookies.game_owner === "1"){
-                if(!connected){
-                    onGameOwnerFirstConnect(socket)
-                    connected = true
+            //to track if a user has connected for the first time
+            if(sockets_connected.indexOf(socket.id) === -1){
+                if(req.cookies.game_owner === "1"){
+                    if(!connected){
+                        onGameOwnerFirstConnect(socket)
+                        connected = true
+                    }
                 }
-            }
-            else if(req.cookies.game_owner === "0"){
-                if(!connected){
-                    onPlayerFirstConnect(socket)
-                    connected = true
+                else if(req.cookies.game_owner === "0"){
+                    if(!connected){
+                        onPlayerFirstConnect(socket)
+                        connected = true
+                    }
                 }
             }
             
             socket.on('disconnect', () => {
-                console.log("someone disconnected");
-                room.removePlayer(socket.id)
+                console.log("disconnect lclaled");
+                if(room){
+                    if(rooms[req.cookies.room].game_owner === socket.id){
+                        onGameOwnerDisconnect(socket)
+                    }
+                    else{
+                        //if room still exists and player disconnects
+                        onPlayerDisconnect(socket)
+                    }
+                }
             })
 
             socket.on('shuffle', () => {
@@ -171,10 +203,8 @@ module.exports = (app, io, rooms) => {
             })
 
             socket.on('start-game', () => {
-                console.log("got start game emit in server");
-                console.log("room object", room);
                 if(!game_started){
-                    startGame(socket, room, seq)
+                    startGame(socket, room)
                     game_started = true
                 }
             })
