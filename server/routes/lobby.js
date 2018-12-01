@@ -20,6 +20,12 @@ module.exports = (app, io, rooms) => {
             socket.to(room).emit('new-player', name)
         }
 
+        clearCookies = () => {
+            res.clearCookie("player")
+            res.clearCookie("room")
+            res.clearCookie("game_owner")
+        }
+
         onGameOwnerFirstConnect = (socket) => {
             rooms[req.cookies.room].setGameOwner(socket.id)
 
@@ -29,9 +35,12 @@ module.exports = (app, io, rooms) => {
 
         onPlayerDisconnect = (socket) =>{
             let room = rooms[req.cookies.room]
+
             room.removePlayer(socket.id)
             //update lobby page for everyone still connected
             socket.to(req.cookies.room).emit('player-disconnected', room.players)
+
+            clearCookies()
         }
 
         onGameOwnerDisconnect = (socket) => {
@@ -40,10 +49,12 @@ module.exports = (app, io, rooms) => {
 
             delete rooms[req.cookies.room]
             console.log('state of room after disc', rooms)
+
+            clearCookies()
         }
 
         io.sockets.on('connection', (socket) => {
-
+            console.log(socket.id);
             if(req.cookies.game_owner === '0'){
                 //make sure to emit user has joined only once
                 if(!connected){
@@ -69,23 +80,23 @@ module.exports = (app, io, rooms) => {
             socket.on('disconnect', () => {
                 //when room doesn't exist anymore (after game owner disconnects),
                 //ignore if is game owner or not, just disconnect
-                if(rooms[req.cookies.room]){
-                    if(rooms[req.cookies.room].game_owner === socket.id){
-                        onGameOwnerDisconnect(socket)
-                    }
-                    else{
-                        //if room still exists and player disconnects
-                        onPlayerDisconnect(socket)
-                    }
-                }
+                // if(rooms[req.cookies.room]){
+                //     if(rooms[req.cookies.room].game_owner === socket.id){
+                //         onGameOwnerDisconnect(socket)
+                //     }
+                //     else{
+                //         //if room still exists and player disconnects
+                //         onPlayerDisconnect(socket)
+                //     }
+                // }
             })
 
             socket.on('shuffle-teams', () => {
-                var currentRoom = rooms[req.cookies.room]
-                currentRoom.shuffleTeams()
+                var room = rooms[req.cookies.room]
+                room.shuffleTeams()
 
-                socket.broadcast.emit("shuffled-teams", currentRoom.teams)
-                console.log(currentRoom)
+                socket.broadcast.emit("shuffled-teams", room.teams)
+                console.log(room)
             })
 
             socket.on('kick', (who) => {

@@ -85,6 +85,7 @@ class Room{
 
     whichTeam(player){
         for(let key of this.teams){
+            //find player in a team array
             if(_.findWhere(key.players, player)){
                 return key
             }
@@ -108,7 +109,7 @@ class Room{
             console.log("shuffled teams:", key.players);
         }
     }
-
+    
     setSocketId(player, socketid){
         //update socketid in players list
         this.players[player].socketid = socketid
@@ -120,11 +121,13 @@ class Room{
                 for(let user of team.players){
                     if(user.name === player){
                         user.socketid = socketid
-                        return
+                        return 1
                     }
                 }
             }
         }
+
+        return 0
     }
 
     returnTeams(){

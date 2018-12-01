@@ -25,7 +25,8 @@ class Game extends React.Component {
                 console.log("response!", res.status)
                 const socket = io.connect(host + ':3000/', {
                     transports: ['websocket'],
-                    upgrade: false
+                    upgrade: false,
+                    'force new connection': true
                 })
 
                 //fetch is asynchronous, so have the client connect after the request is made
@@ -33,7 +34,7 @@ class Game extends React.Component {
                     socket: socket
                 }, () => {
                     this.handleEvents()
-                    console.log("state is", this.state)
+                    console.log("state is", this.state.socket)
                 })
 
             })
@@ -52,7 +53,6 @@ class Game extends React.Component {
         }
     }
 
-    //in the event of wrong or right command, do something
     handleEvents = () => {
         let socket = this.state.socket
         console.log("Socket is", socket)
@@ -62,7 +62,7 @@ class Game extends React.Component {
             this.setState({ turn: true })
         })
 
-        socket.on('start-game', (data) => {
+        socket.on('game-started', (data) => {
             console.log("received sequence after start game", data.seq);
             this.setState({ sequence: data.seq })
             this.setState({ teams: data.teams})
@@ -83,7 +83,7 @@ class Game extends React.Component {
 
     handleShuffle = () => {
         let socket = this.state.socket
-        socket.emit('shuffle-teams')
+        socket.emit('shuffle')
     }
 
     startGame = () => {
@@ -104,14 +104,16 @@ class Game extends React.Component {
         
         return (
             <div>
-                {this.game_owner === "1" ? 
+                {
+                    this.game_owner === "1" ? 
                     <GameOwnerControls
                         sequence={this.state.sequence} 
-                        teams={this.state.teams} 
+                        teams = {this.state.teams}
                         handleShuffle={this.handleShuffle}
                         startGame={this.startGame}
                     /> 
-                    : player_controls}
+                    : player_controls
+                }
 
                 <div>is your turn? {(this.state.turn).toString()}</div>
             </div>

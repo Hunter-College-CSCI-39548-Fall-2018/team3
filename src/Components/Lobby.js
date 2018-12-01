@@ -66,7 +66,6 @@ class Lobby extends React.Component {
                 if (this.state.teams[i][j].name === Cookies.get("player")) { 
                     console.log("i have a match at", i, j)
                     
-                    
                     this.setState({teamNum: i+1})
                 }
             }
@@ -97,11 +96,10 @@ class Lobby extends React.Component {
 
         socket.on("shuffled-teams", (team) => {
             // Updating the current state of teams after the shuffle
-            
-            this.setState({teams: team})
-            this.getTeamNum()
-            // Display the list of all players by team name
-            document.getElementById("team-name").style.display="block";
+            this.setState({ teams: team }, () =>{
+                console.log("this is teams", team);
+                // this.getTeamNum()
+            })
         })
 
         // Only execute the shuffleTeams command when the timer is at 0
@@ -109,17 +107,17 @@ class Lobby extends React.Component {
           this.setState({timeRem: time});
           
           if(time === 0){
-                console.log("time is this value: ", time)
-                //   this.shuffleTeams()
-                socket.emit('shuffle-teams')
-                document.getElementById("kick-player").style.display = "none"
-                    // Why doesn't this run?
+                console.log("time is this value: ", time)  
+                this.startGame()              
             }
         });
     }
     
     startTimer = ()=>{
         const socket = this.state.socket
+
+        socket.emit('shuffle-teams')    
+        document.getElementById("kick-player").style.display = "none"
 
         // Tell the server to start the countdown timer for this room
         socket.emit("start-time", {room:this.state.code});
@@ -135,6 +133,12 @@ class Lobby extends React.Component {
         socket.emit('kick', player)
     }
     
+    componentWillUnmount = () => {
+        //destroy socket instance
+        let socket= this.state.socket
+        socket.close()
+    }
+
     render(){
         const kickPlayer = this.state.players.split(" ").slice(1).map((player,index) => {
             return (
