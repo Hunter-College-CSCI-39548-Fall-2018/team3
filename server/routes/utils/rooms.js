@@ -53,7 +53,6 @@ class Room{
         let teams = this.settings.numOfTeams;
         let templateTeam = {players: [], sequence:0};
         for(let i = 0; i < teams; i++){
-        
             this.teams.push(templateTeam);
         }
     }
@@ -67,8 +66,9 @@ class Room{
                     clearInterval(updated_time);
                     this.start = true;
                 }
+
+                socket.to(this.key).emit('time-left', this.time)
                 socket.emit('time-left', this.time);
-                socket.broadcast.emit('time-left', this.time);
             }, 1000);
         }
     }
@@ -105,9 +105,6 @@ class Room{
             return obj
         })
         this.teams = temp
-        for(let key of this.teams){
-            console.log("shuffled teams:", key.players);
-        }
     }
     
     setSocketId(player, socketid){
@@ -117,7 +114,6 @@ class Room{
         //update socketid in team
         if(this.teams.length > 0){
             for(let team of this.teams){
-                console.log("this is team in rooms object", team);
                 for(let user of team.players){
                     if(user.name === player){
                         user.socketid = socketid

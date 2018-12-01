@@ -82,10 +82,12 @@ module.exports = (app, io, rooms) => {
             room.setSocketId(name, socket.id)
 
             socket.join(req.cookies.room)
-            console.log("people in room", room.players)
+            // console.log("people in room", room.players)
         }
         onGameOwnerFirstConnect = (socket) => {
             // let room = req.cookies.room
+            console.log("socket conncected");
+
             room.game_owner = socket.id
 
             socket.join(room)
@@ -115,7 +117,6 @@ module.exports = (app, io, rooms) => {
         let seq = ['A', 'C', 'D', 'B']
         
         io.sockets.on('connection', (socket)=>{
-            console.log("socket conncected");
             if(req.cookies.game_owner === "1"){
                 if(!connected){
                     onGameOwnerFirstConnect(socket)

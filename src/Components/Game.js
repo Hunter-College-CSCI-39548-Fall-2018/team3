@@ -90,6 +90,7 @@ class Game extends React.Component {
         let socket = this.state.socket
         socket.emit('start-game')
     }
+    // socket.emit('h')
 
     render() {
         const player_controls = (
