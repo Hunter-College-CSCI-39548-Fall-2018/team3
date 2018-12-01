@@ -111,7 +111,7 @@ class Room{
         //update socketid in players list
         this.players[player].socketid = socketid
 
-        //update socketid in team
+        //update socketid in teams list
         if(this.teams.length > 0){
             for(let team of this.teams){
                 for(let user of team.players){

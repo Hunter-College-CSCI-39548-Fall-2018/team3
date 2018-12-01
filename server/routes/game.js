@@ -23,12 +23,12 @@ module.exports = (app, io, rooms) => {
         *   and tells them it is his turn. Only
         *   that person can input a command
         */
-        setTurn = (team) => {
-            let rand = Math.floor(Math.random() * (team.players.length) )
-            console.log("random number:", rand);
+        // setTurn = (team) => {
+        //     let rand = Math.floor(Math.random() * (team.players.length) )
+        //     console.log("random number:", rand);
 
-            io.to(team.players[rand].socketid).emit('your-turn')
-        }
+        //     io.to(team.players[rand].socketid).emit('your-turn')
+        // }
 
         /*
         *   Starts the game by generating random sequence
@@ -48,12 +48,6 @@ module.exports = (app, io, rooms) => {
             //     shuffleIcons(key.socketid)
             // }
 
-            // console.log("start game is called");
-            // for(let key of room.teams){
-            //     setTurn(key)
-            // }
-            // console.log("who is the room emitting to", room);
-
             console.log("teams in start game:", room.teams);
 
             socket.to(room.key).emit('game-started', {seq:seq[0], teams: room.teams})
@@ -68,25 +62,30 @@ module.exports = (app, io, rooms) => {
         *   routes. 
         */
         onPlayerFirstConnect = (socket) => {
-            // let room = rooms[req.cookies.room]
-
             console.log("socket connected");
+            console.log(req.cookies);
+
+            let name = req.cookies.player
+            console.log("cookie ofr name", name);
+
+            console.log("player obj", room.players[name]);
+            //mark that player has connected successfully to the game
+            // room.players[name].connected = true
 
             //only for testing purposes- room should be already
             //populated in real game
-            let player = new Player(req.cookies.player, socket.id)
-            player.room = req.cookies.room
-            room.addPlayer(req.cookies.player, player)
+            // let player = new Player(req.cookies.player, socket.id)
+            // player.room = req.cookies.room
+            // room.addPlayer(req.cookies.player, player)
             
-            let name = req.cookies.player
             room.setSocketId(name, socket.id)
 
-            socket.join(req.cookies.room)
+            socket.join(room.key)
             // console.log("people in room", room.players)
         }
         onGameOwnerFirstConnect = (socket) => {
-            // let room = req.cookies.room
             console.log("socket conncected");
+            console.log(req.cookies);
 
             room.game_owner = socket.id
 
@@ -106,6 +105,28 @@ module.exports = (app, io, rooms) => {
             }
         }
 
+        /*
+        *   If anyone has not connected to the game, kick them out
+        *   of the room
+        */
+        checkForGhosts = () => {
+            //remove disconnected player from players list
+            for(let player in room.players){
+                if(!player.connected){
+                    delete player
+                }
+            }
+
+            //remove disconnected player from team
+            for(let team of room.teams){
+                for(let player of team.players){
+                    if(!player.connected){
+                        delete player
+                    }
+                }
+            }
+        }
+
         endGame = (team) => {
             //finish for when game ends
         }
@@ -117,6 +138,7 @@ module.exports = (app, io, rooms) => {
         let seq = ['A', 'C', 'D', 'B']
         
         io.sockets.on('connection', (socket)=>{
+
             if(req.cookies.game_owner === "1"){
                 if(!connected){
                     onGameOwnerFirstConnect(socket)
@@ -129,7 +151,7 @@ module.exports = (app, io, rooms) => {
                     connected = true
                 }
             }
-
+            
             socket.on('disconnect', () => {
                 console.log("someone disconnected");
                 room.removePlayer(socket.id)
@@ -174,6 +196,8 @@ module.exports = (app, io, rooms) => {
                 }
             })
         })
+
+        checkForGhosts()
         res.sendStatus(200)
 
     })

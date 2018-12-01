@@ -33,20 +33,21 @@ const Room = require('./routes/utils/rooms')
 
 //--------------------------------------------------------
 //Temporary creation of a random room with players inside
-let room = new Room()
-room.createTeams()
-room.key = "test"
-rooms["test"] = room
+// let room = new Room()
+// room.createTeams()
+// room.key = "test"
+// rooms["test"] = room
 //--------------------------------------------------------
 
 
 // This line is required to serve the React files in Express
 app.use(express.static(path.join(__dirname, '..', 'dist')));
 
-require('./routes/game')(app, io, rooms, room)
 require('./routes/create-game')(app, rooms)
 require('./routes/join-game')(app, rooms)
 require('./routes/lobby')(app, io, rooms)
+require('./routes/game')(app, io, rooms)
+
 
 // Necessary as a catch-all to assist with React-routing
 app.get('/*', function(req, res) {
