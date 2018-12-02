@@ -95,10 +95,10 @@ class Room{
     }
 
     whichTeam(player){
-        for(let key of this.teams){
-            //find player in a team array
-            if(_.findWhere(key.players, player)){
-                return key
+        for(let team of this.teams){
+            // //find player in a team array
+            if(_.findWhere(team.players, player)){
+                return team
             }
         }
     }

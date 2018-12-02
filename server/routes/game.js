@@ -59,31 +59,21 @@ module.exports = (app, io, rooms) => {
         *   routes. 
         */
         onPlayerFirstConnect = (socket) => {
-            console.log("socket connected");
-            console.log("cookies ya", req.cookies);
-            console.log("socket id for player", socket.id);
-
             sockets_connected.push(socket.id)
 
             let name = req.cookies.player
 
             //mark that player has connected successfully to the game
             // console.log("player in room", room.players[name].connected);
-            // room.players[name].connected = true
-
-            //only for testing purposes- room should be already
-            //populated in real game
-            // let player = new Player(req.cookies.player, socket.id)
-            // player.room = req.cookies.room
-            // room.addPlayer(req.cookies.player, player)
+            room.players[name].connected = true
             
-            // room.setSocketId(name, socket.id)
+            room.setSocketId(name, socket.id)
 
             socket.join(room.key)
             // console.log("people in room", room.players)
         }
         onPlayerDisconnect = (socket) => {
-            let team = room.whichTeam(socket.id)
+            let team = room.whichTeam({socketid: socket.id})
 
             console.log("player removed from room list before:", room.players);
             console.log("player removed from room teams before:", team.players);
@@ -112,11 +102,11 @@ module.exports = (app, io, rooms) => {
 
             //disconnect and redirect everyone in room
             socket.to(room.key).emit('force-disconnect')
-            delete room
-
-            console.log("does gam eexst after disc", rooms);
 
             clearCookies(socket)
+            delete rooms[req.cookies.room]
+
+            console.log("does gam eexst after disc", rooms);
         }
 
         checkCommand = (curr_icon, command) => {
@@ -154,6 +144,19 @@ module.exports = (app, io, rooms) => {
             }
         }
 
+        //get the cookie tied to a socket 
+        getGameOwnerCookie = (socket) => {
+            let cookies = socket.handshake.headers['cookie']
+            let cookie_split = cookies.split("; ")
+
+            for(let cookies of cookie_split){
+                if(cookies[0] === 'g'){
+                    let game_owner = cookies.split("=")
+                    return game_owner[1]
+                }
+            }
+        }
+
         endGame = (team) => {
             //finish for when game ends
         }
@@ -168,23 +171,16 @@ module.exports = (app, io, rooms) => {
         io.sockets.on('connection', (socket)=>{
             //to track if a user has connected for the first time
             if(sockets_connected.indexOf(socket.id) === -1){
-                if(req.cookies.game_owner === "1"){
-                    if(!connected){
-                        onGameOwnerFirstConnect(socket)
-                        connected = true
-                    }
+                if(getGameOwnerCookie(socket) === "0"){
+                    onPlayerFirstConnect(socket)
                 }
-                else if(req.cookies.game_owner === "0"){
-                    if(!connected){
-                        onPlayerFirstConnect(socket)
-                        connected = true
-                    }
+                else if(getGameOwnerCookie(socket) === "1"){
+                    onGameOwnerFirstConnect(socket)
                 }
             }
             
             socket.on('disconnect', () => {
-                console.log("disconnect lclaled");
-                if(room){
+                if(rooms[req.cookies.room]){
                     if(rooms[req.cookies.room].game_owner === socket.id){
                         onGameOwnerDisconnect(socket)
                     }
