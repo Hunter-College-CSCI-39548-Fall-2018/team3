@@ -74,12 +74,6 @@ class Game extends React.Component {
         socket.on('force-disconnect', () => {
             this.setState({ disconnect: true})
         })
-
-        socket.on('clear-cookies', () => {
-            Cookies.remove("room")
-            Cookies.remove("player")
-            Cookies.remove("game_owner")
-        })
     }
 
     handleShuffle = () => {
@@ -90,6 +84,14 @@ class Game extends React.Component {
     startGame = () => {
         let socket = this.state.socket
         socket.emit('start-game')
+    }
+
+    componentWillUnmount = () => {
+        if(!this.state.disconnect){
+            Cookies.remove("room")
+            Cookies.remove("player")
+            Cookies.remove("game_owner")
+        }
     }
 
     render() {

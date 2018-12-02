@@ -111,12 +111,6 @@ class Lobby extends React.Component {
                 this.startGame()              
             }
         });
-
-        socket.on('clearCookie', () => {
-        	Cookies.remove('game_owner')
-        	Cookies.remove('room')
-        	Cookies.remove('player')
-        })
     }
     
     startTimer = ()=>{
@@ -143,6 +137,12 @@ class Lobby extends React.Component {
         //destroy socket instance
         let socket= this.state.socket
         socket.close()
+
+        if(!this.state.start_game){
+            Cookies.remove('game_owner')
+        	Cookies.remove('room')
+        	Cookies.remove('player')
+        }
     }
 
     render(){

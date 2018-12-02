@@ -26,12 +26,6 @@ module.exports = (app, io, rooms) => {
             return Math.floor(Math.random() * total_icons)
         }
 
-        clearCookies = (socket) =>{
-            //cant clear cookies server side because sends response first
-            //(cant set headers after they're sent)
-            socket.emit('clear-cookies')
-        }
-
         /*
         *   Starts the game by generating random icon
         *   and displaying it for the users on screen
@@ -85,8 +79,6 @@ module.exports = (app, io, rooms) => {
 
             console.log("player removed from room list after:", room.players);
             console.log("player removed from room teams after:", team.players);
-
-            clearCookies(socket)        
         }
 
         onGameOwnerFirstConnect = (socket) => {
@@ -102,7 +94,6 @@ module.exports = (app, io, rooms) => {
             //disconnect and redirect everyone in room
             socket.to(room.key).emit('force-disconnect')
 
-            clearCookies(socket)
             delete rooms[req.cookies.room]
 
             console.log("does gam eexst after disc", rooms);

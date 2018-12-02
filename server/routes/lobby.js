@@ -4,10 +4,6 @@ module.exports = (app, io, rooms) => {
         var connected = false
         var room = rooms[req.cookies.room]
 
-        clearCookies = (socket) => {
-            socket.emit('clearCookie')
-        }
-
         onPlayerFirstConnect = (socket) => {
             let name = req.cookies.player
 
@@ -30,8 +26,6 @@ module.exports = (app, io, rooms) => {
 
             //update lobby page for everyone still connected
             socket.to(room.key).emit('player-disconnected', room.players)
-
-            clearCookies(socket)
         }
 
         onGameOwnerFirstConnect = (socket) => {
@@ -44,8 +38,6 @@ module.exports = (app, io, rooms) => {
             
             delete room
             console.log('state of room after disc', rooms)
-
-            clearCookies()
         }
 
         io.sockets.on('connection', (socket) => {
