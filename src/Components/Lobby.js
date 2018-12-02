@@ -54,32 +54,7 @@ class Lobby extends React.Component {
         // console.log("I am in shuffleTeams")
     }
 
-    getTeamNum = () => {
-        let index = 0;
-        // console.log("im in teamnum")
-
-        // console.log(this.state.teams.length)
-        for (var i = 0, len = this.state.teams.length; i < len; i++) {
-            for (var j = 0, len2 = this.state.teams[i].length; j < len2; j++) {
-                // console.log(this.state.teams[i][j], Cookies.get("player"))
-                if (this.state.teams[i][j].name === Cookies.get("player")) {
-                    // console.log("i have a match at", i, j)
-
-
-                    this.setState({
-                        teamNum: i + 1
-                    })
-                }
-            }
-        }
-    }
-
-    //use this function when you want to update all users on the page after an event
-    updateUsers = (curr_users) => {
-
-        this.setState({ players: curr_users })
-    }
-
+  
     handleEvents = () => {
         let socket = this.state.socket
 
@@ -87,7 +62,7 @@ class Lobby extends React.Component {
             this.updateUsers(curr_users)
         })
 
-        socket.on('new-player', (name) => {
+        socket.on('new-player', (curr_users) => {
             console.log('received new player')
             this.setState({players: curr_users})
         })
@@ -102,6 +77,7 @@ class Lobby extends React.Component {
         })
 
         socket.on("shuffled-teams", (team) => {
+            console.log("this is teams", team);
             // Updating the current state of teams after the shuffle
             this.setState({ teams: team }, () => {
                 console.log("this is teams", team);
@@ -118,78 +94,21 @@ class Lobby extends React.Component {
                 this.startGame()
             }
         });
-        
-        socket.on('clearCookie', () => {
-            Cookies.remove('game_owner')
-            Cookies.remove('room')
-            Cookies.remove('player')
-        })
 
+    }
 
-        socket.on('get-curr-users', (curr_users) => {
-            console.log("get-curr-users", curr_users)
-            this.setState({ players: curr_users })
-            //this.setCurrUsers(curr_users)
-        })
-
-        socket.on('new-player', (curr_users) => {
-            console.log('received new player', curr_users)
-            this.setState({ players: curr_users })
-        })
-
-        socket.on('player-disconnected', (curr_users) => {
-            // console.log("player disocnnected");
-            this.setCurrUsers(curr_users)
-        })
-
-        socket.on("shuffled-teams", (data) => {
-            //   console.log(data)
-            // Updating the current state of teams after the shuffle
-
-            this.setState({ teams: data.team })
-            console.log(this.state.teams)
-            this.getTeamNum()
-
-            // Display the list of all players by team name
-            // document.getElementById("team-name").style.display="block";
-        })
-
-
-        // Only execute the shuffleTeams command when the timer is at 0
-        socket.on('time-left', (time) => {
-            this.setState({ timeRem: time });
-
-            if (time === 0) {
-                // console.log("time is this value: ", time)
-                this.shuffleTeams()
-                //document.getElementById("kick-player").style.display = "none"
-            }
-        });
-
-        socket.on('updatePlayers', (roomObject) => {
-            console.log("Current Room object", roomObject)
-            let curr_users = ""
-            for (let key in roomObject) {
-                // curr_users += (" " + <span style={{fontSize: "16px"}} className="badge badge-secondary">{key}</span>)
-            }
-            this.setState({ players: curr_users })
-        })
-
-        socket.on('redirect-user', (socketid) => {
-            //   console.log("Redirect this user:",socketid)
-            //   console.log("Curr user:",this.state.socket['id'])
-            if (socket['id'] === socketid) {
-                this.setState({ redirect: true })
-            }
-        })
-
+    //use this function when you want to update all users on the page after an event
+    updateUsers = (curr_users) => {
+        this.setState({ players: curr_users })
     }
 
     startTimer = () => {
         const socket = this.state.socket
 
+        socket.emit('shuffle-teams')    
+
         // Tell the server to start the countdown timer for this room
-        socket.emit("start-time", { room: this.state.code });
+        socket.emit("start-time", {room:this.state.code});
     }
 
 
@@ -206,15 +125,9 @@ class Lobby extends React.Component {
     }
 
     render() {
-
-        // const kickPlayer = this.state.players.split(" ").slice(1).map((player,index) => {
-        //   return (<div key={index}>
-        //     <button key={index} onClick={this.handleKick.bind(this,player)}> 
-        //       {player}
-        //     </button>
-        //     </div>
-        //   )
-        // })
+        if(this.state.start_game){
+            return (<Redirect to='/game'/>)
+        }
 
         if (this.state.redirect === true) {
             return (<Redirect to='/' />)
@@ -236,7 +149,7 @@ class Lobby extends React.Component {
                     <div id='players' style={{ fontSize: "16px" }} className="font-weight-bold">
                         {/* Players: {this.state.players.map((player,i)=> <span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary" key={i}>{player}</span>)} */}
                         Players:
-                    {Object.keys(this.state.players).map((player, i) =>
+                        {Object.keys(this.state.players).map((player, i) =>
                             <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
 
                                 <span className="tag label label-info">
@@ -249,35 +162,32 @@ class Lobby extends React.Component {
                             <header className="panel-heading">
                                 <h5 className="panel-title"></h5>
                             </header>
-                            <div className="row">
-                                <div className="col-md-3"></div>
-                                <div className="col-md-6">
-
-
-                                </div>
-                            </div>
-
                         </div>
                         <footer className="panel-footer">...</footer>
                     </div>
-                    <br />
-
-                    <div id="teams" style={{ margin: "0 auto", textAlign: "center" }}>
-                        {this.state.teams.map((team, index) => {
-                            <div key={index}><span style={{ float: "left" }}>Team {index + 1}</span>
-                                <ul style={{ float: "left", width: "20%", display: "inline-block" }} key={index}>
-                                    {team.map((player, i) => <li key={i}> {player.name} </li>)}
+                
+                    <div>
+                        {console.log("these ar ehthe teams", this.state.teams)}
+                        {this.state.teams.map((team,index)=>
+                            <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
+                                
+                                <ul style={{float:"left", width:"20%", display: "inline-block"}} key={index}>
+                                    {team.players.map((player,i) => <li style={{display:"listItem"}} key={i}> {player.name} </li>)}  
                                 </ul>
+                            
                             </div>
-
-                        }
                         )}
-
                     </div>
-                    {this.game_owner == '1' ? <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> : ""}
 
-                </div>
-            )
+                    <br />
+                    <footer className="panel-footer">...</footer>
+                    {
+                        this.game_owner == '1' ? 
+                            <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> 
+                        : ""
+                    }
+                </div>    
+            )      
         }
         else {
             // if anyone disconnected, redirect all players including game owner to home
