@@ -58,19 +58,15 @@ class Room{
     }
 
     startTimer(socket){
-        if(this.start === false){
-            //activated for the first time
-            let updated_time = setInterval( () => {
-                this.time -=1;
-                if(this.time === 0){
-                    clearInterval(updated_time);
-                    this.start = true;
-                }
-
-                socket.to(this.key).emit('time-left', this.time)
-                socket.emit('time-left', this.time);
-            }, 1000);
-        }
+        this.start = true;
+        let updated_time = setInterval( () => {
+            this.time -=1;
+            if(this.time === 0){
+                clearInterval(updated_time);
+            }
+            socket.to(this.key).emit('time-left', this.time)
+            socket.emit('time-left', this.time);
+        }, 1000);
     }
 
     countPlayers(){
