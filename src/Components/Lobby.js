@@ -54,7 +54,12 @@ class Lobby extends React.Component {
         // console.log("I am in shuffleTeams")
     }
 
-  
+    clearCookies = () => {
+        Cookies.remove('game_owner')
+        Cookies.remove('room')
+        Cookies.remove('player')
+    }
+
     handleEvents = () => {
         let socket = this.state.socket
 
@@ -73,7 +78,8 @@ class Lobby extends React.Component {
         })
 
         socket.on('force-disconnect', () => {
-            this.setState({ connected: false })
+            this.clearCookies()
+            this.setState({connected: false})
         })
 
         socket.on("shuffled-teams", (team) => {
@@ -94,7 +100,6 @@ class Lobby extends React.Component {
                 this.startGame()
             }
         });
-
     }
 
     //use this function when you want to update all users on the page after an event
@@ -121,7 +126,16 @@ class Lobby extends React.Component {
         console.log("Kick Player Name: ", kickPlayer)
         let socket = this.state.socket
         socket.emit('kick', kickPlayer)
+    }
+    
+    componentWillUnmount = () => {
+        //destroy socket instance
+        let socket= this.state.socket
+        socket.close()
 
+        if(!this.state.start_game){
+            this.clearCookies()
+        }
     }
 
     render() {
