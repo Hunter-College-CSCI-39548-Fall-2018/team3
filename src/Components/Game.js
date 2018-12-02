@@ -80,7 +80,7 @@ class Game extends React.Component {
 
         socket.on('clear-cookies', () => {
             Cookies.remove("room")
-            Cookies.remove("name")
+            Cookies.remove("player")
             Cookies.remove("game_owner")
         })
     }

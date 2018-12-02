@@ -1,5 +1,5 @@
 const _ = require('underscore')
-
+const Team = require('./teams.js')
 class Room{
     constructor(){
         this.settings = {
@@ -62,7 +62,7 @@ class Room{
     createTeams(){
         console.log("calling create teams");
         let teams = this.settings.numOfTeams;
-        let templateTeam = {players: [], curr_icon: 0};
+        let templateTeam = new Team();
         for(let i = 0; i < teams; i++){
             this.teams.push(templateTeam);
         }

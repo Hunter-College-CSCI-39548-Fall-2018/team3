@@ -10,7 +10,6 @@ module.exports = (app, io, rooms) => {
 
     app.get('/game', (req, res) => {
         var room = rooms[req.cookies.room]
-        var connected = false
 
         /*
         *   Shuffle icons each turn for all players
@@ -209,9 +208,17 @@ module.exports = (app, io, rooms) => {
                 //make sure it listens only to client that emitted
                 if(socket.id === msg.socketid){
                     var team = room.whichTeam({socketid: socket.id})
-                    //implementation for score
 
-                    //implentation for "race" - there is a sequence 
+                    //implementation for score
+                    if(checkCommand(team.curr_icon === msg.command)){
+                        team.score += 1
+                        team.curr_icon = generateCurrIcon()
+                        broadcastToTeam(team, 'correct-command', team.curr_icon)
+                    }else{
+                        team.score -= 1
+                        broadcastToTeam(team, 'wrong-command', 0)
+                    }
+
                     
                     // if(checkCommand(seq[team.sequence], msg.command)){
                     //     if(team.sequence >= sequence.length){
