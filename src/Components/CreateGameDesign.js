@@ -68,7 +68,7 @@ class CreateGameDesign extends React.Component{
 
   render(){
 	if(this.state.redirect){
-	  return (<Redirect to='/lobby'/>)
+	  return (<Redirect to='/lobby-design'/>)
 	}
 	else{
 	  return(
@@ -215,4 +215,4 @@ class CreateGameDesign extends React.Component{
   }
 }
 
-export default CreateGameDesign
+export default CreateGame

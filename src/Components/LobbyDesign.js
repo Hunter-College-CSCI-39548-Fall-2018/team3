@@ -17,7 +17,7 @@ class LobbyDesign extends React.Component {
       start_game: false,
       teamNum: 0,
       redirect: false
-    }
+    } 
     this.game_owner = Cookies.get("game_owner")
     console.log(this.game_owner);
   }
@@ -59,7 +59,7 @@ class LobbyDesign extends React.Component {
     console.log('attempting to add current users')
 
     for(let key in curr_users){
-      players += (" " + key)
+      players += (" " + <span className="badge badge-secondary">{key}</span>)
     }
 
     this.setState({players: players})
@@ -130,7 +130,7 @@ class LobbyDesign extends React.Component {
       console.log("Current Room object", roomObject)
       let curr_users = ""
       for (let key in roomObject){
-        curr_users += (" " + key)
+        curr_users += (" " + <span style={{fontSize: "16px"}} className="badge badge-secondary">{key}</span>)
       }
       this.setState({players : curr_users})
     })
@@ -190,6 +190,73 @@ class LobbyDesign extends React.Component {
             <h1 id="logo" className="display-4">
             {this.state.code}tst
             </h1>
+        
+                    
+                <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
+                <br />
+                <div id='players' style={{fontSize: "16px"}} className="font-weight-bold">
+                    {/* players: {this.state.players} */}
+                    Players: 
+                    <div className="panel panel-default">
+                        <header className="panel-heading">
+                            <h5 className="panel-title">...</h5>
+                        </header>
+                        <div className="row">
+                            <div className="col-md-3"></div>
+                            <div className="col-md-6">
+                                <div className="panel-body">
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                                <span style={{fontSize: "16px"}} className="ml-3 mt-3 badge badge-secondary">Player 1</span><span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary">Player 2</span>
+                            </div>                        
+                            </div>
+                        </div>
+
+                    </div>
+                    <footer className="panel-footer">...</footer>
+                </div>
+                        
+
+                <br />
+            
+                
+
+                <div id="teams" style={{margin:"0 auto", textAlign:"center"}}>
+                    {this.state.teams.map((team,index) => 
+                    {
+                    <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
+                        <ul style={{float:"left", width:"20%", display: "inline-block"}}key={index}>
+                        {team.map((player,i) => <li key={i}> {player.name} </li>)}  
+                        </ul>
+                    </div>
+                
+                    }
+                    )}
+
+                </div>
+
+
+                
+            {this.game_owner == '1' ? <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> : ""}
+
+          
+
         </div>
       )
     }

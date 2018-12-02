@@ -25,17 +25,18 @@ class Room{
     this.key = key
   }
 
-  setPlayers(players){
-    this.players = players
-  }
+  // Obsolete function
+  // setPlayers(players){
+  //   this.players = players
+  // }
 
   addPlayer(player, value){
     this.players[player] = value
   }
 
-  getGameStatus(){
-    return this.start
-  }
+  // getGameStatus(){
+  //   return this.start
+  // }
 
   removePlayer(socketid){
     for (var key in this.players) {
@@ -81,13 +82,13 @@ class Room{
     }
   }
 
-  countPlayers(){
-    let count = 0
-    for(let key in this.players){
-      count++
-    }
-    return count
-  }
+  // countPlayers(){
+  //   let count = 0
+  //   for(let key in this.players){
+  //     count++
+  //   }
+  //   return count
+  // }
 
   shuffleTeams(){
     //substitue for number of players per team later 

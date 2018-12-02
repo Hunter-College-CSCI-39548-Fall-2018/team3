@@ -9,17 +9,20 @@ module.exports = (app, io, rooms) => {
       let player = rooms[req.cookies.room].players[req.cookies.player]
       let name = req.cookies.player
 
-      // tell everyone that player has joined, get current users in lobby
-      socket.emit('get-curr-users', rooms[room].players)
+      
 
       // Add new player to the Room Object
       rooms[room].addPlayer(name, {name: name, socketid: socket.id})
+
+
+      // tell everyone that player has joined, get current users in lobby
+      socket.emit('get-curr-users', rooms[room].players)
 
       // player.socketid = socket.id
       socket.join(room)
 
       // Notify that a new user has joined
-      socket.to(room).emit('new-player', name)
+      socket.to(room).emit('new-player', rooms[room].players)
     }
 
     onGameOwnerFirstConnect = (socket) => {
@@ -110,8 +113,15 @@ module.exports = (app, io, rooms) => {
 
           //console.log("I am in shuffleTeams socket")
           //console.log(newTeams)
-          socket.broadcast.emit("shuffled-teams", {team: currentRoom.teams})
-          console.log(currentRoom)
+
+          // Emitting only to other players and not game owner
+          // socket.to(req.cookies.room).emit("shuffled-teams", {team: currentRoom.teams})
+          
+          // Emitting only to other players and not game owner
+          // socket.to(req.cookies.room).broadcast.emit("shuffled-teams", {team: currentRoom.teams})
+          
+          io.in(req.cookies.room).emit("shuffled-teams", {team: currentRoom.teams})
+          console.log("shuffled teams currentRoom", currentRoom)
       })      
     })
     res.sendStatus(200)

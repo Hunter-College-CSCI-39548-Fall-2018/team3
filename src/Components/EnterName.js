@@ -49,7 +49,7 @@ class EnterName extends React.Component{
             console.log(err)
         })
     }
-
+    
     render(){
         //when make post request, make sure that user should redirect or not
         //check if name exists in the room or not
@@ -57,18 +57,37 @@ class EnterName extends React.Component{
             return (<Redirect to='/lobby'/>)
         }else{
             return(
-                <div>
-                    <h1>Enter your nickname</h1>
-                    <div id="global-error" className="alert alert-danger" role="alert" style={{display:"none"}}>
-                        One or more inputs are bad
+
+                <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
+                    <h1 id="logo" className="display-4">
+                        Enter your nickname
+                    </h1>
+
+                    <div id="global-error" className="alert alert-danger" role="alert" style={{visibility:"hidden"}}>
+                        The nickname is taken
                     </div>
-                    <input ref={this.nickname} type='text' name='nickname' autoFocus/>
-                    <button id='enter-name' type='button' onClick={this.handleEnterName}>Next</button>
-                    <ul>
-                        <li id="name-length" style={{display:"none"}}>Nickname must be 3-12 characters</li>
-                        <li id="name-taken" style={{display:"none"}}>Name has already been taken</li>
-                    </ul>
+                    <div className="container">
+                        <div className="row">
+                            <div className="col-md-4"></div>
+
+                            <div className="col-md-4">
+                                <div className="input-group col-mb-3">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text" id="basic-addon1">Nickname</span>
+                                    </div>
+                                    <input ref={this.nickname} type='text' name='nickname' className="form-control"  autoFocus/>
+                                </div>
+                            </div>
+
+                            <div className="col-md-4">
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+
+                    <button id='enter-name' type='button' onClick={this.handleEnterName} className="btn btn-success">Next</button>
                 </div>
+                   
 
             )
         }
