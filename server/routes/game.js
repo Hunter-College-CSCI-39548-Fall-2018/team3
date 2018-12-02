@@ -10,7 +10,7 @@ module.exports = (app, io, rooms) => {
 
     app.get('/game', (req, res) => {
         var room = rooms[req.cookies.room]
-
+        var connected = false
         /*
         *   Shuffle icons each turn for all players
         *   TODO: Michelle fill this out thanks
@@ -57,19 +57,22 @@ module.exports = (app, io, rooms) => {
         *   through their socket. Rooms are not persistant through
         *   routes. 
         */
-        onPlayerFirstConnect = (socket) => {
+        onPlayerFirstConnect = (socket) => {     
+            console.log("scoekt cookie in conect func", socket.handshake.headers['cookie']);
+       
+            //indicate player has connected
             sockets_connected.push(socket.id)
+            let name = getCookie(socket, "player")
 
-            let name = req.cookies.player
+            console.log("name ooockie", name);
 
             //mark that player has connected successfully to the game
-            // console.log("player in room", room.players[name].connected);
             room.players[name].connected = true
-            
+
+            //update socketid of player 
             room.setSocketId(name, socket.id)
 
             socket.join(room.key)
-            // console.log("people in room", room.players)
         }
         onPlayerDisconnect = (socket) => {
             let team = room.whichTeam({socketid: socket.id})
@@ -88,8 +91,6 @@ module.exports = (app, io, rooms) => {
         }
 
         onGameOwnerFirstConnect = (socket) => {
-            console.log("socket id for game owner", socket.id);
-
             sockets_connected.push(socket.id)
 
             room.game_owner = socket.id
@@ -143,16 +144,24 @@ module.exports = (app, io, rooms) => {
             }
         }
 
-        //get the cookie tied to a socket 
-        getGameOwnerCookie = (socket) => {
+        //get cookie tied to a socket
+        getCookie = (socket, cookie) => {
             let cookies = socket.handshake.headers['cookie']
             let cookie_split = cookies.split("; ")
 
             for(let cookies of cookie_split){
-                if(cookies[0] === 'g'){
-                    let game_owner = cookies.split("=")
-                    return game_owner[1]
+                if(cookie === "player"){
+                    if(cookies[0] === 'p'){
+                        let player = cookies.split("=")
+                        return player[1]
+                    }
                 }
+                else if(cookie === "game_owner"){
+                    if(cookies[0] === 'g'){
+                        let game_owner = cookies.split("=")
+                        return game_owner[1]
+                    }
+                }     
             }
         }
 
@@ -168,13 +177,20 @@ module.exports = (app, io, rooms) => {
         console.log("called game route")
                 
         io.sockets.on('connection', (socket)=>{
+            console.log("cookies form scoket", socket.handshake.headers['cookie']);
             //to track if a user has connected for the first time
             if(sockets_connected.indexOf(socket.id) === -1){
-                if(getGameOwnerCookie(socket) === "0"){
-                    onPlayerFirstConnect(socket)
+                if(getCookie(socket, "game_owner") === "0"){
+                    if(!connected){
+                        onPlayerFirstConnect(socket)
+                        connected = true
+                    }
                 }
-                else if(getGameOwnerCookie(socket) === "1"){
-                    onGameOwnerFirstConnect(socket)
+                else if(getCookie(socket, "game_owner") === "1"){
+                    if(!connected){
+                        onGameOwnerFirstConnect(socket)
+                        connected = true
+                    }
                 }
             }
             
@@ -218,20 +234,6 @@ module.exports = (app, io, rooms) => {
                         team.score -= 1
                         broadcastToTeam(team, 'wrong-command', 0)
                     }
-
-                    
-                    // if(checkCommand(seq[team.sequence], msg.command)){
-                    //     if(team.sequence >= sequence.length){
-                    //         endGame(team)
-                    //     }else{
-                    //         team.sequence += 1
-
-                    //         broadcastToTeam(team, 'correct-command', seq[team.sequence])
-                    //         setTurn(team)
-                    //     }
-                    // }else{
-                    //     io.to(socket.id).emit('wrong-command')
-                    // }
                 }
             })
         })

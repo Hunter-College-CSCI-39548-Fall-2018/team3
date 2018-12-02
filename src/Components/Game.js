@@ -2,8 +2,8 @@ import React from 'react'
 import io from 'socket.io-client'
 import Cookies from 'js-cookie';
 import GameOwnerControls from './GameOwnerControls'
-// import PlayerControls from './PlayerControls'
 import {Redirect} from 'react-router-dom'
+import PlayerControls from './PlayerControls';
 
 class Game extends React.Component {
     constructor(props) {
@@ -121,8 +121,12 @@ class Game extends React.Component {
                         curr-icon = {this.state.curr_icon} 
 
                     /> 
-                    : player_controls
-                }
+                    : <PlayerControls
+                        icons={[1, 2, 3]}
+                        handleCommand = {this.handleCommand}
+                        team={1}
+                    />
+                }   
             </div>
         )
     }
