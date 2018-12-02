@@ -24,10 +24,11 @@ module.exports = (app, io, rooms) => {
             socket.to(room.key).emit('new-player', name)
         }
 
-        clearCookies = () => {
-            res.clearCookie("player")
-            res.clearCookie("room")
-            res.clearCookie("game_owner")
+        clearCookies = (socket) => {
+            // res.clearCookie("player")
+            // res.clearCookie("room")
+            // res.clearCookie("game_owner")
+            socket.emit('clearCookie')
         }
 
         onGameOwnerFirstConnect = (socket) => {
@@ -44,7 +45,7 @@ module.exports = (app, io, rooms) => {
             //update lobby page for everyone still connected
             socket.to(room.key).emit('player-disconnected', room.players)
 
-            clearCookies()
+            clearCookies(socket)
         }
 
         onGameOwnerDisconnect = (socket) => {

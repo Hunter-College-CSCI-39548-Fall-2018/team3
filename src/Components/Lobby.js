@@ -111,6 +111,12 @@ class Lobby extends React.Component {
                 this.startGame()              
             }
         });
+
+        socket.on('clearCookie', () => {
+        	Cookies.remove('game_owner')
+        	Cookies.remove('room')
+        	Cookies.remove('player')
+        })
     }
     
     startTimer = ()=>{
