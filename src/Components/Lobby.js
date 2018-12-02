@@ -1,6 +1,7 @@
 import React from 'react'
 import io from 'socket.io-client';
 import Cookies from 'js-cookie';
+import Music from './Music.js';
 
 class Lobby extends React.Component{
     constructor(props){
@@ -96,7 +97,7 @@ class Lobby extends React.Component{
           //   }
           // }
 
-          let room = Cookies.get('room')
+        let room = Cookies.get('room')
         console.log("room cookie ", room)
         this.setState({room: room})
         })
@@ -123,6 +124,8 @@ class Lobby extends React.Component{
     render(){
       return(
         <div>
+          {/* <Music/> */}
+          {this.game_owner=== '1'? <Music/>: ""}
           <div id='code'>code:
             <input type="text"
               ref={(input) => { this.shuffleBtn = input; }}
@@ -130,7 +133,7 @@ class Lobby extends React.Component{
           </div>
           <div id='players'>players: {this.state.players}</div>
          <div id = 'timeDisplay'>Time Until Start: {this.state.timeRem} </div>
-         {this.game_owner == '1' ? <button onClick={this.startTimer}>Start Timer</button> : ""}
+         {this.game_owner=== '1' ? <button onClick={this.startTimer}>Start Timer</button> : ""}
         </div>
       )
     }

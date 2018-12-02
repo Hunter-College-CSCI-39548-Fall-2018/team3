@@ -53,7 +53,7 @@ class Room{
   }
 
   startTimer(socket){
-    if(this.start === false){
+    // if(this.start === false){
       this.start = true;   //activated for the first time
       let updated_time = setInterval( () => {
           this.time -=1;
@@ -66,7 +66,7 @@ class Room{
           socket.broadcast.emit('time-left', this.time);
       },
       1000);
-  }
+  // }
   }
 
   countPlayers(){
