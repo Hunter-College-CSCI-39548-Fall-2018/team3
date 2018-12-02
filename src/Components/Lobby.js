@@ -72,6 +72,11 @@ class Lobby extends React.Component {
         }
     }
 
+    clearCookies = () => {
+        Cookies.remove('game_owner')
+        Cookies.remove('room')
+        Cookies.remove('player')
+    }
 
     handleEvents = () => {
         let socket = this.state.socket
@@ -91,6 +96,7 @@ class Lobby extends React.Component {
         })
         
         socket.on('force-disconnect', () => {
+            this.clearCookies()
             this.setState({connected: false})
         })
 
@@ -139,9 +145,7 @@ class Lobby extends React.Component {
         socket.close()
 
         if(!this.state.start_game){
-            Cookies.remove('game_owner')
-        	Cookies.remove('room')
-        	Cookies.remove('player')
+            this.clearCookies()
         }
     }
 

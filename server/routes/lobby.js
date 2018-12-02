@@ -1,3 +1,5 @@
+
+
 module.exports = (app, io, rooms) => {
     app.get('/lobby', (req, res) => {
         console.log("lobby post was called")
@@ -5,7 +7,7 @@ module.exports = (app, io, rooms) => {
         var room = rooms[req.cookies.room]
 
         onPlayerFirstConnect = (socket) => {
-            let name = req.cookies.player
+            let name = getCookie(socket, "player")
 
             //get current users in lobby
             socket.emit('get-curr-users', room.players)
@@ -36,20 +38,39 @@ module.exports = (app, io, rooms) => {
             //disconnect and redirect everyone in room
             socket.to(room.key).emit('force-disconnect')
             
-            delete room
+            delete rooms[req.cookies.room]
             console.log('state of room after disc', rooms)
         }
 
+        getCookie = (socket, cookie) => {
+            let cookies = socket.handshake.headers['cookie']
+            let cookie_split = cookies.split("; ")
+
+            for(let cookies of cookie_split){
+                if(cookie === "player"){
+                    if(cookies[0] === 'p'){
+                        let player = cookies.split("=")
+                        return player[1]
+                    }
+                }
+                else if(cookie === "game_owner"){
+                    if(cookies[0] === 'g'){
+                        let game_owner = cookies.split("=")
+                        return game_owner[1]
+                    }
+                }     
+            }
+        }
+
         io.sockets.on('connection', (socket) => {
-            if(req.cookies.game_owner === '0'){
+            if(getCookie(socket, "game_owner") === "0"){
                 //make sure to emit user has joined only once
                 if(!connected){
                     onPlayerFirstConnect(socket)
                     connected = true
                 }
             }    
-
-            else if(req.cookies.game_owner === '1'){
+            else if(getCookie(socket, "game_owner") === "1"){
                 if(!connected){
                     onGameOwnerFirstConnect(socket)
                     connected = true
@@ -62,16 +83,13 @@ module.exports = (app, io, rooms) => {
             })
 
             socket.on('disconnect', () => {
-                console.log("disconnect time", room.time);
-
                 //if the countdown timer hasnt gone down yet all the way and someone disconnects,
                 //do everything as originally intended
                 if(room.time > 1){
-                    console.log("this shouldnt hapen");
                     //when room doesn't exist anymore (after game owner disconnects),
                     //ignore if is game owner or not, just disconnect
                     if(room){
-                        if(rooms[req.cookies.room].game_owner === socket.id){
+                        if(getCookie(socket, "game_owner") === "1"){
                             onGameOwnerDisconnect(socket)
                         }
                         else{

@@ -45,6 +45,11 @@ class Game extends React.Component {
             .catch(err => console.log("error", err))
     }
 
+    clearCookies = () =>{
+        Cookies.remove("room")
+        Cookies.remove("player")
+        Cookies.remove("game_owner")
+    }
     //get input command from player
     handleCommand = (command) => {
         let socket = this.state.socket
@@ -72,6 +77,7 @@ class Game extends React.Component {
         })
 
         socket.on('force-disconnect', () => {
+            this.clearCookies()
             this.setState({ disconnect: true})
         })
     }
@@ -88,9 +94,7 @@ class Game extends React.Component {
 
     componentWillUnmount = () => {
         if(!this.state.disconnect){
-            Cookies.remove("room")
-            Cookies.remove("player")
-            Cookies.remove("game_owner")
+            this.clearCookies()
         }
     }
 
