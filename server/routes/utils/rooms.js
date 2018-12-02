@@ -1,4 +1,5 @@
 const _ = require('underscore')
+const Team = require('./teams.js')
 
 class Room{
     constructor(){
@@ -43,6 +44,17 @@ class Room{
         }
     }
 
+    removePlayerFromTeam(socketid){
+        for(let team of this.teams){
+            for(let i = 0; i < team.players.length; i++){
+                if(team.players[i].socketid === socketid){
+                    team.players.splice(i, 1)
+                    return
+                }
+            }
+        }
+    }
+
     hasPlayer(player){
         console.log(this.players)
         return this.players.hasOwnProperty(player)
@@ -51,10 +63,12 @@ class Room{
     createTeams(){
         console.log("calling create teams");
         let teams = this.settings.numOfTeams;
-        let templateTeam = {players: [], sequence:0};
+
         for(let i = 0; i < teams; i++){
-            this.teams.push(templateTeam);
+            this.teams.push(new Team());
         }
+
+        console.log("what does teams look like", this.teams);
     }
 
     startTimer(socket){
@@ -80,10 +94,10 @@ class Room{
     }
 
     whichTeam(player){
-        for(let key of this.teams){
-            //find player in a team array
-            if(_.findWhere(key.players, player)){
-                return key
+        for(let team of this.teams){
+            // //find player in a team array
+            if(_.findWhere(team.players, player)){
+                return team
             }
         }
     }
@@ -96,7 +110,7 @@ class Room{
         var hold_teams = _.chunk(newArr, chunk);
 
         let temp = hold_teams.map(team => {
-            let obj = {players: [], sequence: 0}
+            let obj = new Team()
             obj.players = team
             return obj
         })

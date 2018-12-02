@@ -8,17 +8,26 @@ class GameOwnerControls extends React.Component{
     render(){
         return(
             <div>
-                <div id='sequence'>
-                    {/* {this.props.sequence} */}
+                <div id='curr-icon'>
+                    {console.log("this is teams", this.props.teams)}
+                    {
+                    this.props.teams.map((team, i) => {
+                        console.log("this is score", team.score)
+                        return(
+                            <div key={i}>
+                                <div>input: {team.curr_icon} </div>
+                                <div>team: {i} {team.score}</div>
+                                <br/>
+                            </div>
+
+                        )
+                    })
+
+                    }
                 </div>
                 <button onClick={this.props.handleShuffle.bind(this)}>test shuffle</button>
                 <button onClick={this.props.startGame.bind(this)}>start game</button>
-                {   
-                    console.log("this is teams", this.props.teams)
-                    // this.props.teams.map((team) => {
-                    //     <li>1{team.sequence}</li>
-                    // })
-                }
+
             </div>
         )
     }

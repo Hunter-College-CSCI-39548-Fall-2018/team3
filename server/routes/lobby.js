@@ -1,10 +1,12 @@
-const Player = require('./utils/player.js')
-
 module.exports = (app, io, rooms) => {
     app.get('/lobby', (req, res) => {
         console.log("lobby post was called")
         var connected = false
         var room = rooms[req.cookies.room]
+
+        clearCookies = (socket) => {
+            socket.emit('clearCookie')
+        }
 
         onPlayerFirstConnect = (socket) => {
             let name = req.cookies.player
@@ -23,23 +25,7 @@ module.exports = (app, io, rooms) => {
             // Notify that a new user has joined
             socket.to(room.key).emit('new-player', name)
         }
-
-        clearCookies = (socket) => {
-            // res.clearCookie("player")
-            // res.clearCookie("room")
-            // res.clearCookie("game_owner")
-            socket.emit('clearCookie')
-        }
-
-        onGameOwnerFirstConnect = (socket) => {
-            room.setGameOwner(socket.id)
-            socket.join(room.key)
-        }
-
         onPlayerDisconnect = (socket) =>{
-            //figure out a way to differentiate between disconnecting for real
-            //and "disconnect" on redirect
-
             room.removePlayer(socket.id)
 
             //update lobby page for everyone still connected
@@ -48,10 +34,14 @@ module.exports = (app, io, rooms) => {
             clearCookies(socket)
         }
 
+        onGameOwnerFirstConnect = (socket) => {
+            room.setGameOwner(socket.id)
+            socket.join(room.key)
+        }
         onGameOwnerDisconnect = (socket) => {
             //disconnect and redirect everyone in room
             socket.to(room.key).emit('force-disconnect')
-
+            
             delete room
             console.log('state of room after disc', rooms)
 
@@ -80,9 +70,12 @@ module.exports = (app, io, rooms) => {
             })
 
             socket.on('disconnect', () => {
+                console.log("disconnect time", room.time);
+
                 //if the countdown timer hasnt gone down yet all the way and someone disconnects,
                 //do everything as originally intended
-                if(room.time > 0){
+                if(room.time > 1){
+                    console.log("this shouldnt hapen");
                     //when room doesn't exist anymore (after game owner disconnects),
                     //ignore if is game owner or not, just disconnect
                     if(room){

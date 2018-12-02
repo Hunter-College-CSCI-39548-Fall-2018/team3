@@ -2,15 +2,19 @@ import React from 'react'
 import io from 'socket.io-client'
 import Cookies from 'js-cookie';
 import GameOwnerControls from './GameOwnerControls'
+import {Redirect} from 'react-router-dom'
+import PlayerControls from './PlayerControls';
 
 class Game extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             socket: false,
-            sequence: "",
-            turn: false,
-            teams: []
+            curr_icon: "",
+            teams: [],
+            disconnect: false,
+            icons: [0, 1, 2, 3],
+            team: 0
         }
         this.game_owner = Cookies.get('game_owner')
     }
@@ -44,40 +48,37 @@ class Game extends React.Component {
     //get input command from player
     handleCommand = (command) => {
         let socket = this.state.socket
-        console.log(socket)
-        if (this.state.turn) {
-            console.log("inputing omcmadn");
-            socket.emit('input-command', { command: command, socketid: socket.id })
-        } else {
-            console.log("not your turn fool");
-        }
+        socket.emit('input-command', {command: command, socketid: socket.id})
     }
 
     handleEvents = () => {
         let socket = this.state.socket
         console.log("Socket is", socket)
 
-        socket.on('your-turn', () => {
-            console.log("it's my turn now");
-            this.setState({ turn: true })
+        socket.on('game-started', (teams) => {
+            this.setState({ teams: teams})
         })
 
-        socket.on('game-started', (data) => {
-            console.log("received sequence after start game", data.seq);
-            this.setState({ sequence: data.seq })
-            this.setState({ teams: data.teams})
-        })
+        socket.on('correct-command', (teams) => {
+            console.log("you got ir ghti");
 
-        socket.on('correct-command', (seq) => {
-            this.setState({ sequence: seq })
-            this.setState({ turn: false })
+            //update the team's current icon
+            this.setState({ teams: teams })
         })
 
         socket.on('wrong-command', () => {
-            this.setState({ turn: true })
-
             //some penalty here
             console.log("you suck")
+        })
+
+        socket.on('force-disconnect', () => {
+            this.setState({ disconnect: true})
+        })
+
+        socket.on('clear-cookies', () => {
+            Cookies.remove("room")
+            Cookies.remove("player")
+            Cookies.remove("game_owner")
         })
     }
 
@@ -90,33 +91,27 @@ class Game extends React.Component {
         let socket = this.state.socket
         socket.emit('start-game')
     }
-    // socket.emit('h')
 
     render() {
-        const player_controls = (
-            <div>
-                {/* replace this with images from cdn eventually */}
-                <button id='A' onClick={this.handleCommand.bind(this, 'A')}>A</button>
-                <button id='B' onClick={this.handleCommand.bind(this, 'B')}>B</button>
-                <button id='C' onClick={this.handleCommand.bind(this, 'C')}>C</button>
-                <button id='D' onClick={this.handleCommand.bind(this, 'D')}>D</button>
-            </div>
-        )
+        if(this.state.disconnect){
+            return (<Redirect to='/'/>)
+        }
         
         return (
             <div>
                 {
-                    this.game_owner === "1" ? 
-                    <GameOwnerControls
-                        sequence={this.state.sequence} 
-                        teams = {this.state.teams}
-                        handleShuffle={this.handleShuffle}
-                        startGame={this.startGame}
-                    /> 
-                    : player_controls
-                }
-
-                <div>is your turn? {(this.state.turn).toString()}</div>
+                this.game_owner === "1" ? 
+                <GameOwnerControls
+                    teams = {this.state.teams}
+                    handleShuffle={this.handleShuffle}
+                    startGame={this.startGame}
+                /> 
+                : <PlayerControls
+                    icons={this.state.icons}
+                    handleCommand = {this.handleCommand}
+                    team={this.state.team}
+                />
+                }   
             </div>
         )
     }
