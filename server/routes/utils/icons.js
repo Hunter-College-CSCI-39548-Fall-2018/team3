@@ -1,5 +1,5 @@
 var fs = require('fs');
-const dir = '../../../src/static/images';
+const dir = '../../../config/public/images';
 let files;
 
 try {
@@ -107,4 +107,4 @@ function generateGameIcons(omit, numberOfPlayers) {
     return playersIcons;
 }
 
-generateGameIcons(0, 2);
+// generateGameIcons(0, 2);
