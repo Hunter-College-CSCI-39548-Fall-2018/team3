@@ -113,7 +113,7 @@ class Lobby extends React.Component {
       // Updating the current state of teams after the shuffle
       
         this.setState({teams: data.team})
-        console.log(this.state.teams)
+        console.log("these are the teams:", this.state.teams)
         this.getTeamNum()
 
         // Display the list of all players by team name
@@ -173,15 +173,6 @@ class Lobby extends React.Component {
     
   render(){
 
-    // const kickPlayer = this.state.players.split(" ").slice(1).map((player,index) => {
-    //   return (<div key={index}>
-    //     <button key={index} onClick={this.handleKick.bind(this,player)}> 
-    //       {player}
-    //     </button>
-    //     </div>
-    //   )
-    // })
-
     if(this.state.redirect === true){
       return(<Redirect to='/'/>)
     }
@@ -215,6 +206,19 @@ class Lobby extends React.Component {
                             </span>
                         </span>
                     )}
+                    <div>
+                    {this.state.teams.map((team,index)=>
+                        <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
+                            
+                                <ul style={{float:"left", width:"20%", display: "inline-block"}} key={index}>
+                                {team.map((player,i) => <li style={{display:"listItem"}} key={i}> {player.name} </li>)}  
+                                </ul>
+                        
+                        </div>
+
+                
+                    )}
+                    </div>
                     <div className="panel panel-default">
                         <header className="panel-heading">
                             <h5 className="panel-title"></h5>
@@ -233,16 +237,25 @@ class Lobby extends React.Component {
             <br />
     
             <div id="teams" style={{margin:"0 auto", textAlign:"center"}}>
-                {this.state.teams.map((team,index) => 
+            {Object.keys(this.state.teams).map((team,i)=>
+                (
+                    <span key={i}>{
+                        Object.keys(team).map((player,j)=>
+                            <div key={j}>{player.name}</div>
+                        )
+                    }</span>
+                ))
+            }
+                {/* {this.state.teams.map((team,index) => 
                 {
                 <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
-                    <ul style={{float:"left", width:"20%", display: "inline-block"}}key={index}>
+                    <ul style={{float:"left", width:"20%", display: "inline-block"}} key={index}>
                     {team.map((player,i) => <li key={i}> {player.name} </li>)}  
                     </ul>
                 </div>
             
                 }
-                )}
+                )} */}
 
             </div>
             {this.game_owner == '1' ? <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> : ""}
