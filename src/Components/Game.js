@@ -67,24 +67,22 @@ class Game extends React.Component {
         socket.on('correct-command', (teams) => {
             console.log("you got ir ghti");
 
-            //update the team's current icon
+            //update the team's current icon and score (+)
             this.setState({ teams: teams })
         })
 
-        socket.on('wrong-command', () => {
+        socket.on('wrong-command', (teams) => {
             //some penalty here
             console.log("you suck")
+
+            //update team's score (-)
+            this.setState({ teams: teams})
         })
 
         socket.on('force-disconnect', () => {
             this.clearCookies()
             this.setState({ disconnect: true})
         })
-    }
-
-    handleShuffle = () => {
-        let socket = this.state.socket
-        socket.emit('shuffle')
     }
 
     startGame = () => {
@@ -109,7 +107,6 @@ class Game extends React.Component {
                 this.game_owner === "1" ? 
                 <GameOwnerControls
                     teams = {this.state.teams}
-                    handleShuffle={this.handleShuffle}
                     startGame={this.startGame}
                 /> 
                 : <PlayerControls

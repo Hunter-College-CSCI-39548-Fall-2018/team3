@@ -25,7 +25,6 @@ class GameOwnerControls extends React.Component{
 
                     }
                 </div>
-                <button onClick={this.props.handleShuffle.bind(this)}>test shuffle</button>
                 <button onClick={this.props.startGame.bind(this)}>start game</button>
 
             </div>

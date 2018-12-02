@@ -85,7 +85,7 @@ module.exports = (app, io, rooms) => {
             socket.on('disconnect', () => {
                 //if the countdown timer hasnt gone down yet all the way and someone disconnects,
                 //do everything as originally intended
-                if(room.time > 1){
+                if(room.time > 0){
                     //when room doesn't exist anymore (after game owner disconnects),
                     //ignore if is game owner or not, just disconnect
                     if(room){
