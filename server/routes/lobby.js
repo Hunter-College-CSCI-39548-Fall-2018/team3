@@ -1,5 +1,10 @@
 module.exports = (app, io, rooms) => {
+    app.get('/lobby', (req, res) => {
+        console.log("lobby post was called")
+        var connected = false
+        var room = rooms[req.cookies.room]
 
+<<<<<<< HEAD
   app.get('/lobby', (req, res) => {
     console.log("lobby post was called")
     var connected = false
@@ -58,52 +63,43 @@ module.exports = (app, io, rooms) => {
         if(!connected){
           onPlayerFirstConnect(socket)
           connected = true
-        }
-      }    
-      else if(req.cookies.game_owner === '1'){
-        if(!connected){
-          onGameOwnerFirstConnect(socket)
-          connected = true
+=======
+        clearCookies = (socket) => {
+            socket.emit('clearCookie')
+>>>>>>> 669c4990cebde0f35138f0574dfbc2381888d54c
         }
 
-        // Only the game owner can start the timer
-        socket.on('start-time', (data) => {
-          // Get the room object by the cod e name
-          let currentRoom = rooms[req.cookies.room]
-          
-          // Start the timer for that specific room
-          currentRoom.startTimer(socket);
-          
-          //console.log(data)
-        });
+        onPlayerFirstConnect = (socket) => {
+            let name = req.cookies.player
 
-        //socket.join(req.cookies.room)
-        socket.on('kick', (who) => {
-          console.log("before", rooms[req.cookies.room].players)
-          socket.emit("redirect-user",rooms[req.cookies.room].players[who]['socketid'])
-          socket.broadcast.emit("redirect-user",rooms[req.cookies.room].players[who]['socketid'])
-          delete rooms[req.cookies.room].players[who]
-          console.log("after", rooms[req.cookies.room].players)
+            //get current users in lobby
+            socket.emit('get-curr-users', room.players)
 
-          socket.emit('updatePlayers',rooms[req.cookies.room].players)
-          socket.broadcast.emit('updatePlayers',rooms[req.cookies.room].players)
-        })
-      }
+            // let player = new Player(name, socket.id)
+            // room.addPlayer(name, player)
+            room.setSocketId(name, socket.id)
+            socket.join(room.key)
 
-      socket.on('disconnect', () => {
-        //when room doesn't exist anymore (after game owner disconnects),
-        //ignore if is game owner or not, just disconnect
-        if(rooms[req.cookies.room]){
-          if(rooms[req.cookies.room].game_owner === socket.id){
-            onGameOwnerDisconnect(socket)
-            console.log("GAME OWNER DISCONNECTS")
-          }
-          else{
-            //if room still exists and player disconnects
-            onPlayerDisconnect(socket)
-            console.log("PLAYER DISCONNECTS")
-          }
+            console.log("player in room", room.players[name]);
+
+
+            // Notify that a new user has joined
+            socket.to(room.key).emit('new-player', name)
         }
+        onPlayerDisconnect = (socket) =>{
+            room.removePlayer(socket.id)
+
+            //update lobby page for everyone still connected
+            socket.to(room.key).emit('player-disconnected', room.players)
+
+            clearCookies(socket)
+        }
+
+        onGameOwnerFirstConnect = (socket) => {
+            room.setGameOwner(socket.id)
+            socket.join(room.key)
+        }
+<<<<<<< HEAD
       })
 
       socket.on('shuffle-teams', () => {
@@ -125,5 +121,77 @@ module.exports = (app, io, rooms) => {
       })      
     })
     res.sendStatus(200)
+=======
+        onGameOwnerDisconnect = (socket) => {
+            //disconnect and redirect everyone in room
+            socket.to(room.key).emit('force-disconnect')
+            
+            delete room
+            console.log('state of room after disc', rooms)
+
+            clearCookies()
+        }
+
+        io.sockets.on('connection', (socket) => {
+            if(req.cookies.game_owner === '0'){
+                //make sure to emit user has joined only once
+                if(!connected){
+                    onPlayerFirstConnect(socket)
+                    connected = true
+                }
+            }    
+
+            else if(req.cookies.game_owner === '1'){
+                if(!connected){
+                    onGameOwnerFirstConnect(socket)
+                    connected = true
+                }
+            }
+
+            socket.on('start-time', () => {                
+                // Start the timer for that specific room
+                room.startTimer(socket);
+            })
+
+            socket.on('disconnect', () => {
+                console.log("disconnect time", room.time);
+
+                //if the countdown timer hasnt gone down yet all the way and someone disconnects,
+                //do everything as originally intended
+                if(room.time > 1){
+                    console.log("this shouldnt hapen");
+                    //when room doesn't exist anymore (after game owner disconnects),
+                    //ignore if is game owner or not, just disconnect
+                    if(room){
+                        if(rooms[req.cookies.room].game_owner === socket.id){
+                            onGameOwnerDisconnect(socket)
+                        }
+                        else{
+                            //if room still exists and player disconnects
+                            onPlayerDisconnect(socket)
+                        }
+                    }
+                }
+            })
+
+            socket.on('shuffle-teams', () => {
+                room.shuffleTeams()
+
+                socket.to(room.key).emit("shuffled-teams", room.teams)
+                socket.emit("shuffled-teams", room.teams)
+                console.log(room)
+            })
+
+            socket.on('kick', (who) => {
+                //redirect user back to home, delete user from room object
+                socket.to(room.players[who].socketid).emit('force-disconnect')
+                delete room.players[who]
+
+                socket.emit('get-curr-users', room.players)
+                socket.to(room.key).emit('get-curr-users', room.players)
+            })
+        })
+        res.sendStatus(200)
+>>>>>>> 669c4990cebde0f35138f0574dfbc2381888d54c
   })
 }

@@ -1,10 +1,9 @@
+const Player = require('./utils/player.js')
+
 module.exports = (app, rooms) => {
 
     app.post('/enter-room', (req, res) => {
-
-        //console.log("Joined room", req.body.room)
         if(req.body.room){
-
             //check if room exists
             if(rooms[req.body.room] === undefined){
                 console.log("invalid key")
@@ -44,13 +43,10 @@ module.exports = (app, rooms) => {
             //if name exists in room
             if(!rooms[req.cookies.room].hasPlayer(req.body.nickname)){
 
-                //map a player to a room- only name and if connected for now
-                var val = {name: req.body.nickname, connected: false, socketid: 0}
-                rooms[req.cookies.room].addPlayer(req.body.nickname, val)
-
-                // if(rooms[req.cookies.room].hasPlayer(req.body.nickname)){
-                //     console.log('successfully added player to room')
-                // }
+                let player = new Player(req.body.nickname, 0)
+                player.connected = false
+                
+                rooms[req.cookies.room].addPlayer(req.body.nickname, player)
 
                 res.clearCookie('player')
                 res.cookie('player', req.body.nickname, {
@@ -58,7 +54,6 @@ module.exports = (app, rooms) => {
                     overwrite: true
                 })
 
-                // console.log("Player cookie was successfully made")
                 res.json(true)
 
             }else{
