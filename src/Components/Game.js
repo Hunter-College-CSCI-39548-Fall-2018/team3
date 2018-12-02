@@ -1,104 +1,118 @@
 import React from 'react'
 import io from 'socket.io-client'
+import Cookies from 'js-cookie';
+import GameOwnerControls from './GameOwnerControls'
+import {Redirect} from 'react-router-dom'
+import PlayerControls from './PlayerControls';
 
-class Game extends React.Component{
-    constructor(props){
+class Game extends React.Component {
+    constructor(props) {
         super(props)
-        this.state = {socket: false, sequence: "", turn: false}
+        this.state = {
+            socket: false,
+            curr_icon: "",
+            teams: [],
+            disconnect: false,
+            icons: [0, 1, 2, 3],
+            team: 0
+        }
+        this.game_owner = Cookies.get('game_owner')
     }
 
-    componentDidMount(){
-        fetch('http://localhost:3000/game', {
+    componentDidMount() {
+        let host = 'http://' + location.hostname
+        fetch(host + ':3000/game', {
             method: 'GET',
             credentials: 'include'
         })
-        .then((res) => {
-            console.log("response!", res.status)
-            const socket = io.connect('http://localhost:3000/', {
-                transports: ['websocket'],
-                upgrade: false
+            .then((res) => {
+                console.log("response!", res.status)
+                const socket = io.connect(host + ':3000/', {
+                    transports: ['websocket'],
+                    upgrade: false,
+                    'force new connection': true
+                })
+
+                //fetch is asynchronous, so have the client connect after the request is made
+                this.setState({
+                    socket: socket
+                }, () => {
+                    this.handleEvents()
+                    console.log("state is", this.state.socket)
+                })
+
             })
-
-            //fetch is asynchronous, so have the client connect after the get request is made
-            this.setState({
-                socket: socket
-            },()=>{
-                this.handleEvents()
-                console.log("state is", this.state)
-            })
-
-        })
-        .catch(err => console.log("error", err))
-
-        
+            .catch(err => console.log("error", err))
     }
 
     //get input command from player
     handleCommand = (command) => {
         let socket = this.state.socket
-        console.log(command)
-        if(this.state.turn){
-            socket.emit('input-command', command)
-        }else{
-            console.log("not your turn fool");
-        }
+        socket.emit('input-command', {command: command, socketid: socket.id})
     }
 
-    //in the event of wrong or right command, do something
     handleEvents = () => {
         let socket = this.state.socket
         console.log("Socket is", socket)
 
-        socket.on('your-turn', () =>{
-            console.log("it's my turn now");
-            this.setState({turn: true})
+        socket.on('game-started', (teams) => {
+            this.setState({ teams: teams})
         })
 
-        socket.on('start-game', (seq) => {
-            this.setState({sequence: seq})
-        })
+        socket.on('correct-command', (teams) => {
+            console.log("you got ir ghti");
 
-        socket.on('correct-command', (seq) => {
-            console.log("is seqeuecne yes got it")
-
-            this.setState({sequence: seq})
-            this.setState({turn: false})
+            //update the team's current icon
+            this.setState({ teams: teams })
         })
 
         socket.on('wrong-command', () => {
-            this.setState({turn: true})
-
             //some penalty here
             console.log("you suck")
+        })
+
+        socket.on('force-disconnect', () => {
+            this.setState({ disconnect: true})
+        })
+
+        socket.on('clear-cookies', () => {
+            Cookies.remove("room")
+            Cookies.remove("player")
+            Cookies.remove("game_owner")
         })
     }
 
     handleShuffle = () => {
         let socket = this.state.socket
-        socket.emit('shuffle-teams')
+        socket.emit('shuffle')
     }
 
     startGame = () => {
         let socket = this.state.socket
         socket.emit('start-game')
     }
+
     render() {
-        return(
+        if(this.state.disconnect){
+            return (<Redirect to='/'/>)
+        }
+        
+        return (
             <div>
-                {/* replace this with images from cdn eventually */}
-                <button id='A' onClick={this.handleCommand.bind(this,'A')}>A</button>
-                <button id='B' onClick={this.handleCommand.bind(this,'B')}>B</button>
-                <button id='C' onClick={this.handleCommand.bind(this,'C')}>C</button>
-                <button id='D' onClick={this.handleCommand.bind(this,'D')}>D</button>
-
-
-                <div>{this.state.sequence}</div>
-                <div>is your turn? {(this.state.turn).toString()}</div>
-
-                <button onClick={this.handleShuffle.bind(this)}>test shuffle</button>
-                <button onClick={this.startGame.bind(this)}>start game</button>
+                {
+                this.game_owner === "1" ? 
+                <GameOwnerControls
+                    teams = {this.state.teams}
+                    handleShuffle={this.handleShuffle}
+                    startGame={this.startGame}
+                /> 
+                : <PlayerControls
+                    icons={this.state.icons}
+                    handleCommand = {this.handleCommand}
+                    team={this.state.team}
+                />
+                }   
             </div>
-
         )
     }
 }
