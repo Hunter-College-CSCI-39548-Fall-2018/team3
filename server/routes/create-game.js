@@ -44,7 +44,7 @@ module.exports = (app, rooms) => {
             secure: false,
             overwrite: true
         })
-
+        
         //map room key to room object
         rooms[room.key] = room
 

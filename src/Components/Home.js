@@ -8,6 +8,18 @@ class Home extends React.Component{
 
     }
 
+    testGameAsGameOwner = () => {
+        Cookies.set('game_owner', 1)
+        Cookies.set('room', "test")
+
+    }
+    
+    testGameAsPlayer = () => {
+        Cookies.set('game_owner', 0)
+        Cookies.set('room', "test")
+        Cookies.set('player', "TEST" + i)
+    }
+    
     render(){
         return(
 
@@ -18,9 +30,6 @@ class Home extends React.Component{
                     <a href="/enter-room" className="btn btn-success">Join a Room</a>
                 </div>
             </div>
-
-
-
         )
     }
 }
