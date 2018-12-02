@@ -1,5 +1,6 @@
 const _ = require('underscore')
 const Team = require('./teams.js')
+
 class Room{
     constructor(){
         this.settings = {
@@ -62,10 +63,12 @@ class Room{
     createTeams(){
         console.log("calling create teams");
         let teams = this.settings.numOfTeams;
-        let templateTeam = new Team();
+
         for(let i = 0; i < teams; i++){
-            this.teams.push(templateTeam);
+            this.teams.push(new Team());
         }
+
+        console.log("what does teams look like", this.teams);
     }
 
     startTimer(socket){
@@ -111,7 +114,7 @@ class Room{
         var hold_teams = _.chunk(newArr, chunk);
 
         let temp = hold_teams.map(team => {
-            let obj = {players: [], curr_icon: 0}
+            let obj = new Team()
             obj.players = team
             return obj
         })

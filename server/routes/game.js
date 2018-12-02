@@ -191,7 +191,7 @@ module.exports = (app, io, rooms) => {
             
             socket.on('disconnect', () => {
                 if(rooms[req.cookies.room]){
-                    if(getCookies(socket, "game_owner") === "1"){
+                    if(getCookie(socket, "game_owner") === "1"){
                         onGameOwnerDisconnect(socket)
                     }else{
                         //if room still exists and player disconnects
@@ -229,12 +229,12 @@ module.exports = (app, io, rooms) => {
                     var team = room.whichTeam({socketid: socket.id})
 
                     console.log("suppsoed to comamdn", team.curr_icon);
-
+                    console.log("is score exist?", team.score);
                     //implementation for score
                     if(checkCommand(team.curr_icon, msg.command)){
                         team.score += 1
                         team.curr_icon = generateCurrIcon()
-                        // broadcastToTeam(team, 'correct-command', room.teams)
+
                         io.to(room.game_owner).emit('correct-command', room.teams)
                     }else{
                         team.score -= 1

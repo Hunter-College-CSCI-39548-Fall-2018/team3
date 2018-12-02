@@ -12,7 +12,15 @@ class GameOwnerControls extends React.Component{
                     {console.log("this is teams", this.props.teams)}
                     {
                     this.props.teams.map((team, i) => {
-                        return(<div key={i}>{team.curr_icon} </div>)
+                        console.log("this is score", team.score)
+                        return(
+                            <div key={i}>
+                                <div>input: {team.curr_icon} </div>
+                                <div>team: {i} {team.score}</div>
+                                <br/>
+                            </div>
+
+                        )
                     })
 
                     }
