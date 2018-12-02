@@ -3,7 +3,7 @@ module.exports = (app, io, rooms) => {
     var game_started = false
 
     const time_until_start = 5000
-    const total_icons = 40
+    const total_icons = 4
     const end_score = 30
 
     var sockets_connected = []
@@ -36,35 +36,34 @@ module.exports = (app, io, rooms) => {
         *   Starts the game by generating random icon
         *   and displaying it for the users on screen
         */
-        startGame = (socket, room) => {
+        startGame = (socket) => {
             console.log("called start game");
 
             // for(let key of room.players){
             //     shuffleIcons(key.socketid)
             // }
 
-            console.log("teams in start game:", room.teams);
             let curr_icon = generateCurrIcon()
-
-            socket.to(room.key).emit('game-started', {icon: curr_icon, teams: room.teams})
-            socket.emit('game-started', {icon: curr_icon, teams:room.teams})
+            for(let team of room.teams){
+                team.curr_icon = curr_icon
+                broadcastToTeam(team, "game-started", room.teams)
+            }
+            console.log("what does teams look like", room.teams);
+            socket.emit('game-started', room.teams)
+            // socket.to(room.key).emit('game-started', {icon: curr_icon, teams: room.teams})
 
             console.log("end of clal game");
         }
 
         /*
         *   When players first connect, have them join the room
-        *   through their socket. Rooms are not persistant through
+        *   through their socket. Connections are not persistant through
         *   routes. 
         */
-        onPlayerFirstConnect = (socket) => {     
-            console.log("scoekt cookie in conect func", socket.handshake.headers['cookie']);
-       
+        onPlayerFirstConnect = (socket) => {            
             //indicate player has connected
             sockets_connected.push(socket.id)
             let name = getCookie(socket, "player")
-
-            console.log("name ooockie", name);
 
             //mark that player has connected successfully to the game
             room.players[name].connected = true
@@ -110,7 +109,10 @@ module.exports = (app, io, rooms) => {
         }
 
         checkCommand = (curr_icon, command) => {
-            return curr_icon == command
+            console.log("what is curr_icon i checkcmand", curr_icon);
+            console.log("what is commadn in checkcmand", command);
+            console.log("is ture?", curr_icon === command);
+            return curr_icon === command
         }
 
         /* 
@@ -177,32 +179,32 @@ module.exports = (app, io, rooms) => {
         console.log("called game route")
                 
         io.sockets.on('connection', (socket)=>{
-            console.log("cookies form scoket", socket.handshake.headers['cookie']);
             //to track if a user has connected for the first time
             if(sockets_connected.indexOf(socket.id) === -1){
                 if(getCookie(socket, "game_owner") === "0"){
-                    if(!connected){
-                        onPlayerFirstConnect(socket)
-                        connected = true
-                    }
+                    onPlayerFirstConnect(socket)
                 }
                 else if(getCookie(socket, "game_owner") === "1"){
-                    if(!connected){
-                        onGameOwnerFirstConnect(socket)
-                        connected = true
-                    }
+                    onGameOwnerFirstConnect(socket)
                 }
             }
             
             socket.on('disconnect', () => {
                 if(rooms[req.cookies.room]){
-                    if(rooms[req.cookies.room].game_owner === socket.id){
+                    if(getCookies(socket, "game_owner") === "1"){
                         onGameOwnerDisconnect(socket)
-                    }
-                    else{
+                    }else{
                         //if room still exists and player disconnects
                         onPlayerDisconnect(socket)
                     }
+
+                    // if(rooms[req.cookies.room].game_owner === socket.id){
+                    //     onGameOwnerDisconnect(socket)
+                    // }
+                    // else{
+                    //     //if room still exists and player disconnects
+                    //     onPlayerDisconnect(socket)
+                    // }
                 }
             })
 
@@ -215,21 +217,25 @@ module.exports = (app, io, rooms) => {
 
             socket.on('start-game', () => {
                 if(!game_started){
-                    startGame(socket, room)
+                    startGame(socket)
                     game_started = true
                 }
             })
             
             socket.on('input-command', (msg) => {
+                console.log("got command", msg.command);
                 //make sure it listens only to client that emitted
                 if(socket.id === msg.socketid){
                     var team = room.whichTeam({socketid: socket.id})
 
+                    console.log("suppsoed to comamdn", team.curr_icon);
+
                     //implementation for score
-                    if(checkCommand(team.curr_icon === msg.command)){
+                    if(checkCommand(team.curr_icon, msg.command)){
                         team.score += 1
                         team.curr_icon = generateCurrIcon()
-                        broadcastToTeam(team, 'correct-command', team.curr_icon)
+                        // broadcastToTeam(team, 'correct-command', room.teams)
+                        io.to(room.game_owner).emit('correct-command', room.teams)
                     }else{
                         team.score -= 1
                         broadcastToTeam(team, 'wrong-command', 0)

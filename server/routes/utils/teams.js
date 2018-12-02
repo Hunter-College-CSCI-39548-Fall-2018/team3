@@ -1,7 +1,7 @@
 class Team{
     constructor(){
         this.players = []
-        this.curr_icon = 0
+        this.curr_icon = 1
         this.score = 0
     }
 }

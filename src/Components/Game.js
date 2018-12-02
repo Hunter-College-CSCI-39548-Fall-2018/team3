@@ -12,7 +12,9 @@ class Game extends React.Component {
             socket: false,
             curr_icon: "",
             teams: [],
-            disconnect: false
+            disconnect: false,
+            icons: [0, 1, 2, 3],
+            team: 0
         }
         this.game_owner = Cookies.get('game_owner')
     }
@@ -46,27 +48,22 @@ class Game extends React.Component {
     //get input command from player
     handleCommand = (command) => {
         let socket = this.state.socket
-        console.log(socket)
-        // if (this.state.turn) {
-        //     console.log("inputing omcmadn");
-        //     socket.emit('input-command', { command: command, socketid: socket.id })
-        // } else {
-        //     console.log("not your turn fool");
-        // }
+        socket.emit('input-command', {command: command, socketid: socket.id})
     }
 
     handleEvents = () => {
         let socket = this.state.socket
         console.log("Socket is", socket)
 
-        socket.on('game-started', (data) => {
-            console.log("received curr_icon after start game", data.icon);
-            this.setState({ curr_icon: data.icon })
-            this.setState({ teams: data.teams})
+        socket.on('game-started', (teams) => {
+            this.setState({ teams: teams})
         })
 
-        socket.on('correct-command', (icon) => {
-            this.setState({ curr_icon: icon })
+        socket.on('correct-command', (teams) => {
+            console.log("you got ir ghti");
+
+            //update the team's current icon
+            this.setState({ teams: teams })
         })
 
         socket.on('wrong-command', () => {
@@ -99,33 +96,21 @@ class Game extends React.Component {
         if(this.state.disconnect){
             return (<Redirect to='/'/>)
         }
-
-        const player_controls = (
-            <div>
-                {/* replace this with images from cdn eventually */}
-                <button id='A' onClick={this.handleCommand.bind(this, 'A')}>A</button>
-                <button id='B' onClick={this.handleCommand.bind(this, 'B')}>B</button>
-                <button id='C' onClick={this.handleCommand.bind(this, 'C')}>C</button>
-                <button id='D' onClick={this.handleCommand.bind(this, 'D')}>D</button>
-            </div>
-        )
         
         return (
             <div>
                 {
-                    this.game_owner === "1" ? 
-                    <GameOwnerControls
-                        teams = {this.state.teams}
-                        handleShuffle={this.handleShuffle}
-                        startGame={this.startGame}
-                        curr-icon = {this.state.curr_icon} 
-
-                    /> 
-                    : <PlayerControls
-                        icons={[1, 2, 3]}
-                        handleCommand = {this.handleCommand}
-                        team={1}
-                    />
+                this.game_owner === "1" ? 
+                <GameOwnerControls
+                    teams = {this.state.teams}
+                    handleShuffle={this.handleShuffle}
+                    startGame={this.startGame}
+                /> 
+                : <PlayerControls
+                    icons={this.state.icons}
+                    handleCommand = {this.handleCommand}
+                    team={this.state.team}
+                />
                 }   
             </div>
         )
