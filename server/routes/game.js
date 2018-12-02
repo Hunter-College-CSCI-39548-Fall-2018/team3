@@ -1,8 +1,7 @@
 module.exports = (app, io, rooms) => {
-    var shuffled = false
     var game_started = false
 
-    const time_until_start = 5000
+    const time_until_start = 3000
     const total_icons = 4
     const end_score = 30
 
@@ -10,7 +9,6 @@ module.exports = (app, io, rooms) => {
 
     app.get('/game', (req, res) => {
         var room = rooms[req.cookies.room]
-        var connected = false
         /*
         *   Shuffle icons each turn for all players
         *   TODO: Michelle fill this out thanks
@@ -24,12 +22,6 @@ module.exports = (app, io, rooms) => {
         */
         generateCurrIcon = () => {
             return Math.floor(Math.random() * total_icons)
-        }
-
-        clearCookies = (socket) =>{
-            //cant clear cookies server side because sends response first
-            //(cant set headers after they're sent)
-            socket.emit('clear-cookies')
         }
 
         /*
@@ -48,10 +40,8 @@ module.exports = (app, io, rooms) => {
                 team.curr_icon = curr_icon
                 broadcastToTeam(team, "game-started", room.teams)
             }
-            console.log("what does teams look like", room.teams);
-            socket.emit('game-started', room.teams)
-            // socket.to(room.key).emit('game-started', {icon: curr_icon, teams: room.teams})
 
+            socket.emit('game-started', room.teams)
             console.log("end of clal game");
         }
 
@@ -85,8 +75,6 @@ module.exports = (app, io, rooms) => {
 
             console.log("player removed from room list after:", room.players);
             console.log("player removed from room teams after:", team.players);
-
-            clearCookies(socket)        
         }
 
         onGameOwnerFirstConnect = (socket) => {
@@ -96,22 +84,15 @@ module.exports = (app, io, rooms) => {
             socket.join(room)
         }
         onGameOwnerDisconnect = (socket) => {
-            console.log("players in room on game disc before:", room.players);
-            console.log("teams in room on game dsc before:", room.teams);
-
             //disconnect and redirect everyone in room
             socket.to(room.key).emit('force-disconnect')
 
-            clearCookies(socket)
             delete rooms[req.cookies.room]
 
             console.log("does gam eexst after disc", rooms);
         }
 
         checkCommand = (curr_icon, command) => {
-            console.log("what is curr_icon i checkcmand", curr_icon);
-            console.log("what is commadn in checkcmand", command);
-            console.log("is ture?", curr_icon === command);
             return curr_icon === command
         }
 
@@ -167,8 +148,15 @@ module.exports = (app, io, rooms) => {
             }
         }
 
+        checkIfWon = (team) => {
+            if(team.score > end_score){
+                endGame(team)
+            }
+        }
+
         endGame = (team) => {
             //finish for when game ends
+            console.log("game has ended");
         }
 
         //wait for players to connect before starting the game
@@ -208,13 +196,6 @@ module.exports = (app, io, rooms) => {
                 }
             })
 
-            socket.on('shuffle', () => {
-                if(!shuffled){
-                    room.shuffleTeams()
-                    shuffled = true
-                }
-            })
-
             socket.on('start-game', () => {
                 if(!game_started){
                     startGame(socket)
@@ -228,9 +209,6 @@ module.exports = (app, io, rooms) => {
                 if(socket.id === msg.socketid){
                     var team = room.whichTeam({socketid: socket.id})
 
-                    console.log("suppsoed to comamdn", team.curr_icon);
-                    console.log("is score exist?", team.score);
-                    //implementation for score
                     if(checkCommand(team.curr_icon, msg.command)){
                         team.score += 1
                         team.curr_icon = generateCurrIcon()
@@ -238,8 +216,9 @@ module.exports = (app, io, rooms) => {
                         io.to(room.game_owner).emit('correct-command', room.teams)
                     }else{
                         team.score -= 1
-                        broadcastToTeam(team, 'wrong-command', 0)
+                        broadcastToTeam(team, 'wrong-command', room.teams)
                     }
+                    checkIfWon(team)
                 }
             })
         })

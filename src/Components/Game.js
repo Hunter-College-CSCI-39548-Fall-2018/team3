@@ -45,6 +45,11 @@ class Game extends React.Component {
             .catch(err => console.log("error", err))
     }
 
+    clearCookies = () =>{
+        Cookies.remove("room")
+        Cookies.remove("player")
+        Cookies.remove("game_owner")
+    }
     //get input command from player
     handleCommand = (command) => {
         let socket = this.state.socket
@@ -62,34 +67,33 @@ class Game extends React.Component {
         socket.on('correct-command', (teams) => {
             console.log("you got ir ghti");
 
-            //update the team's current icon
+            //update the team's current icon and score (+)
             this.setState({ teams: teams })
         })
 
-        socket.on('wrong-command', () => {
+        socket.on('wrong-command', (teams) => {
             //some penalty here
             console.log("you suck")
+
+            //update team's score (-)
+            this.setState({ teams: teams})
         })
 
         socket.on('force-disconnect', () => {
+            this.clearCookies()
             this.setState({ disconnect: true})
         })
-
-        socket.on('clear-cookies', () => {
-            Cookies.remove("room")
-            Cookies.remove("player")
-            Cookies.remove("game_owner")
-        })
-    }
-
-    handleShuffle = () => {
-        let socket = this.state.socket
-        socket.emit('shuffle')
     }
 
     startGame = () => {
         let socket = this.state.socket
         socket.emit('start-game')
+    }
+
+    componentWillUnmount = () => {
+        if(!this.state.disconnect){
+            this.clearCookies()
+        }
     }
 
     render() {
@@ -103,7 +107,6 @@ class Game extends React.Component {
                 this.game_owner === "1" ? 
                 <GameOwnerControls
                     teams = {this.state.teams}
-                    handleShuffle={this.handleShuffle}
                     startGame={this.startGame}
                 /> 
                 : <PlayerControls
