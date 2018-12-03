@@ -1,6 +1,4 @@
 module.exports = (app, io, rooms) => {
-    var game_started = false
-
     const time_until_start = 3000
     const total_icons = 4
     const end_score = 30
@@ -113,7 +111,7 @@ module.exports = (app, io, rooms) => {
                 for(let team of room.teams){
                     team.curr_icon = curr_icon
                 }
-                socket.to(room.key).emit('game-started', room.teams)
+                io.to(room.key).emit('game-started', room.teams)
 
                 // socket.emit('game-started', room.teams)
                 console.log("end of clal game");
@@ -156,10 +154,7 @@ module.exports = (app, io, rooms) => {
             })
 
             socket.on('start-game', () => {
-                if(!game_started){
-                    startGame()
-                    game_started = true
-                }
+                startGame()
             })
             
             socket.on('input-command', (msg) => {    

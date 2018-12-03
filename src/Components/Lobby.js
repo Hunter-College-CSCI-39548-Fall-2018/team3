@@ -23,6 +23,8 @@ class Lobby extends React.Component {
 
     checkCredentials = () => {
         let cookies = Cookies.get() // returns obj with cookies
+        console.log("cookies obj", cookies);
+        console.log("is room in cokie", "room" in cookies);
         return "room" in cookies
     }
 
@@ -30,7 +32,7 @@ class Lobby extends React.Component {
         //find way to find state of disconnect of socket after it has been instantiated 
 
         if(!this.checkCredentials()){
-            // this.setState({ connected: false})
+            this.setState({ connected: false})
         }else{
             const code = Cookies.get("room");
             this.setState({ code: code });
@@ -87,7 +89,7 @@ class Lobby extends React.Component {
         })
 
         socket.on('force-disconnect', () => {
-            this.setState({connected: false})
+            this.setState({ connected: false})
             this.clearCookies()
         })
  

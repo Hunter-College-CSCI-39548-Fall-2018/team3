@@ -20,9 +20,17 @@ class Game extends React.Component {
         this.socket = false
     }
 
+    checkCredentials = () => {
+        let cookies = Cookies.get() // returns obj with cookies
+        console.log("cookies obj", cookies);
+        console.log("is room in cokie", "room" in cookies);
+        return "room" in cookies
+    }
+
     componentDidMount() {
-        if(!Lobby.checkCredentials){
-            // this.setState({ connected: false })
+        if(!this.checkCredentials()){
+            console.log("there s aproblem with the credentials");
+            this.setState({ connected: false })
         }else{ 
             let host = 'http://' + location.hostname
             fetch(host + ':3000/game', {
@@ -108,7 +116,7 @@ class Game extends React.Component {
     render() {
         if(!this.state.connected/* || this.socket.disconnected*/){
             console.log("client disocnnected bescause of what");
-            this.clearCookies()
+            // this.clearCookies()
             return (<Redirect to='/'/>)
         }
         
