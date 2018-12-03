@@ -56,12 +56,13 @@ module.exports = (app, io, rooms) => {
         
                 room.setSocketId(name, socket.id)
                 socket.join(room.key)
-        
+                
                 // Notify that a new user has joined
                 socket.to(room.key).emit('new-player', room.players)
             }
          
             onPlayerDisconnect = () =>{
+                console.log("player diconnect");
                 room.removePlayer(socket.id)
         
                 //update lobby page for everyone still connected
@@ -75,10 +76,11 @@ module.exports = (app, io, rooms) => {
                 socket.join(room.key)
             }
             onGameOwnerDisconnect = () => {
+                console.log("game onwe rdisoncet");
                 //disconnect and redirect everyone in room
                 socket.to(room.key).emit('force-disconnect')
                 
-                delete rooms[req.cookies.room]
+                delete rooms[getCookie("room")]
                 console.log('state of room after disc', rooms)
             }
     
@@ -104,7 +106,7 @@ module.exports = (app, io, rooms) => {
                     //if the countdown timer hasnt gone down yet all the way and someone disconnects,
                     //do everything as originally intended
                     if(room.time > 0) {
-                        if(getCookie("game_owner") === "1"){
+                        if(room.game_owner === socket.id){
                             onGameOwnerDisconnect()
                         }
                         else{

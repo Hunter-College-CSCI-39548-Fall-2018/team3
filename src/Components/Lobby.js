@@ -19,7 +19,6 @@ class Lobby extends React.Component {
             redirect: false
         }
         this.game_owner = Cookies.get("game_owner")
-        // console.log(this.game_owner);
     }
 
     componentDidMount() {
@@ -44,19 +43,8 @@ class Lobby extends React.Component {
                     this.handleEvents()
                 })
             }
-
-            
         })
         .catch((err) => console.log(err))
-    }
-
-    shuffleTeams = () => {
-        const socket = this.state.socket
-        if (Cookies.get("game_owner") === '1') {
-            socket.emit("shuffle-teams")
-        }
-
-        // console.log("I am in shuffleTeams")
     }
 
     clearCookies = () => {
@@ -83,17 +71,16 @@ class Lobby extends React.Component {
         })
 
         socket.on('force-disconnect', () => {
-            this.clearCookies()
-            this.setState({connected: false})
-        })
+            console.log("should have kked client");
 
-        socket.on("shuffled-teams", (team) => {
-            console.log("this is teams", team);
+            this.setState({connected: false})
+            this.clearCookies()
+        })
+ 
+        socket.on("shuffled-teams", (teams) => {
+            console.log("this is teams", teams);
             // Updating the current state of teams after the shuffle
-            this.setState({ teams: team }, () => {
-                console.log("this is teams", team);
-                // this.getTeamNum()
-            })
+            this.setState({ teams: team })
         })
 
         // Only execute the shuffleTeams command when the timer is at 0
@@ -144,76 +131,84 @@ class Lobby extends React.Component {
         }
     }
 
+    checkCredentials = () => {
+        let cookies = Cookies.get() // returns obj with cookies
+        return "room" in cookies
+    }
+
     render() {
+        //if not correct credentials
+        if(!this.checkCredentials()){
+            return (<Redirect to='/'/>)
+        }
+
+        //start of game
         if(this.state.start_game){
             return (<Redirect to='/game'/>)
         }
 
-        if (this.state.redirect === true) {
-            return (<Redirect to='/' />)
+        //on force redirect
+        if(!this.state.connected){
+            return (<Redirect to='/'/>)
         }
 
-        if (this.state.connected) {
-            return (
-                <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
-                    <h1 id="logo" className="display-4">
-                        {this.state.code}
-                    </h1>
+        // if (this.state.redirect === true) {
+        //     return (<Redirect to='/' />)
+        // }
+        
+        return (
+            <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
+                <h1 id="logo" className="display-4">
+                    {this.state.code}
+                </h1>
 
-                    <a href="/create-game">Create Game</a>
-                    <br />
-                    <a href="/enter-room">Enter Room</a>
+                <a href="/create-game">Create Game</a>
+                <br />
+                <a href="/enter-room">Enter Room</a>
 
-                    <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
-                    <br />
-                    <div id='players' style={{ fontSize: "16px" }} className="font-weight-bold">
-                        {/* Players: {this.state.players.map((player,i)=> <span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary" key={i}>{player}</span>)} */}
-                        Players:
-                        {Object.keys(this.state.players).map((player, i) =>
-                            <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
+                <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
+                <br />
+                <div id='players' style={{ fontSize: "16px" }} className="font-weight-bold">
+                    {/* Players: {this.state.players.map((player,i)=> <span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary" key={i}>{player}</span>)} */}
+                    Players:
+                    {Object.keys(this.state.players).map((player, i) =>
+                        <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
 
-                                <span className="tag label label-info">
-                                    <span>{player}</span>
-                                    <a onClick={this.handleKick.bind(this, player)} ><i className="far fa-times-circle"></i></a>
-                                </span>
+                            <span className="tag label label-info">
+                                <span>{player}</span>
+                                <a onClick={this.handleKick.bind(this, player)} ><i className="far fa-times-circle"></i></a>
                             </span>
-                        )}
-                        <div className="panel panel-default">
-                            <header className="panel-heading">
-                                <h5 className="panel-title"></h5>
-                            </header>
-                        </div>
-                        <footer className="panel-footer">...</footer>
+                        </span>
+                    )}
+                    <div className="panel panel-default">
+                        <header className="panel-heading">
+                            <h5 className="panel-title"></h5>
+                        </header>
                     </div>
-                
-                    <div>
-                        {this.state.teams.map((team,index)=>
-                            <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
-                                
-                                <ul style={{float:"left", width:"20%", display: "inline-block"}} key={index}>
-                                    {team.players.map((player,i) => <li style={{display:"listItem"}} key={i}> {player.name} </li>)}  
-                                </ul>
-                            
-                            </div>
-                        )}
-                    </div>
-
-                    <br />
                     <footer className="panel-footer">...</footer>
-                    {
-                        this.game_owner == '1' ? 
-                            <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> 
-                        : ""
-                    }
-                </div>    
-            )      
-        }
-        else {
-            // if anyone disconnected, redirect all players including game owner to home
-            return (
-                <Redirect to='/' />
-            )
-        }
+                </div>
+            
+                <div>
+                    {this.state.teams.map((team,index)=>
+                        <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
+                            
+                            <ul style={{float:"left", width:"20%", display: "inline-block"}} key={index}>
+                                {team.players.map((player,i) => <li style={{display:"listItem"}} key={i}> {player.name} </li>)}  
+                            </ul>
+                        
+                        </div>
+                    )}
+                </div>
+
+                <br />
+                <footer className="panel-footer">...</footer>
+                {
+                    this.game_owner == '1' ? 
+                        <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> 
+                    : ""
+                }
+            </div>    
+        )      
     }
 }
 export default Lobby

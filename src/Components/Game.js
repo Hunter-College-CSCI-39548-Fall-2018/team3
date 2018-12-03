@@ -94,9 +94,9 @@ class Game extends React.Component {
 
     componentWillUnmount = () => {
         this.state.socket.close()
-        this.state.scoket.disconnect()
+        this.state.socket.disconnect()
 
-        if(!this.state.disconnect){
+        if(this.state.disconnect){
             this.clearCookies()
         }
     }

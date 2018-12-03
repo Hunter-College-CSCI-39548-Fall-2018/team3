@@ -62,7 +62,7 @@ class EnterName extends React.Component{
                     <h1 id="logo" className="display-4">
                         Enter your nickname
                     </h1>
-
+    
                     <div id="global-error" className="alert alert-danger" role="alert" style={{visibility:"hidden"}}>
                         The nickname is taken
                     </div>
