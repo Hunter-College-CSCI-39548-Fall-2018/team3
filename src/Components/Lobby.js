@@ -68,7 +68,8 @@ class Lobby extends React.Component {
         })
 
         socket.on('new-player', (curr_users) => {
-            console.log('received new player')
+            // console.log('received new player')
+            console.log("check for bugged player", curr_users)
             this.setState({players: curr_users})
         })
 

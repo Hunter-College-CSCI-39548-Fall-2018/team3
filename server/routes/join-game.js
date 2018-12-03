@@ -6,7 +6,7 @@ module.exports = (app, rooms) => {
         if(req.body.room){
             //check if room exists
             if(rooms[req.body.room] === undefined){
-                console.log("invalid key")
+                // console.log("invalid key")
                 res.json({keyValid:false})
             }
             else{
@@ -26,8 +26,8 @@ module.exports = (app, rooms) => {
                     })
 
 
-                    console.log('completely find key')
-                    console.log("Cookies: ", req.cookies)
+                    // console.log('completely find key')
+                    // console.log("Cookies: ", req.cookies)
                     res.json({keyValid:true})
                 }
                 else {
@@ -39,13 +39,14 @@ module.exports = (app, rooms) => {
 
     app.post('/enter-name', (req, res) => {
         if(req.body.nickname){
-
+            // console.log("this is the bugged nickname", req.body.nickname)
             //if name exists in room
             if(!rooms[req.cookies.room].hasPlayer(req.body.nickname)){
 
                 let player = new Player(req.body.nickname, 0)
                 player.connected = false
-                
+                // console.log("this is the player obj")
+                // console.log(player)
                 rooms[req.cookies.room].addPlayer(req.body.nickname, player)
 
                 res.clearCookie('player')

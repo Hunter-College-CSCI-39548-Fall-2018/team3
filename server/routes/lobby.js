@@ -1,24 +1,25 @@
 const Player = require('./utils/player.js')
-
 module.exports = (app, io, rooms) => {
     app.get('/lobby', (req, res) => {
-        console.log("lobby post was called")
+        // console.log("lobby post was called")
         var connected = false
         var room = rooms[req.cookies.room]
 
         onPlayerFirstConnect = (socket) => {
-            let name = getCookie(socket, "player")
+            let name = decodeURIComponent(getCookie(socket, "player"))
 
             //get current users in lobby
             socket.emit('get-curr-users', room.players)
 
             let player = new Player(name, socket.id)
-            room.addPlayer(name, player)
 
+            
+            room.addPlayer(name, player)
+            
             room.setSocketId(name, socket.id)
             socket.join(room.key)
 
-            console.log("player in room", room.players[name]);
+            // console.log("player in room", room.players[name]);
 
             // Notify that a new user has joined
             socket.to(room.key).emit('new-player', room.players)
@@ -39,7 +40,7 @@ module.exports = (app, io, rooms) => {
             socket.to(room.key).emit('force-disconnect')
             
             delete rooms[req.cookies.room]
-            console.log('state of room after disc', rooms)
+            // console.log('state of room after disc', rooms)
         }
 
         getCookie = (socket, cookie) => {
@@ -105,7 +106,7 @@ module.exports = (app, io, rooms) => {
 
                 socket.to(room.key).emit("shuffled-teams", room.teams)
                 socket.emit("shuffled-teams", room.teams)
-                console.log(room)
+                // console.log(room)
             })
 
             socket.on('kick', (who) => {
