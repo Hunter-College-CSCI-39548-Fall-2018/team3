@@ -168,7 +168,12 @@ class Lobby extends React.Component {
 
                                 <span className="tag label label-info">
                                     <span>{player}</span>
-                                    <a onClick={this.handleKick.bind(this, player)} ><i className="far fa-times-circle"></i></a>
+                                    {
+                                        this.game_owner == '1' ? 
+                                        <a onClick={this.handleKick.bind(this, player)} ><i className="far fa-times-circle"></i></a> 
+                                        : ""
+                                    }
+                                    
                                 </span>
                             </span>
                         )}
