@@ -95,11 +95,14 @@ class Room{
 
     whichTeam(player){
         for(let team of this.teams){
+            console.log("what team is i t serach thoruhg", team);
             // //find player in a team array
             if(_.findWhere(team.players, player)){
                 return team
             }
         }
+
+        return -1
     }
 
     shuffleTeams(){
@@ -134,6 +137,28 @@ class Room{
         }
 
         return 0
+    }
+
+    /*
+    *   If anyone has not connected to the game, kick them out
+    *   of the room. Removes by name, not socket id
+    */
+    checkForGhosts(){
+        //remove disconnected player from players list
+        for(let name in this.players){
+            if(!this.players[name].connected){
+                delete this.players[name]
+            }
+        }
+        
+        //remove disconnected player from team
+        for(let team of this.teams){
+            for(let i = 0; i < team.players.length; i++){
+                if(!team.players[i].connected){
+                    team.players.splice(i, 1)
+                }
+            }
+        }
     }
 
     returnTeams(){

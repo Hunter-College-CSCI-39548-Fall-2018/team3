@@ -52,6 +52,7 @@ class Game extends React.Component {
     }
     //get input command from player
     handleCommand = (command) => {
+        console.log("called handlecomamnd");
         let socket = this.state.socket
         socket.emit('input-command', {command: command, socketid: socket.id})
     }
@@ -91,6 +92,9 @@ class Game extends React.Component {
     }
 
     componentWillUnmount = () => {
+        this.state.socket.close()
+        this.state.scoket.disconnect()
+
         if(!this.state.disconnect){
             this.clearCookies()
         }

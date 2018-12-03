@@ -132,6 +132,7 @@ class Lobby extends React.Component {
         //destroy socket instance
         let socket= this.state.socket
         socket.close()
+        socket.disconnect()
 
         if(!this.state.start_game){
             this.clearCookies()
@@ -181,7 +182,6 @@ class Lobby extends React.Component {
                     </div>
                 
                     <div>
-                        {console.log("these ar ehthe teams", this.state.teams)}
                         {this.state.teams.map((team,index)=>
                             <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
                                 
