@@ -16,7 +16,7 @@ class PlayerControls extends React.Component{
                     this.props.icons.map((icon, i) => {
                         return (
                             <div className="btn-container" key={i}>
-                                <button className="btn-controller" onClick={this.props.handleCommand.bind(this, icon)}>{icon}</button>
+                                <button className="btn-controller" onClick={this.props.handleCommand.bind(this, icon)}><img style={{height:"128px"}} src="/spiky-smile.png" /></button>
                             </div>
                         )
                     })
