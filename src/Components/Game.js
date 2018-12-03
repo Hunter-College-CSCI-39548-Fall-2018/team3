@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import GameOwnerControls from './GameOwnerControls'
 import {Redirect} from 'react-router-dom'
 import PlayerControls from './PlayerControls';
+import Lobby from './Lobby'
 
 class Game extends React.Component {
     constructor(props) {
@@ -12,21 +13,16 @@ class Game extends React.Component {
             socket: false,
             curr_icon: "",
             teams: [],
-            disconnect: false,
+            connected: true,
             icons: [0, 1, 2, 3],
             team: 0
         }
         this.game_owner = Cookies.get('game_owner')
     }
 
-    checkCredentials = () => {
-        let cookies = Cookies.get() // returns obj with cookies
-        return "room" in cookies
-    }
-
     componentDidMount() {
-        if(!this.checkCredentials()){
-            this.setState({ disconnect: true })
+        if(!Lobby.checkCredentials){
+            this.setState({ connected: false })
         }else{ 
             let host = 'http://' + location.hostname
             fetch(host + ':3000/game', {
@@ -92,7 +88,7 @@ class Game extends React.Component {
 
         socket.on('force-disconnect', () => {
             this.clearCookies()
-            this.setState({ disconnect: true})
+            this.setState({ connected: false})
         })
     }
 
@@ -107,13 +103,13 @@ class Game extends React.Component {
             this.state.socket.disconnect()
         }
 
-        if(this.state.disconnect){
+        if(!this.state.connected){
             this.clearCookies()
         }
     }
 
     render() {
-        if(this.state.disconnect){
+        if(!this.state.connected){
             return (<Redirect to='/'/>)
         }
         
