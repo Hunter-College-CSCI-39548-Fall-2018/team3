@@ -16,42 +16,53 @@ class Lobby extends React.Component {
             connected: true,
             start_game: false,
             teamNum: 0,
-            redirect: false
         }
         this.game_owner = Cookies.get("game_owner")
-        // console.log(this.game_owner);
+        this.socket = false
+    }
+
+    checkCredentials = () => {
+        let cookies = Cookies.get() // returns obj with cookies
+        console.log("cookies obj", cookies);
+        console.log("is room in cokie", "room" in cookies);
+        return "room" in cookies
     }
 
     componentDidMount() {
-        const code = Cookies.get("room");
-        this.setState({ code: code });
-        let host = 'http://' + location.hostname
-        fetch(host + ':3000/lobby', {
-            method: 'GET',
-            credentials: 'include'
-        })
-            .then((res) => {
-                //   console.log("res status is", res.status)
-                const socket = io.connect(host + ':3000', {
-                    transports: ['websocket'],
-                    upgrade: false
-                })
+        //find way to find state of disconnect of socket after it has been instantiated 
 
-                //everything is asynchronous, so need to set socket state and then do all stuff after using callback
-                this.setState({ socket: socket }, () => {
-                    this.handleEvents()
-                })
+        if(!this.checkCredentials()){
+            this.setState({ connected: false})
+        }else{
+            const code = Cookies.get("room");
+            this.setState({ code: code });
+            let host = 'http://' + location.hostname
+
+            fetch(host + ':3000/lobby', {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then((res) => {
+                if(res.ok){
+                    //   console.log("res status is", res.status)
+                    const socket = io.connect(host + ':3000', {
+                        transports: ['websocket'],
+                        upgrade: false,
+                        'force new connection': true
+                    }, () => {
+                        this.socket = socket
+                    })
+
+
+                    console.log("this is socket", socket);
+                    //everything is asynchronous, so need to set socket state and then do all stuff after using callback
+                    this.setState({ socket: socket }, () => {
+                        this.handleEvents()
+                    })
+                }
             })
             .catch((err) => console.log(err))
-    }
-
-    shuffleTeams = () => {
-        const socket = this.state.socket
-        if (Cookies.get("game_owner") === '1') {
-            socket.emit("shuffle-teams")
         }
-
-        // console.log("I am in shuffleTeams")
     }
 
     clearCookies = () => {
@@ -79,20 +90,16 @@ class Lobby extends React.Component {
         })
 
         socket.on('force-disconnect', () => {
+            this.setState({ connected: false})
             this.clearCookies()
-            this.setState({connected: false})
         })
-
-        socket.on("shuffled-teams", (team) => {
-            console.log("this is teams", team);
+ 
+        socket.on("shuffled-teams", (teams) => {
+            console.log("this is teams", teams);
             // Updating the current state of teams after the shuffle
-            this.setState({ teams: team }, () => {
-                console.log("this is teams", team);
-                // this.getTeamNum()
-            })
+            this.setState({ teams: teams })
         })
 
-        // Only execute the shuffleTeams command when the timer is at 0
         socket.on('time-left', (time) => {
             this.setState({ timeRem: time });
 
@@ -130,22 +137,27 @@ class Lobby extends React.Component {
     }
     
     componentWillUnmount = () => {
-        //destroy socket instance
-        let socket= this.state.socket
-        socket.close()
-
-        if(!this.state.start_game){
-            this.clearCookies()
+        if(this.state.socket){
+            //destroy socket instance
+            this.state.socket.close()
+            this.state.socket.disconnect()
         }
     }
 
     render() {
+        if(this.socket.disconnected){
+            console.log("hey wait you dsiconencted");
+        }
+
+        //start of game
         if(this.state.start_game){
             return (<Redirect to='/game'/>)
         }
 
-        if (this.state.redirect === true) {
-            return (<Redirect to='/' />)
+        //force redirect
+        if(!this.state.connected/* || this.socket.disconnected*/){
+            console.log("disocinected because of something");
+            return (<Redirect to='/'/>)
         }
 
         if (this.state.connected) {
@@ -162,7 +174,6 @@ class Lobby extends React.Component {
                     <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
                     <br />
                     <div id='players' style={{ fontSize: "16px" }} className="font-weight-bold">
-                        {/* Players: {this.state.players.map((player,i)=> <span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary" key={i}>{player}</span>)} */}
                         Players:
                         {Object.keys(this.state.players).map((player, i) =>
                             <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
@@ -178,17 +189,17 @@ class Lobby extends React.Component {
                                     
                                 </span>
                             </span>
-                        )}
-                        <div className="panel panel-default">
-                            <header className="panel-heading">
-                                <h5 className="panel-title"></h5>
-                            </header>
-                        </div>
-                        <footer className="panel-footer">...</footer>
+                        
+                    )}
+                    <div className="panel panel-default">
+                        <header className="panel-heading">
+                            <h5 className="panel-title"></h5>
+                        </header>
+                    </div>
+                    <footer className="panel-footer">...</footer>
                     </div>
                 
                     <div>
-                        {console.log("these ar ehthe teams", this.state.teams)}
                         {this.state.teams.map((team,index)=>
                             <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
                                 
@@ -208,14 +219,8 @@ class Lobby extends React.Component {
                         : ""
                     }
                 </div>    
-            )      
-        }
-        else {
-            // if anyone disconnected, redirect all players including game owner to home
-            return (
-                <Redirect to='/' />
             )
-        }
+        }     
     }
 }
 export default Lobby
