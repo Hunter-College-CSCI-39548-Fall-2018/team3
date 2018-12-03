@@ -106,12 +106,12 @@ class Game extends React.Component {
                 {
                 this.game_owner === "1" ? 
                 <GameOwnerControls
-                    teams = {this.state.teams}
+                    teams={this.state.teams}
                     startGame={this.startGame}
                 /> 
                 : <PlayerControls
                     icons={this.state.icons}
-                    handleCommand = {this.handleCommand}
+                    handleCommand={this.handleCommand}
                     team={this.state.team}
                 />
                 }   

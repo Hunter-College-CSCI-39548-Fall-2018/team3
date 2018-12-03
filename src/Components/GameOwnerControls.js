@@ -1,4 +1,7 @@
 import React from 'react'
+import GameScreensTwo from './GameScreensTwo';
+import GameScreensThree from './GameScreensThree';
+import GameScreensFour from './GameScreensFour';
 
 class GameOwnerControls extends React.Component{
     constructor(props){
@@ -9,7 +12,7 @@ class GameOwnerControls extends React.Component{
         return(
             <div>
                 <div id='curr-icon'>
-                    {console.log("this is teams", this.props.teams)}
+                    {/* {console.log("this is teams", this.props.teams)}
                     {
                     this.props.teams.map((team, i) => {
                         console.log("this is score", team.score)
@@ -23,7 +26,9 @@ class GameOwnerControls extends React.Component{
                         )
                     })
 
-                    }
+                    } */}
+                    {console.log("this is teams", this.props.teams)}
+                    <GameScreensFour />
                 </div>
                 <button onClick={this.props.startGame.bind(this)}>start game</button>
 
