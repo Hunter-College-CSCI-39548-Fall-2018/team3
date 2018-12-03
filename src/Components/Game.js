@@ -103,6 +103,7 @@ class Game extends React.Component {
         
         return (
             <div style={{height:"100%"}}>
+                {console.log("i am in game.js return",this.state.teams)}
                 {
                 this.game_owner === "1" ? 
                 <GameOwnerControls
