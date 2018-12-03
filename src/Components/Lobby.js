@@ -123,7 +123,7 @@ class Lobby extends React.Component {
         // When the room owner is ready to start the game then the new state is set for the redirect
         this.setState({ start_game: true })
     }
-    
+
     handleKick = (kickPlayer) => {
         console.log("Kick Player Name: ", kickPlayer)
         let socket = this.state.socket
@@ -131,11 +131,10 @@ class Lobby extends React.Component {
     }
     
     componentWillUnmount = () => {
-        let socket= this.state.socket
-        if(socket){
+        if(this.state.socket){
             //destroy socket instance
-            socket.close()
-            socket.disconnect()
+            this.state.socket.close()
+            this.state.socket.disconnect()
         }
 
         if(!this.state.start_game){

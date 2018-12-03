@@ -19,31 +19,40 @@ class Game extends React.Component {
         this.game_owner = Cookies.get('game_owner')
     }
 
-    componentDidMount() {
-        let host = 'http://' + location.hostname
-        fetch(host + ':3000/game', {
-            method: 'GET',
-            credentials: 'include'
-        })
-        .then((res) => {
-            if(res.ok){
-                console.log("response!", res.status)
-                const socket = io.connect(host + ':3000/', {
-                    transports: ['websocket'],
-                    upgrade: false,
-                    'force new connection': true
-                })
+    checkCredentials = () => {
+        let cookies = Cookies.get() // returns obj with cookies
+        return "room" in cookies
+    }
 
-                //fetch is asynchronous, so have the client connect after the request is made
-                this.setState({
-                    socket: socket
-                }, () => {
-                    this.handleEvents()
-                    console.log("state is", this.state.socket)
-                })
-            }
-        })
-        .catch(err => console.log("error", err))
+    componentDidMount() {
+        if(!this.checkCredentials()){
+            this.setState({ disconnect: true })
+        }else{ 
+            let host = 'http://' + location.hostname
+            fetch(host + ':3000/game', {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then((res) => {
+                if(res.ok){
+                    console.log("response!", res.status)
+                    const socket = io.connect(host + ':3000/', {
+                        transports: ['websocket'],
+                        upgrade: false,
+                        'force new connection': true
+                    })
+
+                    //fetch is asynchronous, so have the client connect after the request is made
+                    this.setState({
+                        socket: socket
+                    }, () => {
+                        this.handleEvents()
+                        console.log("state is", this.state.socket)
+                    })
+                }
+            })
+            .catch(err => console.log("error", err))
+        }
     }
 
     clearCookies = () =>{
@@ -93,8 +102,10 @@ class Game extends React.Component {
     }
 
     componentWillUnmount = () => {
-        this.state.socket.close()
-        this.state.socket.disconnect()
+        if(this.state.socket){
+            this.state.socket.close()
+            this.state.socket.disconnect()
+        }
 
         if(this.state.disconnect){
             this.clearCookies()
