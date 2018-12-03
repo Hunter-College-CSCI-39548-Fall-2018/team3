@@ -11,18 +11,18 @@ class Game extends React.Component {
         super(props)
         this.state = {
             socket: false,
-            curr_icon: "",
             teams: [],
             connected: true,
             icons: [0, 1, 2, 3],
             team: 0
         }
         this.game_owner = Cookies.get('game_owner')
+        this.socket = false
     }
 
     componentDidMount() {
         if(!Lobby.checkCredentials){
-            this.setState({ connected: false })
+            // this.setState({ connected: false })
         }else{ 
             let host = 'http://' + location.hostname
             fetch(host + ':3000/game', {
@@ -38,6 +38,7 @@ class Game extends React.Component {
                         'force new connection': true
                     })
 
+                    this.socket = socket
                     //fetch is asynchronous, so have the client connect after the request is made
                     this.setState({
                         socket: socket
@@ -98,18 +99,16 @@ class Game extends React.Component {
     }
 
     componentWillUnmount = () => {
-        if(this.state.socket){
-            this.state.socket.close()
-            this.state.socket.disconnect()
-        }
-
-        if(!this.state.connected){
-            this.clearCookies()
-        }
+        // if(this.state.socket){
+        //     this.state.socket.close()
+        //     this.state.socket.disconnect()
+        // }
     }
 
     render() {
-        if(!this.state.connected){
+        if(!this.state.connected/* || this.socket.disconnected*/){
+            console.log("client disocnnected bescause of what");
+            this.clearCookies()
             return (<Redirect to='/'/>)
         }
         

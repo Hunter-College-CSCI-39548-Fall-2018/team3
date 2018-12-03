@@ -1,7 +1,5 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
-import Lobby from './Lobby'
-
 
 class EnterName extends React.Component{ 
     constructor(props){
@@ -11,13 +9,6 @@ class EnterName extends React.Component{
 
         this.state = {
             redirct: false,
-            connected: true
-        }
-    }
-
-    componentDidMount(){
-        if(!Lobby.checkCredentials){
-            this.setState({ connected: false })
         }
     }
 
@@ -61,10 +52,6 @@ class EnterName extends React.Component{
     }
     
     render(){
-        if(!this.state.connected){
-            return(<Redirect to='/'/>)
-        }
-
         //when make post request, make sure that user should redirect or not
         //check if name exists in the room or not
         if(this.state.redirect){

@@ -88,7 +88,7 @@ module.exports = (app, io, rooms) => {
             onGameOwnerDisconnect = () => {
                 //disconnect and redirect everyone in room
                 io.to(room.key).emit('force-disconnect')
-        
+                
                 delete room
             }
 

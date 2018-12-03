@@ -16,9 +16,9 @@ class Lobby extends React.Component {
             connected: true,
             start_game: false,
             teamNum: 0,
-            redirect: false
         }
         this.game_owner = Cookies.get("game_owner")
+        this.socket = false
     }
 
     checkCredentials = () => {
@@ -27,8 +27,10 @@ class Lobby extends React.Component {
     }
 
     componentDidMount() {
+        //find way to find state of disconnect of socket after it has been instantiated 
+
         if(!this.checkCredentials()){
-            this.setState({ connected: false})
+            // this.setState({ connected: false})
         }else{
             const code = Cookies.get("room");
             this.setState({ code: code });
@@ -45,8 +47,12 @@ class Lobby extends React.Component {
                         transports: ['websocket'],
                         upgrade: false,
                         'force new connection': true
+                    }, () => {
+                        this.socket = socket
                     })
 
+
+                    console.log("this is socket", socket);
                     //everything is asynchronous, so need to set socket state and then do all stuff after using callback
                     this.setState({ socket: socket }, () => {
                         this.handleEvents()
@@ -81,8 +87,6 @@ class Lobby extends React.Component {
         })
 
         socket.on('force-disconnect', () => {
-            console.log("should have kked client");
-
             this.setState({connected: false})
             this.clearCookies()
         })
@@ -90,10 +94,9 @@ class Lobby extends React.Component {
         socket.on("shuffled-teams", (teams) => {
             console.log("this is teams", teams);
             // Updating the current state of teams after the shuffle
-            this.setState({ teams: team })
+            this.setState({ teams: teams })
         })
 
-        // Only execute the shuffleTeams command when the timer is at 0
         socket.on('time-left', (time) => {
             this.setState({ timeRem: time });
 
@@ -136,26 +139,23 @@ class Lobby extends React.Component {
             this.state.socket.close()
             this.state.socket.disconnect()
         }
-
-        if(!this.state.start_game){
-            this.clearCookies()
-        }
     }
 
     render() {
+        if(this.socket.disconnected){
+            console.log("hey wait you dsiconencted");
+        }
+
         //start of game
         if(this.state.start_game){
             return (<Redirect to='/game'/>)
         }
 
-        //on force redirect
-        if(!this.state.connected){
+        //force redirect
+        if(!this.state.connected/* || this.socket.disconnected*/){
+            console.log("disocinected because of something");
             return (<Redirect to='/'/>)
         }
-
-        // if (this.state.redirect === true) {
-        //     return (<Redirect to='/' />)
-        // }
         
         return (
             <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
