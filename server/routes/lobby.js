@@ -78,7 +78,7 @@ module.exports = (app, io, rooms) => {
             onGameOwnerDisconnect = () => {
                 console.log("game onwe rdisoncet");
                 //disconnect and redirect everyone in room
-                socket.to(room.key).emit('force-disconnect')
+                io.to(room.key).emit('force-disconnect')
                 
                 delete rooms[getCookie("room")]
                 console.log('state of room after disc', rooms)
