@@ -149,8 +149,8 @@ class Lobby extends React.Component {
 
         if (this.state.connected) {
             return (
-                <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
-                    <h1 id="logo" className="display-4">
+                <div style={{backgroundColor:"#c9c9ff"}} id="header" className="d-flex align-items-center flex-column justify-content-center h-100">
+                    <h1 id="logo" style={{fontFamily: "Open Sans"}}className="display-4">
                         {this.state.code}
                     </h1>
 
@@ -167,6 +167,7 @@ class Lobby extends React.Component {
                             <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
 
                                 <span className="tag label label-info">
+                                    {console.log("player data", player)}
                                     <span>{player}</span>
                                     {
                                         this.game_owner == '1' ? 

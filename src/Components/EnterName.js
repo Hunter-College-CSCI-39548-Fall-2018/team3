@@ -58,7 +58,7 @@ class EnterName extends React.Component{
         }else{
             return(
 
-                <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
+                <div id="header" style={{backgroundColor:"#B4D7B2"}} className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
                     <h1 id="logo" className="display-4">
                         Enter your nickname
                     </h1>
