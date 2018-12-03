@@ -21,30 +21,40 @@ class Lobby extends React.Component {
         this.game_owner = Cookies.get("game_owner")
     }
 
-    componentDidMount() {
-        const code = Cookies.get("room");
-        this.setState({ code: code });
-        let host = 'http://' + location.hostname
-        fetch(host + ':3000/lobby', {
-            method: 'GET',
-            credentials: 'include'
-        })
-        .then((res) => {
-            if(res.ok){
-                //   console.log("res status is", res.status)
-                const socket = io.connect(host + ':3000', {
-                    transports: ['websocket'],
-                    upgrade: false,
-                    'force new connection': true
-                })
+    checkCredentials = () => {
+        let cookies = Cookies.get() // returns obj with cookies
+        return "room" in cookies
+    }
 
-                //everything is asynchronous, so need to set socket state and then do all stuff after using callback
-                this.setState({ socket: socket }, () => {
-                    this.handleEvents()
-                })
-            }
-        })
-        .catch((err) => console.log(err))
+    componentDidMount() {
+        if(!this.checkCredentials()){
+            this.setState({ connected: false})
+        }else{
+            const code = Cookies.get("room");
+            this.setState({ code: code });
+            let host = 'http://' + location.hostname
+
+            fetch(host + ':3000/lobby', {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then((res) => {
+                if(res.ok){
+                    //   console.log("res status is", res.status)
+                    const socket = io.connect(host + ':3000', {
+                        transports: ['websocket'],
+                        upgrade: false,
+                        'force new connection': true
+                    })
+
+                    //everything is asynchronous, so need to set socket state and then do all stuff after using callback
+                    this.setState({ socket: socket }, () => {
+                        this.handleEvents()
+                    })
+                }
+            })
+            .catch((err) => console.log(err))
+        }
     }
 
     clearCookies = () => {
@@ -113,7 +123,7 @@ class Lobby extends React.Component {
         // When the room owner is ready to start the game then the new state is set for the redirect
         this.setState({ start_game: true })
     }
-
+    
     handleKick = (kickPlayer) => {
         console.log("Kick Player Name: ", kickPlayer)
         let socket = this.state.socket
@@ -121,27 +131,19 @@ class Lobby extends React.Component {
     }
     
     componentWillUnmount = () => {
-        //destroy socket instance
         let socket= this.state.socket
-        socket.close()
-        socket.disconnect()
+        if(socket){
+            //destroy socket instance
+            socket.close()
+            socket.disconnect()
+        }
 
         if(!this.state.start_game){
             this.clearCookies()
         }
     }
 
-    checkCredentials = () => {
-        let cookies = Cookies.get() // returns obj with cookies
-        return "room" in cookies
-    }
-
     render() {
-        //if not correct credentials
-        if(!this.checkCredentials()){
-            return (<Redirect to='/'/>)
-        }
-
         //start of game
         if(this.state.start_game){
             return (<Redirect to='/game'/>)

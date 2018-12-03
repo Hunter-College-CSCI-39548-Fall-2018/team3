@@ -64,7 +64,7 @@ module.exports = (app, io, rooms) => {
             onPlayerDisconnect = () =>{
                 console.log("player diconnect");
                 room.removePlayer(socket.id)
-        
+                
                 //update lobby page for everyone still connected
                 socket.to(room.key).emit('player-disconnected', room.players)
             }
