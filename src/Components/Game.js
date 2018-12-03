@@ -25,7 +25,8 @@ class Game extends React.Component {
             method: 'GET',
             credentials: 'include'
         })
-            .then((res) => {
+        .then((res) => {
+            if(res.ok){
                 console.log("response!", res.status)
                 const socket = io.connect(host + ':3000/', {
                     transports: ['websocket'],
@@ -40,9 +41,9 @@ class Game extends React.Component {
                     this.handleEvents()
                     console.log("state is", this.state.socket)
                 })
-
-            })
-            .catch(err => console.log("error", err))
+            }
+        })
+        .catch(err => console.log("error", err))
     }
 
     clearCookies = () =>{

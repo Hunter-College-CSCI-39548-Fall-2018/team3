@@ -30,19 +30,24 @@ class Lobby extends React.Component {
             method: 'GET',
             credentials: 'include'
         })
-            .then((res) => {
+        .then((res) => {
+            if(res.ok){
                 //   console.log("res status is", res.status)
                 const socket = io.connect(host + ':3000', {
                     transports: ['websocket'],
-                    upgrade: false
+                    upgrade: false,
+                    'force new connection': true
                 })
 
                 //everything is asynchronous, so need to set socket state and then do all stuff after using callback
                 this.setState({ socket: socket }, () => {
                     this.handleEvents()
                 })
-            })
-            .catch((err) => console.log(err))
+            }
+
+            
+        })
+        .catch((err) => console.log(err))
     }
 
     shuffleTeams = () => {
