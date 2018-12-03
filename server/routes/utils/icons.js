@@ -24,7 +24,8 @@ function generateIndex(size) {
 // console.log(index);
 
 //returns an icon
-export function generateIcon(num) {
+export function generateIcon() {
+    let num = generateIndex(size);
     return files[num];
 }
 // let image = generateIcon(index);
