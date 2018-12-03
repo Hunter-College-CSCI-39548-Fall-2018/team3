@@ -1,5 +1,5 @@
 import React from 'react'
-import { Redirect, Route } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 
 class EnterName extends React.Component{ 
     constructor(props){
@@ -7,11 +7,12 @@ class EnterName extends React.Component{
         this.nickname = React.createRef()
         this.handleEnterName = this.handleEnterName.bind(this)
 
-        this.state = {redirct: false}
+        this.state = {
+            redirct: false,
+        }
     }
 
-    handleEnterName(event){
-
+    handleEnterName(){
         let name = this.nickname.current.value
         let obj = {"nickname":name}
 
@@ -62,7 +63,7 @@ class EnterName extends React.Component{
                     <h1 id="logo" className="display-4">
                         Enter your nickname
                     </h1>
-
+    
                     <div id="global-error" className="alert alert-danger" role="alert" style={{visibility:"hidden"}}>
                         The nickname is taken
                     </div>

@@ -4,45 +4,60 @@ import Cookies from 'js-cookie';
 import GameOwnerControls from './GameOwnerControls'
 import {Redirect} from 'react-router-dom'
 import PlayerControls from './PlayerControls';
+import Lobby from './Lobby'
 
 class Game extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             socket: false,
-            curr_icon: "",
             teams: [],
-            disconnect: false,
+            connected: true,
             icons: [0, 1, 2, 3],
             team: 0
         }
         this.game_owner = Cookies.get('game_owner')
+        this.socket = false
+    }
+
+    checkCredentials = () => {
+        let cookies = Cookies.get() // returns obj with cookies
+        console.log("cookies obj", cookies);
+        console.log("is room in cokie", "room" in cookies);
+        return "room" in cookies
     }
 
     componentDidMount() {
-        let host = 'http://' + location.hostname
-        fetch(host + ':3000/game', {
-            method: 'GET',
-            credentials: 'include'
-        })
+        if(!this.checkCredentials()){
+            console.log("there s aproblem with the credentials");
+            this.setState({ connected: false })
+        }else{ 
+            let host = 'http://' + location.hostname
+            fetch(host + ':3000/game', {
+                method: 'GET',
+                credentials: 'include'
+            })
             .then((res) => {
-                console.log("response!", res.status)
-                const socket = io.connect(host + ':3000/', {
-                    transports: ['websocket'],
-                    upgrade: false,
-                    'force new connection': true
-                })
+                if(res.ok){
+                    console.log("response!", res.status)
+                    const socket = io.connect(host + ':3000/', {
+                        transports: ['websocket'],
+                        upgrade: false,
+                        'force new connection': true
+                    })
 
-                //fetch is asynchronous, so have the client connect after the request is made
-                this.setState({
-                    socket: socket
-                }, () => {
-                    this.handleEvents()
-                    console.log("state is", this.state.socket)
-                })
-
+                    this.socket = socket
+                    //fetch is asynchronous, so have the client connect after the request is made
+                    this.setState({
+                        socket: socket
+                    }, () => {
+                        this.handleEvents()
+                        console.log("state is", this.state.socket)
+                    })
+                }
             })
             .catch(err => console.log("error", err))
+        }
     }
 
     clearCookies = () =>{
@@ -52,6 +67,7 @@ class Game extends React.Component {
     }
     //get input command from player
     handleCommand = (command) => {
+        console.log("called handlecomamnd");
         let socket = this.state.socket
         socket.emit('input-command', {command: command, socketid: socket.id})
     }
@@ -81,7 +97,7 @@ class Game extends React.Component {
 
         socket.on('force-disconnect', () => {
             this.clearCookies()
-            this.setState({ disconnect: true})
+            this.setState({ connected: false})
         })
     }
 
@@ -91,13 +107,16 @@ class Game extends React.Component {
     }
 
     componentWillUnmount = () => {
-        if(!this.state.disconnect){
-            this.clearCookies()
-        }
+        // if(this.state.socket){
+        //     this.state.socket.close()
+        //     this.state.socket.disconnect()
+        // }
     }
 
     render() {
-        if(this.state.disconnect){
+        if(!this.state.connected/* || this.socket.disconnected*/){
+            console.log("client disocnnected bescause of what");
+            // this.clearCookies()
             return (<Redirect to='/'/>)
         }
         
