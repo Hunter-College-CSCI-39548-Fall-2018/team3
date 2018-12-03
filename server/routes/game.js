@@ -1,3 +1,31 @@
+const Icons = require('./utils/icons.js')
+// const Teams = require('./utils/teams.js')
+
+var room = rooms[req.cookies.room];
+//holds the prompt icon for the teams in a room
+// const prompts = [];
+let prompt;
+//generates the prompts for each team in the begining
+for(let team of room.teams) {
+    team.prompt = Icon.generateIcon();
+}
+
+// let teamSize = [];
+getTeamSize = (room.teams) => {
+    for(let i in room.teams) {
+        teamSize.push(room.teams.players.length)
+    }
+    return teamSize;
+}
+
+// //holds the icons for each team in the same room
+// let teamIcons = [];
+// //generate teh array of icons for each player in a team
+for(let team of room.teams) {
+    let teamIcon = Icons.generateRoundIcons(team.prompt, team.players.length);
+    teamIcons.push(teamIcon);
+}
+
 module.exports = (app, io, rooms) => {
     var game_started = false
 
@@ -6,6 +34,8 @@ module.exports = (app, io, rooms) => {
     const end_score = 30
 
     var sockets_connected = []
+
+    Icons.generateIcon();
 
     app.get('/game', (req, res) => {
         var room = rooms[req.cookies.room]
@@ -16,7 +46,6 @@ module.exports = (app, io, rooms) => {
         shuffleIcons = (socket) => {
 
         }
-
         /*
         *   Generate the icon to be inputted on the screen
         */
@@ -30,16 +59,17 @@ module.exports = (app, io, rooms) => {
         */
         startGame = (socket) => {
             console.log("called start game");
-
-            // for(let key of room.players){
-            //     shuffleIcons(key.socketid)
-            // }
-
-            let curr_icon = generateCurrIcon()
             for(let team of room.teams){
                 team.curr_icon = curr_icon
                 broadcastToTeam(team, "game-started", room.teams)
             }
+           
+
+            let curr_icon = generateCurrIcon()
+             // for(let key of room.players){
+            //     shuffleIcons(key.socketid)
+            // }
+            
 
             socket.emit('game-started', room.teams)
             console.log("end of clal game");
@@ -211,6 +241,7 @@ module.exports = (app, io, rooms) => {
 
                     if(checkCommand(team.curr_icon, msg.command)){
                         team.score += 1
+                        //start a new round
                         team.curr_icon = generateCurrIcon()
 
                         io.to(room.game_owner).emit('correct-command', room.teams)
@@ -222,8 +253,6 @@ module.exports = (app, io, rooms) => {
                 }
             })
         })
-
         res.sendStatus(200)
-
     })
 }
