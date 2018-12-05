@@ -108,6 +108,13 @@ module.exports = (app, io, rooms) => {
                 return winning_team
             }
 
+            shuffleTeamsIcons = (team) => {
+                for(let user of team.players){
+                    let icons = shuffleIcons()
+                    socket.to(user.socketid).emit("new-icons", icons)
+                }
+            }
+
             startTimer = () =>{
                 let updated_time = setInterval( () => {
                     
@@ -136,7 +143,7 @@ module.exports = (app, io, rooms) => {
             *   TODO: Michelle fill this out thanks
             */
             shuffleIcons = (socket) => {
-
+                return [1,2,3,4]
             }
 
             /*
@@ -152,10 +159,11 @@ module.exports = (app, io, rooms) => {
 
                 for(let team of room.teams){
                     team.curr_icon = curr_icon
+                    shuffleTeamsIcons(team)
                 }
+
                 io.to(room.key).emit('game-started', room.teams)
 
-                // socket.emit('game-started', room.teams)
                 console.log("end of clal game");
             }
 
@@ -209,7 +217,8 @@ module.exports = (app, io, rooms) => {
                         if(checkCommand(team.curr_icon, msg.command)){
                             team.score += 1
                             team.curr_icon = generateCurrIcon()
-
+                            
+                            // shuffleTeamsIcons(team)
                             io.to(room.game_owner).emit('correct-command', room.teams)
                         }else{
                             team.score -= 1

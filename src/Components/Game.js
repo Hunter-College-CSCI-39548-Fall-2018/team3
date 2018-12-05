@@ -69,7 +69,6 @@ class Game extends React.Component {
     }
     //get input command from player
     handleCommand = (command) => {
-        console.log("called handlecomamnd");
         let socket = this.state.socket
         socket.emit('input-command', {command: command, socketid: socket.id})
     }
@@ -83,6 +82,10 @@ class Game extends React.Component {
 
         socket.on('game-started', (teams) => {
             this.setState({ teams: teams})
+        })
+
+        socket.on('new-icons', (icons) => {
+            this.setState({ icons: icons })
         })
 
         socket.on('correct-command', (teams) => {
