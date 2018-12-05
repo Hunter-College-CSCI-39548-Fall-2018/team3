@@ -11,7 +11,7 @@ class Room{
         this.key = ""
         this.teams = []
         this.game_owner = "" //track socket id
-        this.time = 3;
+        this.time = 10;
         this.start = false;
     }
 
