@@ -134,9 +134,6 @@ class Lobby extends React.Component {
         let socket = this.state.socket
         socket.emit('kick', kickPlayer)
     }
-    
-    componentWillUnmount = () => {
-    }
 
     render() {
         if(this.socket.disconnected){

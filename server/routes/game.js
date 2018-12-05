@@ -217,7 +217,10 @@ module.exports = (app, io, rooms) => {
             })
 
             //wait until everyone is connected before disabling add event listener
-            if(game_connected.length === room.players.length +1){
+            if(game_connected.length === Object.keys(room.players).length +1){
+                console.log("everyon eocnnected");
+
+                //server version of componentWillUnmount
                 on_game = false
             }
 

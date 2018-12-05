@@ -135,6 +135,8 @@ module.exports = (app, io, rooms) => {
                 socket.emit('get-curr-users', room.players)
                 socket.to(room.key).emit('get-curr-users', room.players)
             })
+
+            //server version of componentWillUnmount
             on_lobby = false
         }  
     })
