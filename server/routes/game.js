@@ -18,6 +18,7 @@ module.exports = (app, io, rooms) => {
 
     io.sockets.on('connection', (socket)=>{
         if(on_game){
+            console.log("called game socket sonncection");
             //get cookie in headers of socket connection
             getCookie = (cookie) => {
                 let cookies = socket.handshake.headers['cookie']
@@ -69,6 +70,8 @@ module.exports = (app, io, rooms) => {
                 //remove player by socket id
                 room.removePlayer(socket.id)
                 room.removePlayerFromTeam(socket.id)
+
+                console.log("removed player from disconet in game");
             }
             
             onGameOwnerFirstConnect = () => {
@@ -93,6 +96,17 @@ module.exports = (app, io, rooms) => {
                 delete room
             }
 
+            checkIfWon = () => {
+                //in case there are multiple teams that win
+                // let winning_team = []
+                
+                var winning_team = room.teams.reduce(function(x, y) {
+                    return x.score > y.score ? x : y;
+                })         
+
+                return winning_team
+            }
+
             startTimer = () =>{
                 let updated_time = setInterval( () => {
                     
@@ -105,9 +119,10 @@ module.exports = (app, io, rooms) => {
 
                     if(time.min === 0 && time.sec === 0){
                         clearInterval(updated_time);
-                        // let winning_team = checkIfWon()
-                        // console.log("winnign team is", checkIfwon());
-                        // endGame(winning_team)
+                        let winning_team = checkIfWon()
+
+                        console.log("winnign team is", winning_team);
+                        endGame(winning_team)
                         console.log("gme had ended in server side");
                     }
 
@@ -147,17 +162,6 @@ module.exports = (app, io, rooms) => {
                 return curr_icon === command
             }
 
-            checkIfWon = () => {
-                let winning_score = (
-                    Math.max.apply(Math, room.teams.map((team) => { return team.score }))
-                )
-            
-                // for(let team of room.teams){
-                //     if()
-                // }                
-
-                // return winning_team
-            }
             
             endGame = (team) => {
                 //finish for when game ends
@@ -211,6 +215,12 @@ module.exports = (app, io, rooms) => {
                     }
                 }
             })
+
+            //wait until everyone is connected before disabling add event listener
+            if(game_connected.length === room.players.length +1){
+                on_game = false
+            }
+
         }
 
         
