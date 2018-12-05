@@ -134,9 +134,6 @@ module.exports = (app, io, rooms) => {
                 socket.emit('get-curr-users', room.players)
                 socket.to(room.key).emit('get-curr-users', room.players)
             })
-<<<<<<< Updated upstream
-=======
-
             socket.on('request-icons', () => {
                 let icons = gameAssets.enumerateIcons()
                 console.log(icons)
@@ -145,7 +142,6 @@ module.exports = (app, io, rooms) => {
 
             //server version of componentWillUnmount
             on_lobby = false
->>>>>>> Stashed changes
         }  
     })
 }
