@@ -6,8 +6,9 @@ class EnterRoom extends React.Component{
         super(props)
         this.room = React.createRef()
         this.handleEnterRoom = this.handleEnterRoom.bind(this)
-
-        this.state = {redirect: false}
+        this.state = {
+        	redirect: false
+        }
     }
 
     handleEnterRoom(event){
