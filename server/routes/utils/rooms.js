@@ -96,7 +96,6 @@ class Room{
 
     shuffleTeams(){
         var chunk = Math.ceil(Object.keys(this.players).length/this.settings.num_teams)
-        console.log("what is chunk", chunk);
         let newArr = _.shuffle(this.players);
 
         //_.chunk - second argument takes how many elements in each array 

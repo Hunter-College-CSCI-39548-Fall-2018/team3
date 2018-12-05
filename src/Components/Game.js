@@ -101,6 +101,7 @@ class Game extends React.Component {
         })
 
         socket.on('force-disconnect', () => {
+            console.log("should have disconnected player");
             this.clearCookies()
             this.setState({ connected: false})
         })
@@ -139,10 +140,10 @@ class Game extends React.Component {
     }
 
     render() {
-        if(!this.state.connected /*|| this.socket.disconnected*/){
+        if(!this.state.connected){
             console.log("client disocnnected bescause of what");
         //     this.clearCookies()
-        //     return (<Redirect to='/'/>)
+            return (<Redirect to='/'/>)
         }
 
 		if (this.state.restart === true){

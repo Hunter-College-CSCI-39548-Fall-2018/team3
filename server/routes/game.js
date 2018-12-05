@@ -12,7 +12,7 @@ module.exports = (app, io, rooms) => {
 
         on_game = true
         time = {min: rooms[req.cookies.room].settings.time, sec: 0}
-        
+
         res.sendStatus(200)
     })
 
@@ -90,6 +90,7 @@ module.exports = (app, io, rooms) => {
                 socket.join(room.key)
             }
             onGameOwnerDisconnect = () => {
+                console.log("game owner disconnected in game");
                 //disconnect and redirect everyone in room
                 io.to(room.key).emit('force-disconnect')
                 
@@ -183,7 +184,7 @@ module.exports = (app, io, rooms) => {
             
             socket.on('disconnect', () => {
                 if(room){
-                    if(getCookie("game_owner") === "1"){
+                    if(room.game_owner === socket.id){
                         onGameOwnerDisconnect()
                     }else{
                         //if room still exists and player disconnects
