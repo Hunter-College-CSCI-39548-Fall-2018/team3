@@ -84,10 +84,10 @@ class EnterRoom extends React.Component{
                     <button id='enter-code' type='button' onClick={this.handleEnterRoom} className="btn btn-success">Next</button>
 
                     {/*
-                    <div id="room-error" className="alert alert-danger" role="alert" style={{visibility:"hidden"}}>
-                    	Error
+                    <div id="global-error" className="alert alert-danger" role="alert" style={{visibility:"hidden"}}>
+                    	This code is invalid
                     </div>*/}
-                    <div id="room-error">
+                    <div>
                     	{this.state.error}
                     </div>
 
