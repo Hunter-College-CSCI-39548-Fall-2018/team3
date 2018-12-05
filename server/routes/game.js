@@ -165,6 +165,8 @@ module.exports = (app, io, rooms) => {
             
             endGame = (team) => {
                 //finish for when game ends
+                const winInfo = {teamNumber : 1 ,players : team.players, score : team.score}
+        		socket.emit('end-game',winInfo)
                 console.log("game has ended");
                 console.log("team has won", team.score);
             }
@@ -215,6 +217,18 @@ module.exports = (app, io, rooms) => {
                     }
                 }
             })
+
+			socket.on('restart', () => {
+
+				const currPlayersSockets = Object.values(room.players)
+
+				for (key in currPlayersSockets){
+					socket.to(currPlayersSockets[key].socketid).emit('restart')
+				}
+
+				socket.emit('GameOwnerRestart')
+			})
+
 
             //wait until everyone is connected before disabling add event listener
             if(game_connected.length === Object.keys(room.players).length +1){
