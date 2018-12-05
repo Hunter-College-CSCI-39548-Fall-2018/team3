@@ -14,7 +14,11 @@ class Game extends React.Component {
             connected: true,
             icons: [0, 1, 2, 3],
             team: 0,
-            time: false
+            time: false,
+            gameWon : false,
+            wonTeamInfo : {},
+            restart : false,
+            GameOwnerRestart : false
         }
         this.game_owner = Cookies.get('game_owner')
         this.socket = false
@@ -100,12 +104,32 @@ class Game extends React.Component {
             this.clearCookies()
             this.setState({ connected: false})
         })
+
+        socket.on('end-game', (wonData) => {
+        	this.setState({gameWon : true, 'wonTeamInfo' : wonData})
+        })
+
+        socket.on('restart', () => {
+        	this.clearCookies()
+            this.setState({restart : true})
+        })
+
+        socket.on('GameOwnerRestart', () => {
+        	this.clearCookies()
+            this.setState({GameOwnerRestart : true})
+        })
+
     }
 
     startGame = () => {
         let socket = this.state.socket
         socket.emit('start-game')
     }
+
+	handleRestart = () => {
+		let socket = this.state.socket
+		socket.emit('restart')
+	}
 
     componentWillUnmount = () => {
         // if(this.state.socket){
@@ -120,7 +144,47 @@ class Game extends React.Component {
         //     this.clearCookies()
         //     return (<Redirect to='/'/>)
         }
-        
+
+		if (this.state.restart === true){
+			return (
+				<Redirect to={{ pathname : '/enter-room'}} />
+			)
+		}
+
+		if (this.state.GameOwnerRestart === true){
+			return (
+				<Redirect to={{ pathname : '/create-game'}} />
+			)			
+		}
+
+        if (this.state.gameWon === true){
+			const teamWon = this.state.wonTeamInfo['teamNumber']
+			const wonScore = this.state.wonTeamInfo['score']
+			const playersWon = this.state.wonTeamInfo['players'].map((player,index) => {
+				var playerName = player['name']
+				return (
+					<li key={index}>
+						{playerName}
+					</li>
+				)
+			})
+        	return (
+	 			<div>
+					<h1> Congratulations Team {teamWon} Won </h1>
+					<br/>
+					Score: {wonScore}  
+					<br/>
+					Players:
+					<br/>
+					<ul>
+						{playersWon}
+					</ul>
+					<br/>
+					<button onClick={this.handleRestart}> Restart </button>
+				</div>       		
+        	)
+        }
+
         return (
             <div>
                 {
@@ -135,7 +199,8 @@ class Game extends React.Component {
                     handleCommand = {this.handleCommand}
                     team={this.state.team}
                 />
-                }   
+                }
+
             </div>
         )
     }

@@ -16,6 +16,7 @@ class Lobby extends React.Component {
             connected: true,
             start_game: false,
             teamNum: 0,
+            message : ""
         }
         this.game_owner = Cookies.get("game_owner")
         this.socket = false
@@ -115,12 +116,17 @@ class Lobby extends React.Component {
     }
 
     startTimer = () => {
-        const socket = this.state.socket
+    	if (Object.keys(this.state.players).length > 0) {
+	        const socket = this.state.socket
 
-        socket.emit('shuffle-teams')    
+	        socket.emit('shuffle-teams')    
 
-        // Tell the server to start the countdown timer for this room
-        socket.emit("start-time", {room:this.state.code});
+	        // Tell the server to start the countdown timer for this room
+	        socket.emit("start-time", {room:this.state.code});
+	    }
+	    else{
+	    	this.setState({message : "No players are currently in the lobby"})
+	    }
     }
 
 
@@ -171,7 +177,11 @@ class Lobby extends React.Component {
 
                             <span className="tag label label-info">
                                 <span>{player}</span>
-                                <a onClick={this.handleKick.bind(this, player)} ><i className="far fa-times-circle"></i></a>
+                                {
+                                    this.game_owner == '1' ? 
+                                    <a onClick={this.handleKick.bind(this, player)} ><i className="far fa-times-circle"></i></a> 
+                                    : ""
+                                }
                             </span>
                         </span>
                     )}
@@ -202,6 +212,11 @@ class Lobby extends React.Component {
                         <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> 
                     : ""
                 }
+
+                {	this.state.message != "" ?
+                		this.state.message
+                	: ""
+            	}                
             </div>    
         )      
     }
