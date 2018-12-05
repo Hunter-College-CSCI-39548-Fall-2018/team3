@@ -3,18 +3,22 @@ module.exports = (app, io, rooms) => {
     const total_icons = 4
     const end_score = 30
 
+    var time
     var game_connected = []
-
     var on_game = false
+
     app.get('/game', (req, res) => {
         console.log("called game route") 
 
         on_game = true
+        time = {min: 0, sec: 5}
+
         res.sendStatus(200)
     })
 
     io.sockets.on('connection', (socket)=>{
         if(on_game){
+            console.log("called game socket sonncection");
             //get cookie in headers of socket connection
             getCookie = (cookie) => {
                 let cookies = socket.handshake.headers['cookie']
@@ -66,6 +70,8 @@ module.exports = (app, io, rooms) => {
                 //remove player by socket id
                 room.removePlayer(socket.id)
                 room.removePlayerFromTeam(socket.id)
+
+                console.log("removed player from disconet in game");
             }
             
             onGameOwnerFirstConnect = () => {
@@ -90,6 +96,40 @@ module.exports = (app, io, rooms) => {
                 delete room
             }
 
+            checkIfWon = () => {
+                //in case there are multiple teams that win
+                // let winning_team = []
+                
+                var winning_team = room.teams.reduce(function(x, y) {
+                    return x.score > y.score ? x : y;
+                })         
+
+                return winning_team
+            }
+
+            startTimer = () =>{
+                let updated_time = setInterval( () => {
+                    
+                    if(time.sec === 0){
+                        time.min -= 1
+                        time.sec = 59
+                    }else{
+                        time.sec -= 1
+                    }
+
+                    if(time.min === 0 && time.sec === 0){
+                        clearInterval(updated_time);
+                        let winning_team = checkIfWon()
+
+                        console.log("winnign team is", winning_team);
+                        endGame(winning_team)
+                        console.log("gme had ended in server side");
+                    }
+
+                    io.to(room.game_owner).emit('time-left', time)
+                }, 1000);
+            }
+
             /*
             *   Shuffle icons each turn for all players
             *   TODO: Michelle fill this out thanks
@@ -106,6 +146,7 @@ module.exports = (app, io, rooms) => {
             }
 
             startGame = () => {
+                startTimer()
                 let curr_icon = generateCurrIcon()
 
                 for(let team of room.teams){
@@ -121,15 +162,11 @@ module.exports = (app, io, rooms) => {
                 return curr_icon === command
             }
 
-            checkIfWon = (team) => {
-                if(team.score > end_score){
-                    endGame(team)
-                }
-            }
-        
+            
             endGame = (team) => {
                 //finish for when game ends
                 console.log("game has ended");
+                console.log("team has won", team.score);
             }
 
             //to track if a user has connected for the first time
@@ -175,10 +212,18 @@ module.exports = (app, io, rooms) => {
                             team.score -= 1
                             io.to(room.game_owner).emit('wrong-command', room.teams)
                         }
-                        checkIfWon(team)
                     }
                 }
             })
+
+            //wait until everyone is connected before disabling add event listener
+            if(game_connected.length === Object.keys(room.players).length +1){
+                console.log("everyon eocnnected");
+
+                //server version of componentWillUnmount
+                on_game = false
+            }
+
         }
 
         

@@ -14,6 +14,7 @@ module.exports = (app, io, rooms) => {
 
     io.on('connection', (socket) => {
         if(on_lobby){
+            console.log("calld lobby socket connect");
             getCookie = (cookie) => {
                 let cookies = socket.handshake.headers['cookie']
                 let cookie_split = cookies.split("; ")
@@ -134,12 +135,12 @@ module.exports = (app, io, rooms) => {
                 socket.emit('get-curr-users', room.players)
                 socket.to(room.key).emit('get-curr-users', room.players)
             })
+
             socket.on('request-icons', () => {
                 let icons = gameAssets.enumerateIcons()
                 console.log(icons)
                 socket.emit('game-icons', icons)
             })
-
             //server version of componentWillUnmount
             on_lobby = false
         }  
