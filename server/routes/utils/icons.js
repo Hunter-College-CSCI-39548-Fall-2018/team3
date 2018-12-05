@@ -1,5 +1,5 @@
 var fs = require('fs');
-const dir = '../../../src/static/images';
+const dir = '../../src/static/images';
 let files;
 
 try {
@@ -105,6 +105,16 @@ function generateGameIcons(omit, numberOfPlayers) {
     // }
     console.log(playersIcons);
     return playersIcons;
+}
+
+enumerateIcons = () => {
+    let icons = {}
+
+    for(let i = 0; i < files.length; i++){
+        icons[i] = files[i]
+    }
+
+    return icons
 }
 
 generateGameIcons(0, 2);
