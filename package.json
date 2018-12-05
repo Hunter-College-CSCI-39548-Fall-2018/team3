@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "socket-app",
   "version": "1.0.0",
   "description": "",
@@ -12,5 +13,75 @@
     "express": "^4.16.4",
     "jquery": "^3.3.1",
     "socket.io": "^2.1.1"
+=======
+  "name": "Biscuit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "client-express": "nodemon server/server.js",
+    "client-react": "webpack-dev-server --mode development --config config/webpack.base.config.js --hot --history-api-fallback --host 0.0.0.0",
+    "start": "concurrently \"npm run client-express\" \"npm run client-react\"",
+    "prestart:prod": "webpack --mode production --config config/webpack.prod.config.js --env.NODE_ENV=production --progress",
+    "start:prod": "node server",
+    "build": "webpack --mode production --config config/webpack.prod.config.js --env.NODE_ENV=production --progress",
+    "deploy:prod": "now --public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Hunter-College-CSCI-39548-Fall-2018/team3.git"
+  },
+  "events": {
+    "restart": "fuser -k 3000/tcp;"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "7.0.0-beta.46",
+    "@babel/preset-env": "7.0.0-beta.46",
+    "@babel/preset-react": "7.0.0-beta.46",
+    "@babel/preset-stage-2": "7.0.0-beta.46",
+    "babel-loader": "^8.0.4",
+    "css-loader": "^0.28.11",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "html-webpack-plugin": "^3.2.0",
+    "node-gyp": "^3.8.0",
+    "node-sass": "^4.8.3",
+    "optimize-css-assets-webpack-plugin": "^4.0.0",
+    "sass-loader": "^7.0.1",
+    "style-loader": "^0.21.0",
+    "uglifyjs-webpack-plugin": "^1.2.5",
+    "webpack": "^4.6.0",
+    "webpack-cli": "^2.0.15",
+    "webpack-dev-server": "^3.1.10",
+    "webpack-merge": "^4.1.2"
+  },
+  "dependencies": {
+    "babel-preset-react": "^6.24.1",
+    "concurrently": "^4.0.1",
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.4",
+    "create-react-class": "^15.6.3",
+    "express": "^4.16.3",
+    "js-cookie": "^2.2.0",
+    "liowebrtc": "^0.2.4",
+    "lodash": "^4.17.11",
+    "micro": "latest",
+    "moment": "^2.22.2",
+    "nodemon": "^1.18.6",
+    "now": "^11.4.6",
+    "pm2": "^3.2.2",
+    "randomstring": "^1.1.5",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-moment": "^0.7.9",
+    "react-native-openpgp": "^1.0.4",
+    "react-router-dom": "^4.3.1",
+    "socket.io": "^2.1.1",
+    "styled-components": "^4.0.3",
+    "underscore": "^1.9.1",
+    "webrtc-adapter": "^6.3.2"
+>>>>>>> d46f6c14b5ccf4bd44af5e9a0f05d6bd319c92a3
   }
 }
