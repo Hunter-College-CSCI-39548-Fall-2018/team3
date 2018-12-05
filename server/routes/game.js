@@ -11,7 +11,7 @@ module.exports = (app, io, rooms) => {
         console.log("called game route") 
 
         on_game = true
-        time = {min: rooms[req.cookies.room].settings.time, sec: 0}
+        time = {min: /*rooms[req.cookies.room].settings.time*/0, sec: 5}
 
         res.sendStatus(200)
     })
@@ -79,6 +79,11 @@ module.exports = (app, io, rooms) => {
                     console.log("what does team slook iek", key.players);
                 }
 
+                setTimeout(() => {
+                    // room.checkForGhosts()
+                    startGame()
+                }, time_until_start)
+
                 //wait for players to connect before starting the game
                 // setTimeout(() => {
                 //     room.checkForGhosts()
@@ -110,6 +115,7 @@ module.exports = (app, io, rooms) => {
 
             shuffleTeamsIcons = (team) => {
                 for(let user of team.players){
+
                     let icons = shuffleIcons()
                     socket.to(user.socketid).emit("new-icons", icons)
                 }
@@ -175,7 +181,7 @@ module.exports = (app, io, rooms) => {
             endGame = (team) => {
                 //finish for when game ends
                 const winInfo = {teamNumber : 1 ,players : team.players, score : team.score}
-        		socket.emit('end-game',winInfo)
+        		socket.to(room.game_owner).emit('end-game',winInfo)
                 console.log("game has ended");
                 console.log("team has won", team.score);
             }
@@ -199,10 +205,6 @@ module.exports = (app, io, rooms) => {
                         onPlayerDisconnect()
                     }
                 }
-            })
-
-            socket.on('start-game', () => {
-                startGame()
             })
             
             socket.on('input-command', (msg) => {    
@@ -230,13 +232,13 @@ module.exports = (app, io, rooms) => {
 
 			socket.on('restart', () => {
 
-				const currPlayersSockets = Object.values(room.players)
+				// const currPlayersSockets = Object.values(room.players)
 
-				for (key in currPlayersSockets){
-					socket.to(currPlayersSockets[key].socketid).emit('restart')
+				for (key in room.players){
+					socket.to(room.players[key].socketid).emit('restart')
 				}
 
-				socket.emit('GameOwnerRestart')
+				io.to(room.game_owner).emit('GameOwnerRestart')
 			})
 
 

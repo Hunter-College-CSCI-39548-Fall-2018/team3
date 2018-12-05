@@ -125,11 +125,6 @@ class Game extends React.Component {
 
     }
 
-    startGame = () => {
-        let socket = this.state.socket
-        socket.emit('start-game')
-    }
-
 	handleRestart = () => {
 		let socket = this.state.socket
 		socket.emit('restart')
@@ -157,7 +152,7 @@ class Game extends React.Component {
 
 		if (this.state.GameOwnerRestart === true){
 			return (
-				<Redirect to={{ pathname : '/create-game'}} />
+				<Redirect to='/create-game' />
 			)			
 		}
 

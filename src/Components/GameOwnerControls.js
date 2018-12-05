@@ -28,8 +28,6 @@ class GameOwnerControls extends React.Component{
                 </div>
                 {console.log("time in compoennt:", this.props.time)}
                 <Countdown time={this.props.time}/>
-                <button onClick={this.props.startGame.bind(this)}>start game</button>
-
             </div>
         )
     }
