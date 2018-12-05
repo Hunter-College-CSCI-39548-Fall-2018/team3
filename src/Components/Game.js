@@ -4,7 +4,6 @@ import Cookies from 'js-cookie';
 import GameOwnerControls from './GameOwnerControls'
 import {Redirect} from 'react-router-dom'
 import PlayerControls from './PlayerControls';
-import Lobby from './Lobby'
 
 class Game extends React.Component {
     constructor(props) {
@@ -14,7 +13,8 @@ class Game extends React.Component {
             teams: [],
             connected: true,
             icons: [0, 1, 2, 3],
-            team: 0
+            team: 0,
+            time: false
         }
         this.game_owner = Cookies.get('game_owner')
         this.socket = false
@@ -22,8 +22,6 @@ class Game extends React.Component {
 
     checkCredentials = () => {
         let cookies = Cookies.get() // returns obj with cookies
-        console.log("cookies obj", cookies);
-        console.log("is room in cokie", "room" in cookies);
         return "room" in cookies
     }
 
@@ -74,7 +72,10 @@ class Game extends React.Component {
 
     handleEvents = () => {
         let socket = this.state.socket
-        console.log("Socket is", socket)
+
+        socket.on('time-left', (time) => {
+            this.setState({ time: time})
+        })
 
         socket.on('game-started', (teams) => {
             this.setState({ teams: teams})
@@ -114,10 +115,10 @@ class Game extends React.Component {
     }
 
     render() {
-        if(!this.state.connected/* || this.socket.disconnected*/){
+        if(!this.state.connected /*|| this.socket.disconnected*/){
             console.log("client disocnnected bescause of what");
-            // this.clearCookies()
-            return (<Redirect to='/'/>)
+        //     this.clearCookies()
+        //     return (<Redirect to='/'/>)
         }
         
         return (
@@ -127,6 +128,7 @@ class Game extends React.Component {
                 <GameOwnerControls
                     teams = {this.state.teams}
                     startGame={this.startGame}
+                    time= {this.state.time}
                 /> 
                 : <PlayerControls
                     icons={this.state.icons}

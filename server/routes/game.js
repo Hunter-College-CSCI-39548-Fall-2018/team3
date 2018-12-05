@@ -3,13 +3,16 @@ module.exports = (app, io, rooms) => {
     const total_icons = 4
     const end_score = 30
 
+    var time
     var game_connected = []
-
     var on_game = false
+
     app.get('/game', (req, res) => {
         console.log("called game route") 
 
         on_game = true
+        time = {min: 0, sec: 5}
+
         res.sendStatus(200)
     })
 
@@ -90,6 +93,28 @@ module.exports = (app, io, rooms) => {
                 delete room
             }
 
+            startTimer = () =>{
+                let updated_time = setInterval( () => {
+                    
+                    if(time.sec === 0){
+                        time.min -= 1
+                        time.sec = 59
+                    }else{
+                        time.sec -= 1
+                    }
+
+                    if(time.min === 0 && time.sec === 0){
+                        clearInterval(updated_time);
+                        // let winning_team = checkIfWon()
+                        // console.log("winnign team is", checkIfwon());
+                        // endGame(winning_team)
+                        console.log("gme had ended in server side");
+                    }
+
+                    io.to(room.game_owner).emit('time-left', time)
+                }, 1000);
+            }
+
             /*
             *   Shuffle icons each turn for all players
             *   TODO: Michelle fill this out thanks
@@ -106,6 +131,7 @@ module.exports = (app, io, rooms) => {
             }
 
             startGame = () => {
+                startTimer()
                 let curr_icon = generateCurrIcon()
 
                 for(let team of room.teams){
@@ -121,15 +147,22 @@ module.exports = (app, io, rooms) => {
                 return curr_icon === command
             }
 
-            checkIfWon = (team) => {
-                if(team.score > end_score){
-                    endGame(team)
-                }
+            checkIfWon = () => {
+                let winning_score = (
+                    Math.max.apply(Math, room.teams.map((team) => { return team.score }))
+                )
+            
+                // for(let team of room.teams){
+                //     if()
+                // }                
+
+                // return winning_team
             }
-        
+            
             endGame = (team) => {
                 //finish for when game ends
                 console.log("game has ended");
+                console.log("team has won", team.score);
             }
 
             //to track if a user has connected for the first time
@@ -175,7 +208,6 @@ module.exports = (app, io, rooms) => {
                             team.score -= 1
                             io.to(room.game_owner).emit('wrong-command', room.teams)
                         }
-                        checkIfWon(team)
                     }
                 }
             })
