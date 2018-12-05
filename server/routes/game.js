@@ -115,9 +115,8 @@ module.exports = (app, io, rooms) => {
 
             shuffleTeamsIcons = (team) => {
                 for(let user of team.players){
-
                     let icons = shuffleIcons()
-                    socket.to(user.socketid).emit("new-icons", icons)
+                    io.to(user.socketid).emit("new-icons", icons)
                 }
             }
 
@@ -159,16 +158,23 @@ module.exports = (app, io, rooms) => {
                 return Math.floor(Math.random() * total_icons)
             }
 
+            broadcastToTeam = (team, event, msg) => {
+                for(let user of team.players){
+                    io.to(user.socketid).emit(event, msg)
+                }
+            }
+
             startGame = () => {
                 startTimer()
                 let curr_icon = generateCurrIcon()
 
-                for(let team of room.teams){
-                    team.curr_icon = curr_icon
-                    shuffleTeamsIcons(team)
+                for(let i = 0; i < room.teams.length; i++){
+                    room.teams[i].curr_icon = curr_icon
+                    shuffleTeamsIcons(room.teams[i])
+                    broadcastToTeam(room.teams[i], 'game-started', {teams: room.teams, team: i})
                 }
-
-                io.to(room.key).emit('game-started', room.teams)
+                
+                io.to(room.game_owner).emit('game-started', { teams: room.teams } )
 
                 console.log("end of clal game");
             }
@@ -231,9 +237,6 @@ module.exports = (app, io, rooms) => {
             })
 
 			socket.on('restart', () => {
-
-				// const currPlayersSockets = Object.values(room.players)
-
 				for (key in room.players){
 					socket.to(room.players[key].socketid).emit('restart')
 				}

@@ -129,7 +129,6 @@ class Lobby extends React.Component {
 	    }
     }
 
-
     startGame = () => {
         // When the room owner is ready to start the game then the new state is set for the redirect
         this.setState({ start_game: true })
@@ -141,19 +140,24 @@ class Lobby extends React.Component {
         socket.emit('kick', kickPlayer)
     }
 
-    render() {
-        if(this.socket.disconnected){
-            console.log("hey wait you dsiconencted");
+    componentWillUnmount = () => {
+        console.log("unmounted");
+        if(!this.state.start_game){
+            console.log("didsconnect correctly on componet unmount");
+            this.clearCookies()
         }
+    }
 
+    render() {
         //start of game
         if(this.state.start_game){
             return (<Redirect to='/game'/>)
         }
 
         //force redirect
-        if(!this.state.connected/* || this.socket.disconnected*/){
+        if(!this.state.connected || (this.socket.disconnected && !this.state.start_game) ){
             console.log("disocinected because of something");
+            this.clearCookies()
             return (<Redirect to='/'/>)
         }
         
@@ -162,10 +166,6 @@ class Lobby extends React.Component {
                 <h1 id="logo" className="display-4">
                     {this.state.code}
                 </h1>
-
-                <a href="/create-game">Create Game</a>
-                <br />
-                <a href="/enter-room">Enter Room</a>
 
                 <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
                 <br />

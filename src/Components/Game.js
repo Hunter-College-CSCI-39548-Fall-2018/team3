@@ -80,8 +80,11 @@ class Game extends React.Component {
             this.setState({ time: time})
         })
 
-        socket.on('game-started', (teams) => {
-            this.setState({ teams: teams})
+        socket.on('game-started', (msg) => {
+            if(msg.team){
+                this.setState({ team: msg.team })
+            }
+            this.setState({ teams: msg.teams})
         })
 
         socket.on('new-icons', (icons) => {
@@ -131,22 +134,25 @@ class Game extends React.Component {
 	}
 
     componentWillUnmount = () => {
+        if(this.socket.disconnected){
+            this.clearCookies()
+        }
         // if(this.state.socket){
         //     this.state.socket.close()
-        //     this.state.socket.disconnect()
+        //     this.state.socket.disconnect()       
         // }
     }
 
     render() {
         if(!this.state.connected){
             console.log("client disocnnected bescause of what");
-        //     this.clearCookies()
+            this.clearCookies()
             return (<Redirect to='/'/>)
         }
 
 		if (this.state.restart === true){
 			return (
-				<Redirect to={{ pathname : '/enter-room'}} />
+				<Redirect to='/enter-room' />
 			)
 		}
 
