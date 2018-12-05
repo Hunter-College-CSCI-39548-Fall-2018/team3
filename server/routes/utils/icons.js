@@ -10,6 +10,18 @@ try {
 
 let size = files.length
 
+enumerateIcons = (files) => {
+    let icons = {}
+
+    for(let i = 0; i < files.length; i++){
+        icons[i] = files[i]
+    }
+
+    return icons
+}
+
+var icons = enumerateIcons(files)
+
 Array.prototype.unique = function() {
     return this.filter(function (value, index, self) { 
       return self.indexOf(value) === index;
