@@ -1,7 +1,8 @@
 import React from 'react'
 import io from 'socket.io-client';
 import Cookies from 'js-cookie';
-import { Redirect } from 'react-router-dom'
+import Music from './Music.js';
+import {Redirect} from 'react-router-dom'
 
 class Lobby extends React.Component {
 
@@ -151,39 +152,32 @@ class Lobby extends React.Component {
             return (<Redirect to='/game'/>)
         }
 
-        //force redirect
-        if(!this.state.connected/* || this.socket.disconnected*/){
-            console.log("disocinected because of something");
-            return (<Redirect to='/'/>)
-        }
-        
-        return (
-            <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
-                <h1 id="logo" className="display-4">
-                    {this.state.code}
-                </h1>
+        if (this.state.connected) {
+            return (
+                <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
+                    {/* <Music/> */}
+                    {this.game_owner=== '1'? <Music/>: ""}
+                    <h1 id="logo" className="display-4">
+                        {this.state.code}
+                    </h1>
 
-                <a href="/create-game">Create Game</a>
-                <br />
-                <a href="/enter-room">Enter Room</a>
+                    <a href="/create-game">Create Game</a>
+                    <br />
+                    <a href="/enter-room">Enter Room</a>
 
-                <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
-                <br />
-                <div id='players' style={{ fontSize: "16px" }} className="font-weight-bold">
-                    {/* Players: {this.state.players.map((player,i)=> <span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary" key={i}>{player}</span>)} */}
-                    Players:
-                    {Object.keys(this.state.players).map((player, i) =>
-                        <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
+                    <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
+                    <br />
+                    <div id='players' style={{ fontSize: "16px" }} className="font-weight-bold">
+                        {/* Players: {this.state.players.map((player,i)=> <span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary" key={i}>{player}</span>)} */}
+                        Players:
+                        {Object.keys(this.state.players).map((player, i) =>
+                            <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
 
-                            <span className="tag label label-info">
-                                <span>{player}</span>
-                                {
-                                    this.game_owner == '1' ? 
-                                    <a onClick={this.handleKick.bind(this, player)} ><i className="far fa-times-circle"></i></a> 
-                                    : ""
-                                }
+                                <span className="tag label label-info">
+                                    <span>{player}</span>
+                                    <a onClick={this.handleKick.bind(this, player)} ><i className="far fa-times-circle"></i></a>
+                                </span>
                             </span>
-                        </span>
                     )}
                     <div className="panel panel-default">
                         <header className="panel-heading">
@@ -217,8 +211,9 @@ class Lobby extends React.Component {
                 		this.state.message
                 	: ""
             	}                
-            </div>    
-        )      
+                </div>
+            )    
+        }      
     }
 }
 export default Lobby

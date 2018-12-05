@@ -1,19 +1,4 @@
 {
-<<<<<<< HEAD
-  "name": "socket-app",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.16.4",
-    "jquery": "^3.3.1",
-    "socket.io": "^2.1.1"
-=======
   "name": "Biscuit",
   "version": "1.0.0",
   "description": "",
@@ -82,6 +67,5 @@
     "styled-components": "^4.0.3",
     "underscore": "^1.9.1",
     "webrtc-adapter": "^6.3.2"
->>>>>>> d46f6c14b5ccf4bd44af5e9a0f05d6bd319c92a3
   }
 }
