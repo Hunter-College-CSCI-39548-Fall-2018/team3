@@ -11,16 +11,12 @@ module.exports = (app, rooms) => {
         var info = {}
 
         // Insert the settings for the specific Room Object
-        if(req.body.players_per_team){
-            info["players_per_team"] = req.body.players_per_team
-        }
-
         if(req.body.num_teams){
             info["num_teams"] = req.body.num_teams
         }
 
-        if(req.body.num_icons){
-            info["num_icons"] = req.body.num_icons
+        if(req.body.time){
+            info["time"] = req.body.time
         }
 
         room.setSettings(info)
@@ -47,7 +43,6 @@ module.exports = (app, rooms) => {
         
         //map room key to room object
         rooms[room.key] = room
-
 
         console.log(rooms)
 

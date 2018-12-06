@@ -4,7 +4,7 @@ const Team = require('./teams.js')
 class Room{
     constructor(){
         this.settings = {
-            players_per_team: 1,
+            time: 0,
             num_teams: 2
         }
         this.players = {}
@@ -83,16 +83,6 @@ class Room{
         }, 1000);
     }
 
-    countPlayers(){
-        let count = 0
-
-        //for counting objects
-        for(let key in this.players){
-            count++
-        }
-        return count
-    }
-
     whichTeam(player){
         for(let team of this.teams){
             // //find player in a team array
@@ -105,7 +95,7 @@ class Room{
     }
 
     shuffleTeams(){
-        var chunk = this.settings.players_per_team;
+        var chunk = Math.ceil(Object.keys(this.players).length/this.settings.num_teams)
         let newArr = _.shuffle(this.players);
 
         //_.chunk - second argument takes how many elements in each array 
