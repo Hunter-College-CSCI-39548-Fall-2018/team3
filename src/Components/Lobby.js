@@ -1,7 +1,7 @@
 import React from 'react'
 import io from 'socket.io-client';
 import Cookies from 'js-cookie';
-import Music from './Music.js';
+import Music from './Music';
 import {Redirect} from 'react-router-dom'
 
 class Lobby extends React.Component {
@@ -158,7 +158,7 @@ class Lobby extends React.Component {
             return (
                 <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
                     {/* <Music/> */}
-                    {this.game_owner=== '1'? <Music url={"Lullatone_-_Whistling_in_an_Office.mp3"}/>: ""}
+                    {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""}
                     <h1 id="logo" className="display-4">
                         {this.state.code}
                     </h1>

@@ -1,6 +1,7 @@
 import React from 'react'
 import io from 'socket.io-client'
 import Cookies from 'js-cookie';
+import Music from './Music'
 import GameOwnerControls from './GameOwnerControls'
 import {Redirect} from 'react-router-dom'
 import PlayerControls from './PlayerControls';
@@ -30,6 +31,7 @@ class Game extends React.Component {
     }
 
     componentDidMount() {
+        {this.game_owner === '1'? <Music url={'./Lullatone_-_Whistling_in_an_Office.mp3'}/> : ""}
         if(!this.checkCredentials()){
             console.log("there s aproblem with the credentials");
             this.setState({ connected: false })
@@ -188,7 +190,7 @@ class Game extends React.Component {
         return (
             <div>
                 {
-                this.game_owner === "1" ? 
+                {this.game_owner === '1' ? <Music url={"./Game.wav"}/> : ""}
                 <GameOwnerControls
                     teams = {this.state.teams}
                     startGame={this.startGame}
@@ -200,7 +202,6 @@ class Game extends React.Component {
                     team={this.state.team}
                 />
                 }
-
             </div>
         )
     }
