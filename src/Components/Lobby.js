@@ -169,16 +169,10 @@ class Lobby extends React.Component {
         
         return (
             <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
-                {/* {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""} */}
+                {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""}
                 <h1 id="logo" className="display-4">
                     {this.state.code}
                 </h1>
-
-                {this.game_owner === '1'? 
-                <div> 
-                    <Music url={"./Lobby.mp3"}/>
-                </div>
-                : ""}
 
                 {/* // <div>
                 //     <Music url={'./Winning-Screen.wav'}/>,
@@ -231,7 +225,6 @@ class Lobby extends React.Component {
                 {
                     this.game_owner == '1' ? 
                         <div>
-                            {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""},
                             <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> 
                         </div>
                     : ""

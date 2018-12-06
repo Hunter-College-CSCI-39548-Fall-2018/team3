@@ -6,8 +6,8 @@ class Music extends React.Component {
     constructor(props) {
       super(props);
       this.audio = new Audio(this.props.url);
-      // this.audio.play();
-      this.audio.loop();
+      this.audio.loop = true;
+      this.audio.play();
     }
 
     componentWillUnmount(){
