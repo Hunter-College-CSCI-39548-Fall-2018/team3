@@ -19,7 +19,7 @@ class Lobby extends React.Component {
             icons: [],
             message : ""
         }
-        this.game_owner = Cookies.get("game_owner")
+        this.game_owner = Cookies.get("game_owner").toString()
         this.socket = false
     }
 
@@ -76,6 +76,10 @@ class Lobby extends React.Component {
     handleEvents = () => {
         let socket = this.state.socket
 
+        socket.on('team-num', (num) => {
+            this.setState({ teamNum: num })
+        })
+
         socket.on('get-curr-users', (curr_users) => {
             this.updateUsers(curr_users)
         })
@@ -92,8 +96,8 @@ class Lobby extends React.Component {
         })
 
         socket.on('force-disconnect', () => {
-            this.setState({ connected: false})
             this.clearCookies()
+            this.setState({ connected: false})
         })
  
         socket.on("shuffled-teams", (teams) => {
@@ -122,7 +126,7 @@ class Lobby extends React.Component {
     }
 
     startTimer = () => {
-    	if (Object.keys(this.state.players).length > 0) {
+    	if (Object.keys(this.state.players).length >= this.state.teamNum) {
 	        const socket = this.state.socket
 
 	        socket.emit('shuffle-teams')    
@@ -131,7 +135,7 @@ class Lobby extends React.Component {
 	        socket.emit("start-time", {room:this.state.code});
 	    }
 	    else{
-	    	this.setState({message : "No players are currently in the lobby"})
+	    	this.setState({message : "Not enough players are in the lobby"})
 	    }
     }
 

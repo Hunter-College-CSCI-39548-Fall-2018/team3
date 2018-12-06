@@ -75,6 +75,8 @@ module.exports = (app, io, rooms) => {
         
                 room.setGameOwner(socket.id)
                 socket.join(room.key)
+
+                io.to(room.game_owner).emit('team-num', room.settings.num_teams)
             }
             onGameOwnerDisconnect = () => {
                 console.log("game onwe rdisoncet");
@@ -132,8 +134,9 @@ module.exports = (app, io, rooms) => {
                 socket.to(room.players[who].socketid).emit('force-disconnect')
                 delete room.players[who]
     
-                socket.emit('get-curr-users', room.players)
-                socket.to(room.key).emit('get-curr-users', room.players)
+                io.to(room.key).emit('get-curr-users', room.players)
+                // socket.emit('get-curr-users', room.players)
+                // socket.to(room.key).emit('get-curr-users', room.players)
             })
 
             socket.on('request-icons', () => {
