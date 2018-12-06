@@ -1,7 +1,7 @@
 import React from 'react'
 import io from 'socket.io-client'
 import Cookies from 'js-cookie';
-import Music from './Music'
+import Music from './Music';
 import GameOwnerControls from './GameOwnerControls'
 import {Redirect} from 'react-router-dom'
 import PlayerControls from './PlayerControls';
@@ -31,7 +31,6 @@ class Game extends React.Component {
     }
 
     componentDidMount() {
-        {this.game_owner === '1'? <Music url={'./Lullatone_-_Whistling_in_an_Office.mp3'}/> : ""}
         if(!this.checkCredentials()){
             console.log("there s aproblem with the credentials");
             this.setState({ connected: false })
@@ -71,7 +70,6 @@ class Game extends React.Component {
     }
     //get input command from player
     handleCommand = (command) => {
-        console.log("called handlecomamnd");
         let socket = this.state.socket
         socket.emit('input-command', {command: command, socketid: socket.id})
     }
@@ -83,8 +81,15 @@ class Game extends React.Component {
             this.setState({ time: time})
         })
 
-        socket.on('game-started', (teams) => {
-            this.setState({ teams: teams})
+        socket.on('game-started', (msg) => {
+            if(msg.team){
+                this.setState({ team: msg.team })
+            }
+            this.setState({ teams: msg.teams})
+        })
+
+        socket.on('new-icons', (icons) => {
+            this.setState({ icons: icons })
         })
 
         socket.on('correct-command', (teams) => {
@@ -103,6 +108,7 @@ class Game extends React.Component {
         })
 
         socket.on('force-disconnect', () => {
+            console.log("should have disconnected player");
             this.clearCookies()
             this.setState({ connected: false})
         })
@@ -123,39 +129,37 @@ class Game extends React.Component {
 
     }
 
-    startGame = () => {
-        let socket = this.state.socket
-        socket.emit('start-game')
-    }
-
 	handleRestart = () => {
 		let socket = this.state.socket
 		socket.emit('restart')
 	}
 
     componentWillUnmount = () => {
+        if(this.socket.disconnected){
+            this.clearCookies()
+        }
         // if(this.state.socket){
         //     this.state.socket.close()
-        //     this.state.socket.disconnect()
+        //     this.state.socket.disconnect()       
         // }
     }
 
     render() {
-        if(!this.state.connected /*|| this.socket.disconnected*/){
+        if(!this.state.connected){
             console.log("client disocnnected bescause of what");
-        //     this.clearCookies()
-        //     return (<Redirect to='/'/>)
+            this.clearCookies()
+            return (<Redirect to='/'/>)
         }
 
 		if (this.state.restart === true){
 			return (
-				<Redirect to={{ pathname : '/enter-room'}} />
+				<Redirect to='/enter-room' />
 			)
 		}
 
 		if (this.state.GameOwnerRestart === true){
 			return (
-				<Redirect to={{ pathname : '/create-game'}} />
+				<Redirect to='/create-game' />
 			)			
 		}
 
@@ -189,19 +193,26 @@ class Game extends React.Component {
 
         return (
             <div>
+
                 {
-                {this.game_owner === '1' ? <Music url={"./Game.wav"}/> : ""}
-                <GameOwnerControls
-                    teams = {this.state.teams}
-                    startGame={this.startGame}
-                    time= {this.state.time}
-                /> 
+                this.game_owner === "1" ? 
+                <div>
+                    <GameOwnerControls
+                        teams = {this.state.teams}
+                        startGame={this.startGame}
+                        time= {this.state.time}
+                    />,
+                    <Music
+                        url = {'./Game.wav'}
+                    />
+                </div>
                 : <PlayerControls
                     icons={this.state.icons}
                     handleCommand = {this.handleCommand}
                     team={this.state.team}
                 />
                 }
+
             </div>
         )
     }

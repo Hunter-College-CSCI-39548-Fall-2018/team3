@@ -1,31 +1,3 @@
-// const Icons = require('./utils/icons.js')
-// const Teams = require('./utils/teams.js')
-
-// var room = rooms[req.cookies.room];
-// //holds the prompt icon for the teams in a room
-// // const prompts = [];
-// let prompt;
-// //generates the prompts for each team in the begining
-// for(let team of room.teams) {
-//     team.prompt = Icon.generateIcon();
-// }
-
-// // let teamSize = [];
-// getTeamSize = (room.teams) => {
-//     for(let i in room.teams) {
-//         teamSize.push(room.teams.players.length)
-//     }
-//     return teamSize;
-// }
-
-// // //holds the icons for each team in the same room
-// // let teamIcons = [];
-// // //generate teh array of icons for each player in a team
-// for(let team of room.teams) {
-//     let teamIcon = Icons.generateRoundIcons(team.prompt, team.players.length);
-//     teamIcons.push(teamIcon);
-// }
-
 module.exports = (app, io, rooms) => {
     const time_until_start = 3000
     const total_icons = 4
@@ -39,7 +11,7 @@ module.exports = (app, io, rooms) => {
         console.log("called game route") 
 
         on_game = true
-        time = {min: 0, sec: 5}
+        time = {min: /*rooms[req.cookies.room].settings.time*/0, sec: 5}
 
         res.sendStatus(200)
     })
@@ -107,6 +79,11 @@ module.exports = (app, io, rooms) => {
                     console.log("what does team slook iek", key.players);
                 }
 
+                setTimeout(() => {
+                    // room.checkForGhosts()
+                    startGame()
+                }, time_until_start)
+
                 //wait for players to connect before starting the game
                 // setTimeout(() => {
                 //     room.checkForGhosts()
@@ -118,6 +95,7 @@ module.exports = (app, io, rooms) => {
                 socket.join(room.key)
             }
             onGameOwnerDisconnect = () => {
+                console.log("game owner disconnected in game");
                 //disconnect and redirect everyone in room
                 io.to(room.key).emit('force-disconnect')
                 
@@ -133,6 +111,13 @@ module.exports = (app, io, rooms) => {
                 })         
 
                 return winning_team
+            }
+
+            shuffleTeamsIcons = (team) => {
+                for(let user of team.players){
+                    let icons = shuffleIcons()
+                    io.to(user.socketid).emit("new-icons", icons)
+                }
             }
 
             startTimer = () =>{
@@ -163,7 +148,7 @@ module.exports = (app, io, rooms) => {
             *   TODO: Michelle fill this out thanks
             */
             shuffleIcons = (socket) => {
-
+                return [1,2,3,4]
             }
 
             /*
@@ -173,16 +158,24 @@ module.exports = (app, io, rooms) => {
                 return Math.floor(Math.random() * total_icons)
             }
 
+            broadcastToTeam = (team, event, msg) => {
+                for(let user of team.players){
+                    io.to(user.socketid).emit(event, msg)
+                }
+            }
+
             startGame = () => {
                 startTimer()
                 let curr_icon = generateCurrIcon()
 
-                for(let team of room.teams){
-                    team.curr_icon = curr_icon
+                for(let i = 0; i < room.teams.length; i++){
+                    room.teams[i].curr_icon = curr_icon
+                    shuffleTeamsIcons(room.teams[i])
+                    broadcastToTeam(room.teams[i], 'game-started', {teams: room.teams, team: i})
                 }
-                io.to(room.key).emit('game-started', room.teams)
+                
+                io.to(room.game_owner).emit('game-started', { teams: room.teams } )
 
-                // socket.emit('game-started', room.teams)
                 console.log("end of clal game");
             }
 
@@ -194,7 +187,7 @@ module.exports = (app, io, rooms) => {
             endGame = (team) => {
                 //finish for when game ends
                 const winInfo = {teamNumber : 1 ,players : team.players, score : team.score}
-        		socket.emit('end-game',winInfo)
+        		socket.to(room.game_owner).emit('end-game',winInfo)
                 console.log("game has ended");
                 console.log("team has won", team.score);
             }
@@ -211,17 +204,13 @@ module.exports = (app, io, rooms) => {
             
             socket.on('disconnect', () => {
                 if(room){
-                    if(getCookie("game_owner") === "1"){
+                    if(room.game_owner === socket.id){
                         onGameOwnerDisconnect()
                     }else{
                         //if room still exists and player disconnects
                         onPlayerDisconnect()
                     }
                 }
-            })
-
-            socket.on('start-game', () => {
-                startGame()
             })
             
             socket.on('input-command', (msg) => {    
@@ -236,7 +225,8 @@ module.exports = (app, io, rooms) => {
                         if(checkCommand(team.curr_icon, msg.command)){
                             team.score += 1
                             team.curr_icon = generateCurrIcon()
-
+                            
+                            // shuffleTeamsIcons(team)
                             io.to(room.game_owner).emit('correct-command', room.teams)
                         }else{
                             team.score -= 1
@@ -247,14 +237,11 @@ module.exports = (app, io, rooms) => {
             })
 
 			socket.on('restart', () => {
-
-				const currPlayersSockets = Object.values(room.players)
-
-				for (key in currPlayersSockets){
-					socket.to(currPlayersSockets[key].socketid).emit('restart')
+				for (key in room.players){
+					socket.to(room.players[key].socketid).emit('restart')
 				}
 
-				socket.emit('GameOwnerRestart')
+				io.to(room.game_owner).emit('GameOwnerRestart')
 			})
 
 
