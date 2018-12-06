@@ -6,9 +6,10 @@ class Music extends React.Component {
     constructor(props) {
       super(props);
       this.audio = new Audio(this.props.url);
+      this.audio.loop = true;
       this.audio.play();
     }
-  
+
     componentWillUnmount(){
       this.audio.pause();
     }

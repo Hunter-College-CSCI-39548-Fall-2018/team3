@@ -137,7 +137,6 @@ class Lobby extends React.Component {
     startTimer = () => {
     	if (Object.keys(this.state.players).length >= this.state.teamNum && this.state.teamNum >= 2) {
 	        const socket = this.state.socket
-
 	        socket.emit('shuffle-teams')    
 
 	        // Tell the server to start the countdown timer for this room
@@ -180,74 +179,75 @@ class Lobby extends React.Component {
             this.clearCookies()
             return (<Redirect to='/'/>)
         }
+        
+        return (
+            <div style={{backgroundColor:"#c9c9ff"}} id="header" className="d-flex align-items-center flex-column justify-content-center h-100">
+                {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""}
+                <h1 id="logo" className="display-4">
+                    {this.state.code}
+                </h1>
 
-        if (this.state.connected) {
-            return (
-                <div style={{backgroundColor:"#c9c9ff"}} id="header" className="d-flex align-items-center flex-column justify-content-center h-100">
-                    <h1 id="logo" style={{fontFamily: "Open Sans"}}className="display-4">
-                        {this.state.code}
-                    </h1>
+                {/* // <div>
+                //     <Music url={'./Winning-Screen.wav'}/>,
+                //     <Music url={"./Firework.mp3"}/>
+                // </div> : ""} */}
 
-                    {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""}
+                <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
 
+                <br />
 
-                    <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
-                    <br />
-                    
-                    <div className="card">
-                        <div className="card-header font-weight-bold" style={{ fontSize: "16px" }}>
-                            Players
-                        </div>
-                        <div class="card-body">
-                            <div id='players'>
-                                {console.log("players state", this.state.players)}
-                                {Object.keys(this.state.players).map((player, i) =>
-                                    <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
-
-                                        <span className="tag label label-info">
-                                            {console.log("player data", player)}
-                                            <span>{player}</span>
-                                            {
-                                                this.game_owner == '1' ? 
-                                                <a onClick={this.handleKick.bind(this, player)} ><i className="far fa-times-circle"></i></a> 
-                                                : ""
-                                            }
-                                            
-                                        </span>
-                                    </span>                        
-                                )}
-                            
-                            </div>
-                        </div>
-                    </div>
-                
-                    <div>
-                        {this.state.teams.map((team,index)=>
-                            <span key={index}><span style={{float: "left", fontSize:"16px"}}>Team {index+1}</span>
-                                
-                                <ul style={{float:"left", marginLeft:"10px"}} class="list-group">
-                                {team.players.map((player,i) =>
-                                     <li className="list-group-item" style={{display:"listItem"}} key={i}> {player.name} </li>
-                                )}
-                                </ul>
+                <div id='players' style={{ fontSize: "16px" }} className="font-weight-bold">
+                    {/* Players: {this.state.players.map((player,i)=> <span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary" key={i}>{player}</span>)} */}
+                    Players:
+                    {Object.keys(this.state.players).map((player, i) =>
+                        <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
+                            <span className="tag label label-info">
+                                <span>{player}</span>
+                                {
+                                    this.game_owner == '1' ? 
+                                    <a onClick={this.handleKick.bind(this, player)} ><i className="far fa-times-circle"></i></a> 
+                                    : ""
+                                }
                             </span>
-                        )}
-                    </div>
+                        </span>
+                    )}
+                </div>
 
-                    <br />
-                    {
-                        this.game_owner === '1' ? 
-                            <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> 
-                        : ""
-                    }
-                    <br />
-                    {	this.state.message != "" ?
-                            this.state.message
-                        : ""
-                    }      
-                </div> 
-            )  
-        }               
-    }
+                <br />
+                
+                {/* <div className="card">
+                    <div className="card-header font-weight-bold" style={{ fontSize: "16px" }}>
+                        Players
+                    </div>
+                </div>
+             */}
+                <div>
+                    {this.state.teams.map((team,index)=>
+                        <span key={index}><span style={{float: "left", fontSize:"16px"}}>Team {index+1}</span>
+                            
+                            <ul style={{float:"left", marginLeft:"10px"}} class="list-group">
+                            {team.players.map((player,i) =>
+                                    <li className="list-group-item" style={{display:"listItem"}} key={i}> {player.name} </li>
+                            )}
+                            </ul>
+                        </span>
+                    )}
+                </div>
+
+                <br />
+                {
+                    this.game_owner === '1' ? 
+                        <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> 
+                    : ""
+                }
+                <br />
+                {	this.state.message != "" ?
+                        this.state.message
+                    : ""
+                }      
+            </div> 
+        )  
+    }               
 }
+
 export default Lobby
