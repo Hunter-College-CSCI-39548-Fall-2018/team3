@@ -97,6 +97,7 @@ class Lobby extends React.Component {
 
         socket.on('force-disconnect', () => {
             this.clearCookies()
+            socket.disconnect()
             this.setState({ connected: false})
         })
  
@@ -166,7 +167,7 @@ class Lobby extends React.Component {
         }
 
         //force redirect
-        if(!this.state.connected || (this.socket.disconnected && !this.state.start_game) ){
+        if(!this.state.connected/* || (this.socket.disconnected && !this.state.start_game) */){
             console.log("disocinected because of something");
             this.clearCookies()
             return (<Redirect to='/'/>)

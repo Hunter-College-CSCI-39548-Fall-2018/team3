@@ -194,7 +194,7 @@ class Game extends React.Component {
             return (
                 <div style={{height:"100%"}}>
                     {
-                    this.game_owner === "1" ? 
+                    this.game_owner == "1" ? 
                     <GameOwnerControls
                         teams={this.state.teams}
                         time= {this.state.time}

@@ -63,7 +63,7 @@ module.exports = (app, io, rooms) => {
             }
          
             onPlayerDisconnect = () =>{
-                console.log("player diconnect");
+                console.log("player diconnect called function");
                 room.removePlayer(socket.id)
                 
                 //update lobby page for everyone still connected
@@ -103,6 +103,7 @@ module.exports = (app, io, rooms) => {
             })
     
             socket.on('disconnect', () => {
+                console.log("somsone disconecte din lobby")
                 //when room doesn't exist anymore (after game owner disconnects),
                 //ignore if is game owner or not, just disconnect
                 if(room){
