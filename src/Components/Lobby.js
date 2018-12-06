@@ -19,14 +19,14 @@ class Lobby extends React.Component {
             teamNum: 0,
             message : ""
         }
-        this.game_owner = Cookies.get("game_owner")
+        this.game_owner = Cookies.get("game_owner").toString()
         this.socket = false
     }
 
     checkCredentials = () => {
         let cookies = Cookies.get() // returns obj with cookies
         console.log("cookies obj", cookies);
-        console.log("is room in cokie", "room" in cookies);
+        console.log("is room in cookie", "room" in cookies);
         return "room" in cookies
     }
 
@@ -76,6 +76,10 @@ class Lobby extends React.Component {
     handleEvents = () => {
         let socket = this.state.socket
 
+        socket.on('team-num', (num) => {
+            this.setState({ teamNum: num })
+        })
+
         socket.on('get-curr-users', (curr_users) => {
             this.updateUsers(curr_users)
         })
@@ -91,8 +95,8 @@ class Lobby extends React.Component {
         })
 
         socket.on('force-disconnect', () => {
-            this.setState({ connected: false})
             this.clearCookies()
+            this.setState({ connected: false})
         })
  
         socket.on("shuffled-teams", (teams) => {
@@ -118,7 +122,7 @@ class Lobby extends React.Component {
     }
 
     startTimer = () => {
-    	if (Object.keys(this.state.players).length > 0) {
+    	if (Object.keys(this.state.players).length >= 0) {
 	        const socket = this.state.socket
 
 	        socket.emit('shuffle-teams')    
@@ -127,10 +131,9 @@ class Lobby extends React.Component {
 	        socket.emit("start-time", {room:this.state.code});
 	    }
 	    else{
-	    	this.setState({message : "No players are currently in the lobby"})
+	    	this.setState({message : "Not enough players are in the lobby"})
 	    }
     }
-
 
     startGame = () => {
         // When the room owner is ready to start the game then the new state is set for the redirect
@@ -143,43 +146,54 @@ class Lobby extends React.Component {
         socket.emit('kick', kickPlayer)
     }
 
-    render() {
-        if(this.socket.disconnected){
-            console.log("hey wait you dsiconencted");
+    componentWillUnmount = () => {
+        console.log("unmounted");
+        if(!this.state.start_game){
+            console.log("didsconnect correctly on componet unmount");
+            this.clearCookies()
         }
+    }
 
+    render() {
         //start of game
         if(this.state.start_game){
             //need to stop music
             return (<Redirect to='/game'/>)
         }
 
-        if (this.state.connected) {
-            return (
-                <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
-                    {/* <Music/> */}
-                    {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""}
-                    <h1 id="logo" className="display-4">
-                        {this.state.code}
-                    </h1>
+        //force redirect
+        if(!this.state.connected || (this.socket.disconnected && !this.state.start_game) ){
+            console.log("disconnected because of something");
+            this.clearCookies()
+            return (<Redirect to='/'/>)
+        }
+        
+        return (
+            <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
+                <h1 id="logo" className="display-4">
+                    {this.state.code}
+                </h1>
 
-                    <a href="/create-game">Create Game</a>
-                    <br />
-                    <a href="/enter-room">Enter Room</a>
+                {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""}
 
-                    <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
-                    <br />
-                    <div id='players' style={{ fontSize: "16px" }} className="font-weight-bold">
-                        {/* Players: {this.state.players.map((player,i)=> <span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary" key={i}>{player}</span>)} */}
-                        Players:
-                        {Object.keys(this.state.players).map((player, i) =>
-                            <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
+                <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
 
-                                <span className="tag label label-info">
-                                    <span>{player}</span>
-                                    <a onClick={this.handleKick.bind(this, player)} ><i className="far fa-times-circle"></i></a>
-                                </span>
+                <br />
+
+                <div id='players' style={{ fontSize: "16px" }} className="font-weight-bold">
+                    {/* Players: {this.state.players.map((player,i)=> <span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary" key={i}>{player}</span>)} */}
+                    Players:
+                    {Object.keys(this.state.players).map((player, i) =>
+                        <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
+                            <span className="tag label label-info">
+                                <span>{player}</span>
+                                {
+                                    this.game_owner == '1' ? 
+                                    <a onClick={this.handleKick.bind(this, player)} ><i className="far fa-times-circle"></i></a> 
+                                    : ""
+                                }
                             </span>
+                        </span>
                     )}
                     <div className="panel panel-default">
                         <header className="panel-heading">
@@ -191,17 +205,19 @@ class Lobby extends React.Component {
             
                 <div>
                     {this.state.teams.map((team,index)=>
-                        <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
-                            
+                        <div key={index}> 
+                        	<span style={{float: "left"}}>
+                        		Team {index+1}
+                        	</span>
                             <ul style={{float:"left", width:"20%", display: "inline-block"}} key={index}>
                                 {team.players.map((player,i) => <li style={{display:"listItem"}} key={i}> {player.name} </li>)}  
-                            </ul>
-                        
+                            </ul>    
                         </div>
                     )}
                 </div>
 
-                <br />
+                <br/>
+
                 <footer className="panel-footer">...</footer>
                 {
                     this.game_owner == '1' ? 
@@ -213,9 +229,8 @@ class Lobby extends React.Component {
                 		this.state.message
                 	: ""
             	}                
-                </div>
-            )    
-        }      
+            </div>
+        )          
     }
 }
 export default Lobby
