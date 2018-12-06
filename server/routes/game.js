@@ -11,7 +11,7 @@ module.exports = (app, io, rooms) => {
         console.log("called game route") 
 
         on_game = true
-        time = {min: /*rooms[req.cookies.room].settings.time*/0, sec: 50}
+        time = {min: /*rooms[req.cookies.room].settings.time*/0, sec: 5}
 
         res.sendStatus(200)
     })
