@@ -174,7 +174,16 @@ class Lobby extends React.Component {
                     {this.state.code}
                 </h1>
 
-                {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""}
+                {this.game_owner === '1'? 
+                <div> 
+                    <Music url={"./Lobby.mp3"}/>
+                </div>
+                : ""}
+
+                {/* // <div>
+                //     <Music url={'./Winning-Screen.wav'}/>,
+                //     <Music url={"./Firework.mp3"}/>
+                // </div> : ""} */}
 
                 <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
 
