@@ -122,7 +122,7 @@ class Lobby extends React.Component {
     }
 
     startTimer = () => {
-    	if (Object.keys(this.state.players).length >= 0) {
+    	if (Object.keys(this.state.players).length > 0) {
 	        const socket = this.state.socket
 
 	        socket.emit('shuffle-teams')    
