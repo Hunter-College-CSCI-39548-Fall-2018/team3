@@ -1,6 +1,7 @@
 import React from 'react'
 import io from 'socket.io-client'
 import Cookies from 'js-cookie';
+import Music from './Music';
 import GameOwnerControls from './GameOwnerControls'
 import {Redirect} from 'react-router-dom'
 import PlayerControls from './PlayerControls';
@@ -198,10 +199,15 @@ class Game extends React.Component {
                 <div style={{height:"100%"}}>
                     {
                     this.game_owner == "1" ? 
-                    <GameOwnerControls
-                        teams={this.state.teams}
-                        time= {this.state.time}
-                    /> 
+                    (
+                        <div>
+                            <GameOwnerControls
+                                teams={this.state.teams}
+                                time= {this.state.time}
+                            /> 
+                            <Music url = {'./Game.wav'}/>
+                        </div>
+                    )
                     : <PlayerControls
                         icons={this.state.icons}
                         handleCommand={this.handleCommand}
@@ -212,7 +218,6 @@ class Game extends React.Component {
                 </div>
             )
         }
-        
     }
 }
 

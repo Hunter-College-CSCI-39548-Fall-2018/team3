@@ -1,7 +1,8 @@
 import React from 'react'
 import io from 'socket.io-client';
 import Cookies from 'js-cookie';
-import { Redirect } from 'react-router-dom'
+import Music from './Music';
+import {Redirect} from 'react-router-dom'
 
 class Lobby extends React.Component {
 
@@ -25,7 +26,7 @@ class Lobby extends React.Component {
     checkCredentials = () => {
         let cookies = Cookies.get() // returns obj with cookies
         console.log("cookies obj", cookies);
-        console.log("is room in cokie", "room" in cookies);
+        console.log("is room in cookie", "room" in cookies);
         return "room" in cookies
     }
 
@@ -84,7 +85,9 @@ class Lobby extends React.Component {
         })
 
         socket.on('get-curr-users', (curr_users) => {
-            this.updateUsers(curr_users)
+            console.log("what does currusers look like", curr_users)
+            this.setState({ players: curr_users })
+            // this.updateUsers(curr_users)
         })
 
         socket.on('new-player', (curr_users) => {
@@ -95,7 +98,8 @@ class Lobby extends React.Component {
 
         socket.on('player-disconnected', (curr_users) => {
             console.log("player disocnnected");
-            this.updateUsers(curr_users)
+            this.setState({ players: curr_users })
+            // this.updateUsers(curr_users)
         })
 
         socket.on('force-disconnect', () => {
@@ -116,6 +120,7 @@ class Lobby extends React.Component {
             if (time === 0) {
                 console.log("time is this value: ", time)
                 this.startGame()
+
             }
         });
 
@@ -130,7 +135,7 @@ class Lobby extends React.Component {
     }
 
     startTimer = () => {
-    	if (Object.keys(this.state.players).length >= this.state.teamNum) {
+    	if (Object.keys(this.state.players).length >= this.state.teamNum && this.state.teamNum >= 2) {
 	        const socket = this.state.socket
 
 	        socket.emit('shuffle-teams')    
@@ -165,7 +170,7 @@ class Lobby extends React.Component {
     render() {
         //start of game
         if(this.state.start_game){
-
+            //need to stop music
             return (<Redirect to='/game'/>)
         }
 
@@ -176,7 +181,6 @@ class Lobby extends React.Component {
             return (<Redirect to='/'/>)
         }
 
-
         if (this.state.connected) {
             return (
                 <div style={{backgroundColor:"#c9c9ff"}} id="header" className="d-flex align-items-center flex-column justify-content-center h-100">
@@ -184,13 +188,11 @@ class Lobby extends React.Component {
                         {this.state.code}
                     </h1>
 
-                    <a href="/create-game">Create Game</a>
-                    <br />
-                    <a href="/enter-room">Enter Room</a>
+                    {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""}
+
 
                     <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
                     <br />
-                    
                     
                     <div className="card">
                         <div className="card-header font-weight-bold" style={{ fontSize: "16px" }}>
@@ -198,7 +200,7 @@ class Lobby extends React.Component {
                         </div>
                         <div class="card-body">
                             <div id='players'>
-                                
+                                {console.log("players state", this.state.players)}
                                 {Object.keys(this.state.players).map((player, i) =>
                                     <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
 
@@ -228,19 +230,16 @@ class Lobby extends React.Component {
                                      <li className="list-group-item" style={{display:"listItem"}} key={i}> {player.name} </li>
                                 )}
                                 </ul>
-                            
                             </span>
                         )}
                     </div>
 
                     <br />
                     {
-                        this.game_owner == '1' ? 
+                        this.game_owner === '1' ? 
                             <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> 
                         : ""
                     }
-            
-
                     <br />
                     {	this.state.message != "" ?
                             this.state.message
@@ -248,7 +247,7 @@ class Lobby extends React.Component {
                     }      
                 </div> 
             )  
-        }    
+        }               
     }
 }
 export default Lobby

@@ -88,7 +88,7 @@ module.exports = (app, io, rooms) => {
                 room.removePlayer(socket.id)
                 
                 //update lobby page for everyone still connected
-                socket.to(room.key).emit('player-disconnected', room.players)
+                io.in(room.key).emit('player-disconnected', room.players)
             }
         
             onGameOwnerFirstConnect = () => {
@@ -153,12 +153,10 @@ module.exports = (app, io, rooms) => {
     
             socket.on('kick', (who) => {
                 //redirect user back to home, delete user from room object
-                socket.to(room.players[who].socketid).emit('force-disconnect')
-                delete room.players[who]
-    
-                io.to(room.key).emit('get-curr-users', room.players)
-                // socket.emit('get-curr-users', room.players)
-                // socket.to(room.key).emit('get-curr-users', room.players)
+                io.to(room.players[who].socketid).emit('force-disconnect')
+                // delete room.players[who]
+                
+                io.in(room.key).emit('get-curr-users', room.players)
             })
 
             socket.on('request-icons', () => {

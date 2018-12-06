@@ -305,7 +305,7 @@ module.exports = (app, io, rooms) => {
 
 			socket.on('restart', () => {
 				for (key in room.players){
-					socket.to(room.players[key].socketid).emit('restart')
+					io.to(room.players[key].socketid).emit('restart')
 				}
 
 				io.to(room.game_owner).emit('GameOwnerRestart')
@@ -325,5 +325,3 @@ module.exports = (app, io, rooms) => {
         
     })
 }
-
-
