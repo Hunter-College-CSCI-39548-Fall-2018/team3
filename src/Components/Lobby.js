@@ -173,46 +173,50 @@ class Lobby extends React.Component {
 
                     <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
                     <br />
-                    <div id='players' style={{ fontSize: "16px" }} className="font-weight-bold">
-                        Players:
-                        {Object.keys(this.state.players).map((player, i) =>
-                            <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
+                    
+                    
+                    <div className="card">
+                        <div className="card-header font-weight-bold" style={{ fontSize: "16px" }}>
+                            Players
+                        </div>
+                        <div class="card-body">
+                        <div id='players'>
+                            
+                            {Object.keys(this.state.players).map((player, i) =>
+                                <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
 
-                                <span className="tag label label-info">
-                                    {console.log("player data", player)}
-                                    <span>{player}</span>
-                                    {
-                                        this.game_owner == '1' ? 
-                                        <a onClick={this.handleKick.bind(this, player)} ><i className="far fa-times-circle"></i></a> 
-                                        : ""
-                                    }
-                                    
+                                    <span className="tag label label-info">
+                                        {console.log("player data", player)}
+                                        <span>{player}</span>
+                                        {
+                                            this.game_owner == '1' ? 
+                                            <a onClick={this.handleKick.bind(this, player)} ><i className="far fa-times-circle"></i></a> 
+                                            : ""
+                                        }
+                                        
+                                    </span>
                                 </span>
-                            </span>
-                        
-                    )}
-                    <div className="panel panel-default">
-                        <header className="panel-heading">
-                            <h5 className="panel-title"></h5>
-                        </header>
-                    </div>
-                    <footer className="panel-footer">...</footer>
+                            
+                            )}
+                            </div>
+                        </div>
                     </div>
                 
                     <div>
                         {this.state.teams.map((team,index)=>
-                            <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
+                            <span key={index}><span style={{float: "left", fontSize:"16px"}}>Team {index+1}</span>
                                 
-                                <ul style={{float:"left", width:"20%", display: "inline-block"}} key={index}>
-                                    {team.players.map((player,i) => <li style={{display:"listItem"}} key={i}> {player.name} </li>)}  
+                                <ul style={{float:"left", marginLeft:"10px"}} class="list-group">
+                                {team.players.map((player,i) =>
+                                     <li className="list-group-item" style={{display:"listItem"}} key={i}> {player.name} </li>
+                                )}
                                 </ul>
                             
-                            </div>
+                            </span>
                         )}
                     </div>
 
                     <br />
-                    <footer className="panel-footer">...</footer>
                     {
                         this.game_owner == '1' ? 
                             <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> 
