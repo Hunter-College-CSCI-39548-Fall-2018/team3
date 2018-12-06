@@ -142,34 +142,29 @@ module.exports = (app, io, rooms) => {
                 }, 1000);
             }
 
-            iconsInit = () => {
-                let files = assets.readFiles(dir)
-                let enum_icons = assets.enumerateIcons(files)
-                let omitted_icon = assets.omitIcon(files)
-
-                return {files: files, omitted_icon: omitted_icon}
-            }
-            
             /*
             *   Generate the icon to be inputted on the screen
             */
             generateCurrIcon = () => {
-                let total_icons = iconsInit()
-                return Math.floor(Math.random() * total_icons.files.length)
+                return Math.floor(Math.random() * files.length)
             }
 
             getFiles = () => {
-                let files = assets.readFiles(dir)
-                return files
+                return assets.readFiles(dir)
             }
 
             enumerateIcons = (files) => {
-                let enum_icons = assets.enumerateIcons(files)
-                return enum_icons
+                return assets.enumerateIcons(files)
+            }
+
+            //returns a number
+            getOmittedIcon = (files) => {
+                return assets.omitIcon(files)
             }
 
             const files = getFiles()
             const enum_icons = enumerateIcons(files)
+            var omit_icon = getOmittedIcon(files)
             
 
             // Shuffle icons for player without matching icon
@@ -216,12 +211,12 @@ module.exports = (app, io, rooms) => {
                 startTimer()
 
                 //generate omitted icon
-                let icons_init = iconsInit()
-                let omitted_icon = icons_init.omitted_icon
+                let omitted_icon = getOmittedIcon(files)
 
                 //go through each team and assign curr icon and shuffle icons for each player in team
                 for(let i = 0; i < room.teams.length; i++){
-                    room.teams[i].curr_icon = omitted_icon
+                    room.teams[i].curr_icon = { icon: enum_icons[omitted_icon], index: omitted_icon }
+
                     shuffleTeamsIcons(room.teams[i], omitted_icon)
                     broadcastToTeam(room.teams[i], 'game-started', {teams: room.teams, team: i})
                 }
@@ -274,11 +269,13 @@ module.exports = (app, io, rooms) => {
                     if(team === -1){
                         console.log("wiat this team doesnt eist");
                     }else{
-                        if(checkCommand(team.curr_icon, msg.command)){
+                        if(checkCommand(team.curr_icon.index, msg.command)){
                             team.score += 1
-                            team.curr_icon = generateCurrIcon()
+
+                            let omit_icon = getOmittedIcon(files)
+                            team.curr_icon = { icon: enum_icons[omit_icon], index: omit_icon}
                             
-                            // shuffleTeamsIcons(team)
+                            shuffleTeamsIcons(team, omit_icon)
                             io.to(room.game_owner).emit('correct-command', room.teams)
                         }else{
                             team.score -= 1

@@ -70,6 +70,7 @@ class Game extends React.Component {
     //get input command from player
     handleCommand = (command) => {
         let socket = this.state.socket
+        console.log("what is command", command)
         socket.emit('input-command', {command: command, socketid: socket.id})
     }
 

@@ -5,12 +5,9 @@ import Cookies from 'js-cookie';
 class GameScreensTwo extends React.Component {
     constructor(props) {
         super(props)
-        this.i = 0
     }
 
     render() {
-        console.log("teams in game screen two", this.props.teams)
-        console.log("this is index in game screen two", this.i)
         return(
             <div style={{backgroundColor:"#bae1ff"}} className="vertical-center" >
                 <div className="container">
