@@ -23,34 +23,49 @@ module.exports = (app, io, rooms) => {
     })
 
     io.sockets.on('connection', (socket)=>{
-        if(on_game){
-            console.log("called game socket sonncection");
-            //get cookie in headers of socket connection
-            getCookie = (cookie) => {
-                let cookies = socket.handshake.headers['cookie']
-                let cookie_split = cookies.split("; ")
+        getCookie = (cookie) => {
+            let cookies = socket.handshake.headers['cookie']
+            let cookie_split = cookies.split("; ")
 
-                for(let cookies of cookie_split){
-                    if(cookie === "player"){
-                        if(cookies[0] === 'p'){
-                            let player = cookies.split("=")
-                            return player[1]
-                        }
+            for(let cookies of cookie_split){
+                if(cookie === "player"){
+                    if(cookies[0] === 'p'){
+                        let player = cookies.split("=")
+                        return player[1]
                     }
-                    else if(cookie === "game_owner"){
-                        if(cookies[0] === 'g'){
-                            let game_owner = cookies.split("=")
-                            return game_owner[1]
-                        }
-                    }     
-                    else if(cookie === "room"){
-                        if(cookies[0] === 'r'){
-                            let room = cookies.split("=")
-                            return room[1]
-                        }
+                }
+                else if(cookie === "game_owner"){
+                    if(cookies[0] === 'g'){
+                        let game_owner = cookies.split("=")
+                        return game_owner[1]
+                    }
+                }     
+                else if(cookie === "room"){
+                    if(cookies[0] === 'r'){
+                        let room = cookies.split("=")
+                        return room[1]
                     }
                 }
             }
+        }
+
+        
+
+        if(on_game){
+
+            var room = getCookie("room")
+            var name = getCookie("player")
+
+            if(rooms[room] && (rooms[room].players[name]) ){
+                console.log("checking room", room)
+                console.log("check player name", name)
+            }else{
+                console.log("invalid credentials")
+                return io.to(socket.id).emit('invalid-credentials')
+            }
+            console.log("called game socket sonncection");
+            //get cookie in headers of socket connection
+            
 
             var room = rooms[getCookie("room")]
 

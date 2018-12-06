@@ -15,7 +15,7 @@ module.exports = (app, rooms) => {
                     //set cookie for room user is joinings
                     res.cookie('room', req.body.room, {
                         secure: false,
-                        overwrite: true,
+                        overwrite: true
                     })
 
                     res.clearCookie('game_owner')

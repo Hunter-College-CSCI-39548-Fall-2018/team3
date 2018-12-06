@@ -19,8 +19,7 @@ class Lobby extends React.Component {
             icons: [],
             message : ""
         }
-        this.game_owner = Cookies.get("game_owner").toString()
-        this.socket = false
+        this.game_owner = (Cookies.get("game_owner") ? Cookies.get("game_owner"): "")
     }
 
     checkCredentials = () => {
@@ -51,11 +50,15 @@ class Lobby extends React.Component {
                         transports: ['websocket'],
                         upgrade: false,
                         'force new connection': true
-                    }, () => {
-                        this.socket = socket
                     })
 
-
+                    socket.on("invalid-credentials", () => {
+                        console.log("goodbye")
+                        this.clearCookies()
+                        socket.disconnect()
+                        this.setState({ connected: false })
+                        
+                    })
                     console.log("this is socket", socket);
                     //everything is asynchronous, so need to set socket state and then do all stuff after using callback
                     this.setState({ socket: socket }, () => {
@@ -167,7 +170,7 @@ class Lobby extends React.Component {
         }
 
         //force redirect
-        if(!this.state.connected/* || (this.socket.disconnected && !this.state.start_game) */){
+        if(!this.state.connected){
             console.log("disocinected because of something");
             this.clearCookies()
             return (<Redirect to='/'/>)

@@ -13,34 +13,55 @@ module.exports = (app, io, rooms) => {
     var lobby_connected = []
 
     io.on('connection', (socket) => {
+        getCookie = (cookie) => {
+            let cookies = socket.handshake.headers['cookie']
+            let cookie_split = cookies.split("; ")
+    
+            for(let cookies of cookie_split){
+                if(cookie === "player"){
+                    if(cookies[0] === 'p'){
+                        let player = cookies.split("=")
+                        return decodeURIComponent(player[1])
+                    }
+                }
+                else if(cookie === "game_owner"){
+                    if(cookies[0] === 'g'){
+                        let game_owner = cookies.split("=")
+                        return game_owner[1]
+                    }
+                }
+                else if(cookie === "room"){
+                    if(cookies[0] === 'r'){
+                        let room = cookies.split("=")
+                        return room[1]
+                    }
+                } 
+            }
+    
+            return ""
+        }
+
+        
+
         if(on_lobby){
             console.log("calld lobby socket connect");
-            getCookie = (cookie) => {
-                let cookies = socket.handshake.headers['cookie']
-                let cookie_split = cookies.split("; ")
-        
-                for(let cookies of cookie_split){
-                    if(cookie === "player"){
-                        if(cookies[0] === 'p'){
-                            let player = cookies.split("=")
-                            return decodeURIComponent(player[1])
-                        }
+            
+            var room = getCookie("room")
+            var name = getCookie("player")
+            var game_owner = getCookie("game_owner")
+
+
+            if(rooms[room]){
+                console.log("if room exists")
+                if(game_owner === "0"){ //player
+                    console.log("user is player")
+                    if(rooms[room].players[name]){
+                        console.log("you're ok")
                     }
-                    else if(cookie === "game_owner"){
-                        if(cookies[0] === 'g'){
-                            let game_owner = cookies.split("=")
-                            return game_owner[1]
-                        }
-                    }
-                    else if(cookie === "room"){
-                        if(cookies[0] === 'r'){
-                            let room = cookies.split("=")
-                            return room[1]
-                        }
-                    } 
                 }
-        
-                return ""
+            }else{
+                console.log("received invalid credentials")
+                return io.to(socket.id).emit('invalid-credentials')
             }
     
             var room = rooms[getCookie("room")]
