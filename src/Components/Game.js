@@ -95,7 +95,7 @@ class Game extends React.Component {
 
         socket.on('correct-command', (teams) => {
             // this.game_owner === '1'? <Music url/>
-            if (this.game_owner === '1'){
+            if (this.game_owner === '0'){
                 let url = './Correct.mp3';
                 let audio = new Audio(url);
                 audio.play();
@@ -108,10 +108,11 @@ class Game extends React.Component {
 
         socket.on('wrong-command', (teams) => {
             //some penalty here
-            console.log("you suck")
-            let url = './Wrong.mp3';
-            let audio = new Audio(url);
-            audio.play();
+            if (this.game_owner === '0'){
+                let url = './Wrong.mp3';
+                let audio = new Audio(url);
+                audio.play();
+            }
             //update team's score (-)
             this.setState({ teams: teams})
         })
