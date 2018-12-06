@@ -1,5 +1,5 @@
 var fs = require('fs');
-const dir = '../../../src/static/images';
+const dir = '../../../config/public/images';
 let files;
 
 try {
@@ -36,7 +36,8 @@ function generateIndex(size) {
 // console.log(index);
 
 //returns an icon
-function generateIcon(num) {
+export function generateIcon() {
+    let num = generateIndex(size);
     return files[num];
 }
 // let image = generateIcon(index);
@@ -44,7 +45,7 @@ function generateIcon(num) {
 
 let index;
 let icon;
-//generates array of unique icons 
+//generates X number of icons
 function generateIcons(number) {
     var icons = [];
     for(let i = 0; i<number; ++i) {
@@ -70,8 +71,8 @@ let omit = generateIndex(size);
 let playersIcons = [];  //array of array player icons
 // let playerIcons = [];
 
-//generates  icons for each player minus the omitted
-function generateIconsBlah(num, omit) {
+//generates icons for each player minus the omitted
+function generateIconSet(num, omit) {
     var icons = [];
     for(let i = 0; i<num; ++i){
         index = generateIndex(size);
@@ -91,13 +92,13 @@ function generateIconsBlah(num, omit) {
     return icons.unique();
 }
 
-// generateIconsBlah(3,0);
+// generateIconSet(3,0);
 
-// generates the icons for each player
-function generateGameIcons(omit, numberOfPlayers) {
+// generates the icons for each player for a round in game
+export function generateRoundIcons(omit, numberOfPlayers) {
     for(let i = 0; i<numberOfPlayers; ++i){
         // (function(){
-            let playerIcons = generateIconsBlah(4, omit);
+            let playerIcons = generateIconSet(4, omit);
             console.log(playerIcons);
             playersIcons.push(playerIcons);
         // })()
@@ -111,7 +112,7 @@ function generateGameIcons(omit, numberOfPlayers) {
     console.log("\n after changing");
     // console.log(playersIcons);
     // while(playersIcons[player].unique().length<4) {
-    //     index = generateIndex(size);
+        // index = generateIndex(size);
     //     icon = generateIcon(index);
     //     playersIcons[player].push(icon);
     // }
@@ -119,4 +120,6 @@ function generateGameIcons(omit, numberOfPlayers) {
     return playersIcons;
 }
 
-generateGameIcons(0, 2);
+// generateGameIcons(0, 2);
+
+module.exports = {generateIcon: generateIcon, generateRoundIcons: generateRoundIcons}

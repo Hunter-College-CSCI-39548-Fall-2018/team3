@@ -1,7 +1,8 @@
 import React from 'react'
 import io from 'socket.io-client';
 import Cookies from 'js-cookie';
-import { Redirect } from 'react-router-dom'
+import Music from './Music';
+import {Redirect} from 'react-router-dom'
 
 class Lobby extends React.Component {
 
@@ -25,7 +26,7 @@ class Lobby extends React.Component {
     checkCredentials = () => {
         let cookies = Cookies.get() // returns obj with cookies
         console.log("cookies obj", cookies);
-        console.log("is room in cokie", "room" in cookies);
+        console.log("is room in cookie", "room" in cookies);
         return "room" in cookies
     }
 
@@ -110,6 +111,7 @@ class Lobby extends React.Component {
             if (time === 0) {
                 console.log("time is this value: ", time)
                 this.startGame()
+
             }
         });
     }
@@ -120,7 +122,7 @@ class Lobby extends React.Component {
     }
 
     startTimer = () => {
-    	if (Object.keys(this.state.players).length >= this.state.teamNum) {
+    	if (Object.keys(this.state.players).length >= this.state.teamNum && this.state.teamNum >= 2) {
 	        const socket = this.state.socket
 
 	        socket.emit('shuffle-teams')    
@@ -155,30 +157,35 @@ class Lobby extends React.Component {
     render() {
         //start of game
         if(this.state.start_game){
+            //need to stop music
             return (<Redirect to='/game'/>)
         }
 
         //force redirect
         if(!this.state.connected || (this.socket.disconnected && !this.state.start_game) ){
-            console.log("disocinected because of something");
+            console.log("disconnected because of something");
             this.clearCookies()
             return (<Redirect to='/'/>)
         }
         
         return (
             <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
+                {/* {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""} */}
                 <h1 id="logo" className="display-4">
                     {this.state.code}
                 </h1>
 
+                {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""}
+
                 <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
+
                 <br />
+
                 <div id='players' style={{ fontSize: "16px" }} className="font-weight-bold">
                     {/* Players: {this.state.players.map((player,i)=> <span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary" key={i}>{player}</span>)} */}
                     Players:
                     {Object.keys(this.state.players).map((player, i) =>
                         <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
-
                             <span className="tag label label-info">
                                 <span>{player}</span>
                                 {
@@ -199,21 +206,26 @@ class Lobby extends React.Component {
             
                 <div>
                     {this.state.teams.map((team,index)=>
-                        <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
-                            
+                        <div key={index}> 
+                        	<span style={{float: "left"}}>
+                        		Team {index+1}
+                        	</span>
                             <ul style={{float:"left", width:"20%", display: "inline-block"}} key={index}>
                                 {team.players.map((player,i) => <li style={{display:"listItem"}} key={i}> {player.name} </li>)}  
-                            </ul>
-                        
+                            </ul>    
                         </div>
                     )}
                 </div>
 
-                <br />
+                <br/>
+
                 <footer className="panel-footer">...</footer>
                 {
                     this.game_owner == '1' ? 
-                        <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> 
+                        <div>
+                            {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""},
+                            <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> 
+                        </div>
                     : ""
                 }
 
@@ -221,8 +233,8 @@ class Lobby extends React.Component {
                 		this.state.message
                 	: ""
             	}                
-            </div>    
-        )      
+            </div>
+        )
     }
 }
 export default Lobby

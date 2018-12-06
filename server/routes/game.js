@@ -187,7 +187,7 @@ module.exports = (app, io, rooms) => {
             endGame = (team) => {
                 //finish for when game ends
                 const winInfo = {teamNumber : 1 ,players : team.players, score : team.score}
-        		socket.to(room.game_owner).emit('end-game',winInfo)
+        		io.to(room.game_owner).emit('end-game',winInfo)
                 console.log("game has ended");
                 console.log("team has won", team.score);
             }
@@ -238,7 +238,7 @@ module.exports = (app, io, rooms) => {
 
 			socket.on('restart', () => {
 				for (key in room.players){
-					socket.to(room.players[key].socketid).emit('restart')
+					io.to(room.players[key].socketid).emit('restart')
 				}
 
 				io.to(room.game_owner).emit('GameOwnerRestart')
@@ -258,5 +258,3 @@ module.exports = (app, io, rooms) => {
         
     })
 }
-
-

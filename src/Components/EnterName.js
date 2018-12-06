@@ -19,7 +19,7 @@ class EnterName extends React.Component{
 
         if(name.length > 12 || name.length < 3){
             //document.getElementById("name-length").style.display="inline";
-            this.setState({message : "Nickname needs to be longer than 2 or shorter than 12 character"})
+            this.setState({message : "Nickname needs to be longer than 2 and shorter than 12 character"})
             return;
         }
         
