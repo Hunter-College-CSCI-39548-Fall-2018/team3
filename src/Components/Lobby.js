@@ -26,7 +26,7 @@ class Lobby extends React.Component {
     checkCredentials = () => {
         let cookies = Cookies.get() // returns obj with cookies
         console.log("cookies obj", cookies);
-        console.log("is room in cokie", "room" in cookies);
+        console.log("is room in cookie", "room" in cookies);
         return "room" in cookies
     }
 
@@ -122,7 +122,7 @@ class Lobby extends React.Component {
     }
 
     startTimer = () => {
-    	if (Object.keys(this.state.players).length >= this.state.teamNum) {
+    	if (Object.keys(this.state.players).length >= 0) {
 	        const socket = this.state.socket
 
 	        socket.emit('shuffle-teams')    
@@ -163,7 +163,7 @@ class Lobby extends React.Component {
 
         //force redirect
         if(!this.state.connected || (this.socket.disconnected && !this.state.start_game) ){
-            console.log("disocinected because of something");
+            console.log("disconnected because of something");
             this.clearCookies()
             return (<Redirect to='/'/>)
         }
@@ -174,14 +174,18 @@ class Lobby extends React.Component {
                 <h1 id="logo" className="display-4">
                     {this.state.code}
                 </h1>
+
+                {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""}
+
                 <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
+
                 <br />
+
                 <div id='players' style={{ fontSize: "16px" }} className="font-weight-bold">
                     {/* Players: {this.state.players.map((player,i)=> <span style={{fontSize: "16px"}} className="ml-3 badge badge-secondary" key={i}>{player}</span>)} */}
                     Players:
                     {Object.keys(this.state.players).map((player, i) =>
                         <span style={{ fontSize: "16px" }} className="ml-3 badge badge-secondary" key={i}>
-
                             <span className="tag label label-info">
                                 <span>{player}</span>
                                 {
@@ -202,17 +206,19 @@ class Lobby extends React.Component {
             
                 <div>
                     {this.state.teams.map((team,index)=>
-                        <div key={index}><span style={{float: "left"}}>Team {index+1}</span>
-                            
+                        <div key={index}> 
+                        	<span style={{float: "left"}}>
+                        		Team {index+1}
+                        	</span>
                             <ul style={{float:"left", width:"20%", display: "inline-block"}} key={index}>
                                 {team.players.map((player,i) => <li style={{display:"listItem"}} key={i}> {player.name} </li>)}  
-                            </ul>
-                        
+                            </ul>    
                         </div>
                     )}
                 </div>
 
-                <br />
+                <br/>
+
                 <footer className="panel-footer">...</footer>
                 {
                     this.game_owner == '1' ? 
