@@ -107,6 +107,7 @@ class Lobby extends React.Component {
             if (time === 0) {
                 console.log("time is this value: ", time)
                 this.startGame()
+
             }
         });
     }
@@ -149,6 +150,7 @@ class Lobby extends React.Component {
 
         //start of game
         if(this.state.start_game){
+            //need to stop music
             return (<Redirect to='/game'/>)
         }
 
@@ -156,7 +158,7 @@ class Lobby extends React.Component {
             return (
                 <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
                     {/* <Music/> */}
-                    {this.game_owner=== '1'? <Music/>: ""}
+                    {this.game_owner=== '1'? <Music url={"Lullatone_-_Whistling_in_an_Office.mp3"}/>: ""}
                     <h1 id="logo" className="display-4">
                         {this.state.code}
                     </h1>
