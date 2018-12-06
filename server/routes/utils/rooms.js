@@ -11,7 +11,7 @@ class Room{
         this.key = ""
         this.teams = []
         this.game_owner = "" //track socket id
-        this.time = 100;
+        this.time = 10;
         this.start = false;
     }
 
@@ -95,7 +95,6 @@ class Room{
 
     whichTeam(player){
         for(let team of this.teams){
-            console.log("what team is i t serach thoruhg", team);
             // //find player in a team array
             if(_.findWhere(team.players, player)){
                 return team

@@ -1,12 +1,17 @@
 import React from 'react'
+<<<<<<< HEAD
 import GameScreensTwo from './GameScreensTwo';
 import GameScreensThree from './GameScreensThree';
 import GameScreensFour from './GameScreensFour';
+=======
+import Countdown from './Countdown'
+>>>>>>> 8f14334a0143da9ba2bf28b64e124e7be59a555c
 
 class GameOwnerControls extends React.Component{
     constructor(props){
         super(props)
     }
+    
 
     render(){
         return(
@@ -31,7 +36,15 @@ class GameOwnerControls extends React.Component{
                         )
                     })
 
+<<<<<<< HEAD
                 } 
+=======
+                    }
+                </div>
+                {console.log("time in compoennt:", this.props.time)}
+                <Countdown time={this.props.time}/>
+                <button onClick={this.props.startGame.bind(this)}>start game</button>
+>>>>>>> 8f14334a0143da9ba2bf28b64e124e7be59a555c
 
             </div>
         )

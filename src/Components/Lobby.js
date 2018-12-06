@@ -16,6 +16,7 @@ class Lobby extends React.Component {
             connected: true,
             start_game: false,
             teamNum: 0,
+            icons: []
         }
         this.game_owner = Cookies.get("game_owner")
         this.socket = false
@@ -108,6 +109,10 @@ class Lobby extends React.Component {
                 this.startGame()
             }
         });
+
+        socket.on('game-icons', (icons) =>{
+            this.setState({icons:icons})
+        })
     }
 
     //use this function when you want to update all users on the page after an event
@@ -135,14 +140,6 @@ class Lobby extends React.Component {
         let socket = this.state.socket
         socket.emit('kick', kickPlayer)
     }
-    
-    componentWillUnmount = () => {
-        if(this.state.socket){
-            //destroy socket instance
-            this.state.socket.close()
-            this.state.socket.disconnect()
-        }
-    }
 
     render() {
         if(this.socket.disconnected){
@@ -151,7 +148,8 @@ class Lobby extends React.Component {
 
         //start of game
         if(this.state.start_game){
-            return (<Redirect to='/game'/>)
+
+            return (<Redirect to='/game', state={icons:icons}/>)
         }
 
         //force redirect
