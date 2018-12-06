@@ -20,10 +20,9 @@ class Game extends React.Component {
             gameWon : false,
             wonTeamInfo : {},
             restart : false,
-            GameOwnerRestart : false
+            GameOwnerRestart : false,
         }
         this.game_owner = Cookies.get('game_owner')
-        this.socket = false
     }
 
     checkCredentials = () => {
@@ -48,9 +47,16 @@ class Game extends React.Component {
                         transports: ['websocket'],
                         upgrade: false,
                         'force new connection': true
+                    }, () => {
+                        
                     })
 
-                    this.socket = socket
+                    socket.on('invalid-credentials', () => {
+                        socket.disconnect()
+                        this.clearCookies()
+                        this.setState({ connected: false})
+                    })
+
                     //fetch is asynchronous, so have the client connect after the request is made
                     this.setState({
                         socket: socket
@@ -72,6 +78,7 @@ class Game extends React.Component {
     //get input command from player
     handleCommand = (command) => {
         let socket = this.state.socket
+        console.log("what is command", command)
         socket.emit('input-command', {command: command, socketid: socket.id})
     }
 
@@ -113,7 +120,7 @@ class Game extends React.Component {
         })
 
         socket.on('force-disconnect', () => {
-            console.log("should have disconnected player");
+            socket.disconnect()
             this.clearCookies()
             this.setState({ connected: false})
         })
@@ -140,9 +147,6 @@ class Game extends React.Component {
 	}
 
     componentWillUnmount = () => {
-        if(this.socket.disconnected){
-            this.clearCookies()
-        }
         // if(this.state.socket){
         //     this.state.socket.close()
         //     this.state.socket.disconnect()       
@@ -197,30 +201,28 @@ class Game extends React.Component {
 				</div>       		
         	)
         }
-
-        return (
-            <div>
-                {
-                this.game_owner === "1" ? 
-                <div>
-                    <GameOwnerControls
-                        teams = {this.state.teams}
-                        startGame={this.startGame}
-                        time= {this.state.time}
-                    />
-                    <Music
-                        url = {'./Game.wav'}
-                    />
+        else{
+            return (
+                <div style={{height:"100%"}}>
+                    {
+                    this.game_owner == "1" ? 
+                    (
+                        <div>
+                            <GameOwnerControls
+                                teams={this.state.teams}
+                                time= {this.state.time}
+                            /> 
+                            <Music url = {'./Game.wav'}/>
+                        </div>
+                    )
+                    : <PlayerControls
+                        icons={this.state.icons}
+                        handleCommand={this.handleCommand}
+                        team={this.state.team}/>
+                    }
                 </div>
-                : <PlayerControls
-                    icons={this.state.icons}
-                    handleCommand = {this.handleCommand}
-                    team={this.state.team}
-                />
-                }
-
-            </div>
-        )
+            )
+        }
     }
 }
 

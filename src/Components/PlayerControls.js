@@ -7,16 +7,18 @@ class PlayerControls extends React.Component{
 
     render(){
         return(
-            <div>
-                <div id="team">{this.props.team}</div>
+            <div style={{height:"100%"}}>
+                <h1 style={{width:"100%", height:"10%"}}><strong><i>You're on team {this.props.team}</i></strong></h1>
                 
-                <div id="icons">
+                <div id="icons" style={{float:"left", height:"90%",width:"100%"}}>
                 {
                     
                     this.props.icons.map((icon, i) => {
+                        {console.log("icon ", icon)}
                         return (
-                            <div key={i}>
-                                <button onClick={this.props.handleCommand.bind(this, icon)}>{icon}</button>
+                            
+                            <div className="btn-container" key={i}>
+                                <button className="btn-controller" onClick={this.props.handleCommand.bind(this, icon.index)}><img style={{height:"128px"}} src={'/images/' + icon.icon} /></button>
                             </div>
                         )
                     })

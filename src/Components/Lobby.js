@@ -17,10 +17,10 @@ class Lobby extends React.Component {
             connected: true,
             start_game: false,
             teamNum: 0,
+            icons: [],
             message : ""
         }
-        this.game_owner = Cookies.get("game_owner").toString()
-        this.socket = false
+        this.game_owner = (Cookies.get("game_owner") ? Cookies.get("game_owner"): "")
     }
 
     checkCredentials = () => {
@@ -51,11 +51,15 @@ class Lobby extends React.Component {
                         transports: ['websocket'],
                         upgrade: false,
                         'force new connection': true
-                    }, () => {
-                        this.socket = socket
                     })
 
-
+                    socket.on("invalid-credentials", () => {
+                        console.log("goodbye")
+                        this.clearCookies()
+                        socket.disconnect()
+                        this.setState({ connected: false })
+                        
+                    })
                     console.log("this is socket", socket);
                     //everything is asynchronous, so need to set socket state and then do all stuff after using callback
                     this.setState({ socket: socket }, () => {
@@ -81,21 +85,26 @@ class Lobby extends React.Component {
         })
 
         socket.on('get-curr-users', (curr_users) => {
-            this.updateUsers(curr_users)
+            console.log("what does currusers look like", curr_users)
+            this.setState({ players: curr_users })
+            // this.updateUsers(curr_users)
         })
 
         socket.on('new-player', (curr_users) => {
-            console.log('received new player')
+            // console.log('received new player')
+            console.log("check for bugged player", curr_users)
             this.setState({players: curr_users})
         })
 
         socket.on('player-disconnected', (curr_users) => {
             console.log("player disocnnected");
-            this.updateUsers(curr_users)
+            this.setState({ players: curr_users })
+            // this.updateUsers(curr_users)
         })
 
         socket.on('force-disconnect', () => {
             this.clearCookies()
+            socket.disconnect()
             this.setState({ connected: false})
         })
  
@@ -114,6 +123,10 @@ class Lobby extends React.Component {
 
             }
         });
+
+        socket.on('game-icons', (icons) =>{
+            this.setState({icons:icons})
+        })
     }
 
     //use this function when you want to update all users on the page after an event
@@ -147,10 +160,10 @@ class Lobby extends React.Component {
 
     componentWillUnmount = () => {
         console.log("unmounted");
-        if(!this.state.start_game){
-            console.log("didsconnect correctly on componet unmount");
-            this.clearCookies()
-        }
+        // if(!this.state.start_game){
+        //     console.log("didsconnect correctly on componet unmount");
+        //     this.clearCookies()
+        // }
     }
 
     render() {
@@ -161,14 +174,14 @@ class Lobby extends React.Component {
         }
 
         //force redirect
-        if(!this.state.connected || (this.socket.disconnected && !this.state.start_game) ){
-            console.log("disconnected because of something");
+        if(!this.state.connected){
+            console.log("disocinected because of something");
             this.clearCookies()
             return (<Redirect to='/'/>)
         }
         
         return (
-            <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
+            <div style={{backgroundColor:"#c9c9ff"}} id="header" className="d-flex align-items-center flex-column justify-content-center h-100">
                 {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""}
                 <h1 id="logo" className="display-4">
                     {this.state.code}
@@ -198,44 +211,43 @@ class Lobby extends React.Component {
                             </span>
                         </span>
                     )}
-                    <div className="panel panel-default">
-                        <header className="panel-heading">
-                            <h5 className="panel-title"></h5>
-                        </header>
-                    </div>
-                    <footer className="panel-footer">...</footer>
                 </div>
-            
+
+                <br />
+                
+                {/* <div className="card">
+                    <div className="card-header font-weight-bold" style={{ fontSize: "16px" }}>
+                        Players
+                    </div>
+                </div>
+             */}
                 <div>
                     {this.state.teams.map((team,index)=>
-                        <div key={index}> 
-                        	<span style={{float: "left"}}>
-                        		Team {index+1}
-                        	</span>
-                            <ul style={{float:"left", width:"20%", display: "inline-block"}} key={index}>
-                                {team.players.map((player,i) => <li style={{display:"listItem"}} key={i}> {player.name} </li>)}  
-                            </ul>    
-                        </div>
+                        <span key={index}><span style={{float: "left", fontSize:"16px"}}>Team {index+1}</span>
+                            
+                            <ul style={{float:"left", marginLeft:"10px"}} class="list-group">
+                            {team.players.map((player,i) =>
+                                    <li className="list-group-item" style={{display:"listItem"}} key={i}> {player.name} </li>
+                            )}
+                            </ul>
+                        </span>
                     )}
                 </div>
 
-                <br/>
-
-                <footer className="panel-footer">...</footer>
+                <br />
                 {
-                    this.game_owner == '1' ? 
-                        <div>
-                            <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> 
-                        </div>
+                    this.game_owner === '1' ? 
+                        <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> 
                     : ""
                 }
-
+                <br />
                 {	this.state.message != "" ?
-                		this.state.message
-                	: ""
-            	}                
-            </div>
-        )
-    }
+                        this.state.message
+                    : ""
+                }      
+            </div> 
+        )  
+    }               
 }
+
 export default Lobby

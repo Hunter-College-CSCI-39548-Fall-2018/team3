@@ -59,7 +59,7 @@ class EnterRoom extends React.Component{
             )
         }else{
             return(
-                <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
+                <div id="header" style={{backgroundColor:"#ffbdbd"}} className="d-flex align-items-center flex-column justify-content-center h-100">
                     <h1 id="logo" className="display-4">
                         Room Code
                     </h1>

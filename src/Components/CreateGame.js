@@ -147,10 +147,10 @@ class CreateGame extends React.Component{
 					 this.setState({ num_teams: e.target.value });
 					}
 					console.log(parseInt(numberInput))
-					if(parseInt(numberInput) < 2 || parseInt(numberInput) > 4 || numberInput === ''){
+					if(parseInt(numberInput) < 2 || parseInt(numberInput) > 3 || numberInput === ''){
                        //console.log("i am here")
                        document.getElementById("error-message").style.visibility="visible"
-                       document.getElementById("error-message").innerHTML = "There can only be between 2 and 4 teams"
+                       document.getElementById("error-message").innerHTML = "There can only be 2 or 3 teams"
                    
 					  this.inputs.teams = false
 					}

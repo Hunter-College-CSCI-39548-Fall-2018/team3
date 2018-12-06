@@ -1,5 +1,5 @@
 const Player = require('./utils/player.js')
-
+const gameAssets = require('./utils/icons.js')
 module.exports = (app, io, rooms) => {
     var on_lobby = false
 
@@ -13,34 +13,55 @@ module.exports = (app, io, rooms) => {
     var lobby_connected = []
 
     io.on('connection', (socket) => {
+        getCookie = (cookie) => {
+            let cookies = socket.handshake.headers['cookie']
+            let cookie_split = cookies.split("; ")
+    
+            for(let cookies of cookie_split){
+                if(cookie === "player"){
+                    if(cookies[0] === 'p'){
+                        let player = cookies.split("=")
+                        return decodeURIComponent(player[1])
+                    }
+                }
+                else if(cookie === "game_owner"){
+                    if(cookies[0] === 'g'){
+                        let game_owner = cookies.split("=")
+                        return game_owner[1]
+                    }
+                }
+                else if(cookie === "room"){
+                    if(cookies[0] === 'r'){
+                        let room = cookies.split("=")
+                        return room[1]
+                    }
+                } 
+            }
+    
+            return ""
+        }
+
+        
+
         if(on_lobby){
             console.log("calld lobby socket connect");
-            getCookie = (cookie) => {
-                let cookies = socket.handshake.headers['cookie']
-                let cookie_split = cookies.split("; ")
-        
-                for(let cookies of cookie_split){
-                    if(cookie === "player"){
-                        if(cookies[0] === 'p'){
-                            let player = cookies.split("=")
-                            return player[1]
-                        }
+            
+            var room = getCookie("room")
+            var name = getCookie("player")
+            var game_owner = getCookie("game_owner")
+
+
+            if(rooms[room]){
+                console.log("if room exists")
+                if(game_owner === "0"){ //player
+                    console.log("user is player")
+                    if(rooms[room].players[name]){
+                        console.log("you're ok")
                     }
-                    else if(cookie === "game_owner"){
-                        if(cookies[0] === 'g'){
-                            let game_owner = cookies.split("=")
-                            return game_owner[1]
-                        }
-                    }
-                    else if(cookie === "room"){
-                        if(cookies[0] === 'r'){
-                            let room = cookies.split("=")
-                            return room[1]
-                        }
-                    } 
                 }
-        
-                return ""
+            }else{
+                console.log("received invalid credentials")
+                return io.to(socket.id).emit('invalid-credentials')
             }
     
             var room = rooms[getCookie("room")]
@@ -52,8 +73,8 @@ module.exports = (app, io, rooms) => {
                 //get current users in lobby
                 socket.emit('get-curr-users', room.players)
         
-                let player = new Player(name, socket.id)
-                room.addPlayer(name, player)
+                // let player = new Player(name, socket.id)
+                // room.addPlayer(name, player)
         
                 room.setSocketId(name, socket.id)
                 socket.join(room.key)
@@ -63,11 +84,11 @@ module.exports = (app, io, rooms) => {
             }
          
             onPlayerDisconnect = () =>{
-                console.log("player diconnect");
+                console.log("player diconnect called function");
                 room.removePlayer(socket.id)
                 
                 //update lobby page for everyone still connected
-                socket.to(room.key).emit('player-disconnected', room.players)
+                io.in(room.key).emit('player-disconnected', room.players)
             }
         
             onGameOwnerFirstConnect = () => {
@@ -103,6 +124,7 @@ module.exports = (app, io, rooms) => {
             })
     
             socket.on('disconnect', () => {
+                console.log("somsone disconecte din lobby")
                 //when room doesn't exist anymore (after game owner disconnects),
                 //ignore if is game owner or not, just disconnect
                 if(room){
@@ -126,19 +148,22 @@ module.exports = (app, io, rooms) => {
     
                 socket.to(room.key).emit("shuffled-teams", room.teams)
                 socket.emit("shuffled-teams", room.teams)
-                console.log(room)
+                // console.log(room)
             })
     
             socket.on('kick', (who) => {
                 //redirect user back to home, delete user from room object
-                socket.to(room.players[who].socketid).emit('force-disconnect')
-                delete room.players[who]
-    
-                io.to(room.key).emit('get-curr-users', room.players)
-                // socket.emit('get-curr-users', room.players)
-                // socket.to(room.key).emit('get-curr-users', room.players)
+                io.to(room.players[who].socketid).emit('force-disconnect')
+                // delete room.players[who]
+                
+                io.in(room.key).emit('get-curr-users', room.players)
             })
 
+            socket.on('request-icons', () => {
+                let icons = gameAssets.enumerateIcons()
+                console.log(icons)
+                socket.emit('game-icons', icons)
+            })
             //server version of componentWillUnmount
             on_lobby = false
         }  

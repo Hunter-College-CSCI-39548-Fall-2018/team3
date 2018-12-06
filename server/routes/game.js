@@ -1,9 +1,15 @@
+const assets = require('./utils/icons.js')
+const _ = require('underscore')
+
+const dir = require('path').resolve(__dirname, '../../config/public/images')
+
+
 module.exports = (app, io, rooms) => {
     const time_until_start = 3000
     const total_icons = 4
     const end_score = 30
 
-    var time
+    var time = { min: 1, sec: 0}
     var game_connected = []
     var on_game = false
 
@@ -11,40 +17,59 @@ module.exports = (app, io, rooms) => {
         console.log("called game route") 
 
         on_game = true
-        time = {min: /*rooms[req.cookies.room].settings.time*/0, sec: 5}
+        time = {min: rooms[req.cookies.room].settings.time, sec: 0}
 
         res.sendStatus(200)
     })
 
     io.sockets.on('connection', (socket)=>{
-        if(on_game){
-            console.log("called game socket sonncection");
-            //get cookie in headers of socket connection
-            getCookie = (cookie) => {
-                let cookies = socket.handshake.headers['cookie']
-                let cookie_split = cookies.split("; ")
+        getCookie = (cookie) => {
+            let cookies = socket.handshake.headers['cookie']
+            let cookie_split = cookies.split("; ")
 
-                for(let cookies of cookie_split){
-                    if(cookie === "player"){
-                        if(cookies[0] === 'p'){
-                            let player = cookies.split("=")
-                            return player[1]
-                        }
+            for(let cookies of cookie_split){
+                if(cookie === "player"){
+                    if(cookies[0] === 'p'){
+                        let player = cookies.split("=")
+                        return player[1]
                     }
-                    else if(cookie === "game_owner"){
-                        if(cookies[0] === 'g'){
-                            let game_owner = cookies.split("=")
-                            return game_owner[1]
-                        }
-                    }     
-                    else if(cookie === "room"){
-                        if(cookies[0] === 'r'){
-                            let room = cookies.split("=")
-                            return room[1]
-                        }
+                }
+                else if(cookie === "game_owner"){
+                    if(cookies[0] === 'g'){
+                        let game_owner = cookies.split("=")
+                        return game_owner[1]
+                    }
+                }     
+                else if(cookie === "room"){
+                    if(cookies[0] === 'r'){
+                        let room = cookies.split("=")
+                        return room[1]
                     }
                 }
             }
+        }
+
+        if(on_game){
+
+            var room = getCookie("room")
+            var name = getCookie("player")
+            var game_owner = getCookie("game_owner")
+
+            if(rooms[room]){
+                console.log("if room exists")
+                if(game_owner === "0"){ //player
+                    if(rooms[room].players[name]){
+                        console.log("you're ok")
+                    }
+                }
+            }else{
+                console.log("received invalid credentials")
+                return io.to(socket.id).emit('invalid-credentials')
+            }
+
+            console.log("called game socket sonncection");
+            //get cookie in headers of socket connection
+            
 
             var room = rooms[getCookie("room")]
 
@@ -58,12 +83,16 @@ module.exports = (app, io, rooms) => {
                 game_connected.push(socket.id)
                 let name = getCookie("player")
 
-                //mark that player has connected successfully to the game
-                room.players[name].connected = true
+                console.log("what room's player s look like", room.players)
+                console.log("does player exist", room.players[name])
 
-                //update socketid of player 
-                room.setSocketId(name, socket.id)
-
+                if(room.players[name]){
+                    //mark that player has connected successfully to the game
+                    room.players[name].connected = true
+                    //update socketid of player 
+                    room.setSocketId(name, socket.id)
+                }
+                
                 socket.join(room.key)
             }
             onPlayerDisconnect = () => {
@@ -113,13 +142,6 @@ module.exports = (app, io, rooms) => {
                 return winning_team
             }
 
-            shuffleTeamsIcons = (team) => {
-                for(let user of team.players){
-                    let icons = shuffleIcons()
-                    io.to(user.socketid).emit("new-icons", icons)
-                }
-            }
-
             startTimer = () =>{
                 let updated_time = setInterval( () => {
                     
@@ -144,18 +166,62 @@ module.exports = (app, io, rooms) => {
             }
 
             /*
-            *   Shuffle icons each turn for all players
-            *   TODO: Michelle fill this out thanks
-            */
-            shuffleIcons = (socket) => {
-                return [1,2,3,4]
-            }
-
-            /*
             *   Generate the icon to be inputted on the screen
             */
             generateCurrIcon = () => {
-                return Math.floor(Math.random() * total_icons)
+                return Math.floor(Math.random() * files.length)
+            }
+
+            getFiles = () => {
+                return assets.readFiles(dir)
+            }
+
+            enumerateIcons = (files) => {
+                return assets.enumerateIcons(files)
+            }
+
+            //returns a number
+            getOmittedIcon = (files) => {
+                return assets.omitIcon(files)
+            }
+
+            const files = getFiles()
+            const enum_icons = enumerateIcons(files)
+            var omit_icon = getOmittedIcon(files)
+            
+
+            // Shuffle icons for player without matching icon
+            shuffleGeneralIcons = (omit_icon) => {
+                let icons = []
+                icons = assets.generateIcons(omit_icon, enum_icons, files)
+
+                return icons
+            }
+
+            // Shuffle icons for player with matching icon
+            shuffleMatchIcons = (omit_icon) => {
+                let icons = []
+                icons = assets.generateOmittedIcons(omit_icon, enum_icons, files)
+                
+                return icons
+            }
+
+            shuffleTeamsIcons = (team, omit_icon) => {
+                //generate matching icon for random player
+                let rand_num = Math.floor(Math.random() * team.players.length)
+                let match_icons = shuffleMatchIcons(omit_icon)
+                
+                io.to(team.players[rand_num].socketid).emit("new-icons", match_icons)
+
+
+                //generate general icons for everyone else
+                let general_icons = []
+                for(let i = 0; i < team.players.length; i++){
+                    if(i === rand_num) continue
+
+                    general_icons = shuffleGeneralIcons(omit_icon)
+                    io.to(team.players[i].socketid).emit("new-icons", general_icons)
+                }
             }
 
             broadcastToTeam = (team, event, msg) => {
@@ -166,11 +232,15 @@ module.exports = (app, io, rooms) => {
 
             startGame = () => {
                 startTimer()
-                let curr_icon = generateCurrIcon()
 
+                //generate omitted icon
+                let omitted_icon = getOmittedIcon(files)
+
+                //go through each team and assign curr icon and shuffle icons for each player in team
                 for(let i = 0; i < room.teams.length; i++){
-                    room.teams[i].curr_icon = curr_icon
-                    shuffleTeamsIcons(room.teams[i])
+                    room.teams[i].curr_icon = { icon: enum_icons[omitted_icon], index: omitted_icon }
+
+                    shuffleTeamsIcons(room.teams[i], omitted_icon)
                     broadcastToTeam(room.teams[i], 'game-started', {teams: room.teams, team: i})
                 }
                 
@@ -222,11 +292,13 @@ module.exports = (app, io, rooms) => {
                     if(team === -1){
                         console.log("wiat this team doesnt eist");
                     }else{
-                        if(checkCommand(team.curr_icon, msg.command)){
+                        if(checkCommand(team.curr_icon.index, msg.command)){
                             team.score += 1
-                            team.curr_icon = generateCurrIcon()
+
+                            let omit_icon = getOmittedIcon(files)
+                            team.curr_icon = { icon: enum_icons[omit_icon], index: omit_icon}
                             
-                            // shuffleTeamsIcons(team)
+                            shuffleTeamsIcons(team, omit_icon)
                             io.to(room.game_owner).emit('correct-command', room.teams)
                         }else{
                             team.score -= 1
