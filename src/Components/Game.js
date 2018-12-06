@@ -176,7 +176,7 @@ class Game extends React.Component {
 			const teamWon = this.state.wonTeamInfo['teamNumber']
 			const wonScore = this.state.wonTeamInfo['score']
 			const playersWon = this.state.wonTeamInfo['players'].map((player,index) => {
-				var playerName = player['name']
+				var playerName = player['name']	
 				return (
 					<li key={index}>
 						{playerName}
@@ -196,6 +196,8 @@ class Game extends React.Component {
 					</ul>
 					<br/>
 					<button onClick={this.handleRestart}> Restart </button>
+					<Music url = {'./Winning-Screen.wav'} />
+					<Music url = {'./Firework.mp3'} />
 				</div>       		
         	)
         }
