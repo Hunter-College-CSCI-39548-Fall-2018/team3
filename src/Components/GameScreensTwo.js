@@ -1,6 +1,7 @@
 import React from 'react'
 import io from 'socket.io-client'
 import Cookies from 'js-cookie';
+import Countdown from './Countdown'
 
 class GameScreensTwo extends React.Component {
     constructor(props) {
@@ -10,7 +11,13 @@ class GameScreensTwo extends React.Component {
     render() {
         return(
             <div style={{backgroundColor:"#bae1ff"}} className="vertical-center" >
+               
+
                 <div className="container">
+                    <div className="row text-center">
+                        <Countdown time={this.props.time}/>
+                        <br></br>
+                    </div>
                     <div className="row text-center">
                         {   
                             this.props.teams.map((team, i) => {

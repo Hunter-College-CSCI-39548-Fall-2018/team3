@@ -190,24 +190,26 @@ class Game extends React.Component {
 				</div>       		
         	)
         }
-
-        return (
-            <div style={{height:"100%"}}>
-                {
-                this.game_owner === "1" ? 
-                <GameOwnerControls
-                    teams={this.state.teams}
-                    time= {this.state.time}
-                /> 
-                : <PlayerControls
-                    icons={this.state.icons}
-                    handleCommand={this.handleCommand}
-                    team={this.state.team}
-                />
-                }
-
-            </div>
-        )
+        else{
+            return (
+                <div style={{height:"100%"}}>
+                    {
+                    this.game_owner === "1" ? 
+                    <GameOwnerControls
+                        teams={this.state.teams}
+                        time= {this.state.time}
+                    /> 
+                    : <PlayerControls
+                        icons={this.state.icons}
+                        handleCommand={this.handleCommand}
+                        team={this.state.team}
+                    />
+                    }
+    
+                </div>
+            )
+        }
+        
     }
 }
 

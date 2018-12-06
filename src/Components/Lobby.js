@@ -152,10 +152,10 @@ class Lobby extends React.Component {
 
     componentWillUnmount = () => {
         console.log("unmounted");
-        if(!this.state.start_game){
-            console.log("didsconnect correctly on componet unmount");
-            this.clearCookies()
-        }
+        // if(!this.state.start_game){
+        //     console.log("didsconnect correctly on componet unmount");
+        //     this.clearCookies()
+        // }
     }
 
     render() {

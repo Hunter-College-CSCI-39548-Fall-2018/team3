@@ -9,7 +9,7 @@ module.exports = (app, io, rooms) => {
     const total_icons = 4
     const end_score = 30
 
-    var time
+    var time = { min: 1, sec: 0}
     var game_connected = []
     var on_game = false
 
@@ -237,7 +237,7 @@ module.exports = (app, io, rooms) => {
             endGame = (team) => {
                 //finish for when game ends
                 const winInfo = {teamNumber : 1 ,players : team.players, score : team.score}
-        		socket.to(room.game_owner).emit('end-game',winInfo)
+        		io.to(room.game_owner).emit('end-game',winInfo)
                 console.log("game has ended");
                 console.log("team has won", team.score);
             }

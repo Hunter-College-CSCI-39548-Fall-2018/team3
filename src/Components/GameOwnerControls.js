@@ -23,29 +23,7 @@ class GameOwnerControls extends React.Component{
 
         return(
             <div>
-                <div id='teams'>
-                    { console.log("this is teams", this.props.teams)}
-                    
-                    
-                </div>
-                {
-                    this.props.teams.map((team, i) => {
-                        console.log("this is score", team.score)
-                        return(
-                            <div key={i}>
-                                <div>input: {team.curr_icon} </div>
-                                <div>team: {i} score: {team.score}</div>
-                                <br/>
-                            </div>
-                        )
-                    })
-
-
-                } 
-
-                {console.log("time in compoennt:", this.props.time)}
-                <Countdown time={this.props.time}/>
-
+                <h1><strong>Waiting to Connect...</strong></h1>
             </div>
         )
     }
