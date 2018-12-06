@@ -8,9 +8,9 @@ class PlayerControls extends React.Component{
     render(){
         return(
             <div style={{height:"100%"}}>
-                <div id="team">{this.props.team}</div>
+                <h1 style={{width:"100%", height:"10%"}}><strong><i>You're on team {this.props.team}</i></strong></h1>
                 
-                <div id="icons" style={{float:"left", height:"100%",width:"100%"}}>
+                <div id="icons" style={{float:"left", height:"90%",width:"100%"}}>
                 {
                     
                     this.props.icons.map((icon, i) => {

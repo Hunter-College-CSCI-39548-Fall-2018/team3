@@ -86,12 +86,13 @@ module.exports = (app, io, rooms) => {
                 console.log("what room's player s look like", room.players)
                 console.log("does player exist", room.players[name])
 
-                //mark that player has connected successfully to the game
-                room.players[name].connected = true
-
-                //update socketid of player 
-                room.setSocketId(name, socket.id)
-
+                if(room.players[name]){
+                    //mark that player has connected successfully to the game
+                    room.players[name].connected = true
+                    //update socketid of player 
+                    room.setSocketId(name, socket.id)
+                }
+                
                 socket.join(room.key)
             }
             onPlayerDisconnect = () => {

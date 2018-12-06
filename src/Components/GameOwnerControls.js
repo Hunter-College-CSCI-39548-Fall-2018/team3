@@ -17,9 +17,6 @@ class GameOwnerControls extends React.Component{
         else if(this.props.teams.length === 3){
             return (<GameScreensThree time={this.props.time} teams={this.props.teams}/>)
         }
-        else if(this.props.teams.length === 4){
-            return (<GameScreensFour time={this.props.time} teams={this.props.teams}/>)
-        }
 
         return(
             <div>
