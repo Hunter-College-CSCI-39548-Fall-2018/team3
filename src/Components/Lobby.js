@@ -25,7 +25,7 @@ class Lobby extends React.Component {
     checkCredentials = () => {
         let cookies = Cookies.get() // returns obj with cookies
         console.log("cookies obj", cookies);
-        console.log("is room in cokie", "room" in cookies);
+        console.log("is room in cookie", "room" in cookies);
         return "room" in cookies
     }
 

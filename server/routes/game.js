@@ -18,7 +18,7 @@ module.exports = (app, io, rooms) => {
 
     io.sockets.on('connection', (socket)=>{
         if(on_game){
-            console.log("called game socket sonncection");
+            console.log("called game sockets connection");
             //get cookie in headers of socket connection
             getCookie = (cookie) => {
                 let cookies = socket.handshake.headers['cookie']
@@ -76,7 +76,7 @@ module.exports = (app, io, rooms) => {
             
             onGameOwnerFirstConnect = () => {
                 for(let key of room.teams){
-                    console.log("what does team slook iek", key.players);
+                    console.log("what does team look like", key.players);
                 }
 
                 setTimeout(() => {
@@ -123,20 +123,18 @@ module.exports = (app, io, rooms) => {
             startTimer = () =>{
                 let updated_time = setInterval( () => {
                     
-                    if(time.sec === 0){
-                        time.min -= 1
-                        time.sec = 59
-                    }else{
-                        time.sec -= 1
-                    }
-
                     if(time.min === 0 && time.sec === 0){
                         clearInterval(updated_time);
                         let winning_team = checkIfWon()
 
-                        console.log("winnign team is", winning_team);
+                        console.log("winning team is", winning_team);
                         endGame(winning_team)
-                        console.log("gme had ended in server side");
+                        console.log("game had ended in server side");
+
+                        time.min -= 1
+                        time.sec = 59                                               
+                    }else{
+                        time.sec -= 1
                     }
 
                     io.to(room.game_owner).emit('time-left', time)
@@ -187,7 +185,7 @@ module.exports = (app, io, rooms) => {
             endGame = (team) => {
                 //finish for when game ends
                 const winInfo = {teamNumber : 1 ,players : team.players, score : team.score}
-        		socket.to(room.game_owner).emit('end-game',winInfo)
+                socket.to(room.game_owner).emit('end-game',winInfo)
                 console.log("game has ended");
                 console.log("team has won", team.score);
             }
@@ -220,7 +218,7 @@ module.exports = (app, io, rooms) => {
                     var team = room.whichTeam({socketid: socket.id})
 
                     if(team === -1){
-                        console.log("wiat this team doesnt eist");
+                        console.log("wait this team doesnt exist");
                     }else{
                         if(checkCommand(team.curr_icon, msg.command)){
                             team.score += 1
@@ -236,18 +234,18 @@ module.exports = (app, io, rooms) => {
                 }
             })
 
-			socket.on('restart', () => {
-				for (key in room.players){
-					socket.to(room.players[key].socketid).emit('restart')
-				}
+            socket.on('restart', () => {
+                for (key in room.players){
+                    socket.to(room.players[key].socketid).emit('restart')
+                }
 
-				io.to(room.game_owner).emit('GameOwnerRestart')
-			})
+                io.to(room.game_owner).emit('GameOwnerRestart')
+            })
 
 
             //wait until everyone is connected before disabling add event listener
             if(game_connected.length === Object.keys(room.players).length +1){
-                console.log("everyon eocnnected");
+                console.log("everyone connected");
 
                 //server version of componentWillUnmount
                 on_game = false

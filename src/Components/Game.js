@@ -92,7 +92,7 @@ class Game extends React.Component {
         })
 
         socket.on('correct-command', (teams) => {
-            console.log("you got ir ghti");
+            console.log("you got it right");
 
             //update the team's current icon and score (+)
             this.setState({ teams: teams })
@@ -113,6 +113,7 @@ class Game extends React.Component {
         })
 
         socket.on('end-game', (wonData) => {
+        	console.log("End Game and redirect to winning screen")
         	this.setState({gameWon : true, 'wonTeamInfo' : wonData})
         })
 
@@ -175,7 +176,7 @@ class Game extends React.Component {
 			})
         	return (
 	 			<div>
-					<h1> Congratulations Team {teamWon} Won </h1>
+					<h1> Congratulations </h1>
 					<br/>
 					Score: {wonScore}  
 					<br/>
