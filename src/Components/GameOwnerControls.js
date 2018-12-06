@@ -1,11 +1,8 @@
 import React from 'react'
-<<<<<<< HEAD
 import GameScreensTwo from './GameScreensTwo';
 import GameScreensThree from './GameScreensThree';
 import GameScreensFour from './GameScreensFour';
-=======
 import Countdown from './Countdown'
->>>>>>> 8f14334a0143da9ba2bf28b64e124e7be59a555c
 
 class GameOwnerControls extends React.Component{
     constructor(props){
@@ -14,15 +11,23 @@ class GameOwnerControls extends React.Component{
     
 
     render(){
+        if(this.props.teams.length === 2){
+            return (<GameScreensTwo teams={this.props.teams}/>)
+        }
+        else if(this.props.teams.length === 3){
+            return (<GameScreensThree teams={this.props.teams}/>)
+        }
+        else if(this.props.teams.length === 4){
+            return (<GameScreensFour teams={this.props.teams}/>)
+        }
+
         return(
             <div>
-                <div id='curr-icon'>
+                <div id='teams'>
                     { console.log("this is teams", this.props.teams)}
                     
-                    {console.log("this is teams", this.props.teams)}
-                    <GameScreensFour />
+                    
                 </div>
-                <button onClick={this.props.startGame.bind(this)}>start game</button>
                 {
                     this.props.teams.map((team, i) => {
                         console.log("this is score", team.score)
@@ -32,19 +37,14 @@ class GameOwnerControls extends React.Component{
                                 <div>team: {i} score: {team.score}</div>
                                 <br/>
                             </div>
-
                         )
                     })
 
-<<<<<<< HEAD
+
                 } 
-=======
-                    }
-                </div>
+
                 {console.log("time in compoennt:", this.props.time)}
                 <Countdown time={this.props.time}/>
-                <button onClick={this.props.startGame.bind(this)}>start game</button>
->>>>>>> 8f14334a0143da9ba2bf28b64e124e7be59a555c
 
             </div>
         )

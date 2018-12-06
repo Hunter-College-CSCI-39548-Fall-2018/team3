@@ -1,3 +1,9 @@
+const assets = require('./utils/icons.js')
+const _ = require('underscore')
+
+const dir = require('path').resolve(__dirname, '../../config/public/images')
+
+
 module.exports = (app, io, rooms) => {
     const time_until_start = 3000
     const total_icons = 4
@@ -11,7 +17,7 @@ module.exports = (app, io, rooms) => {
         console.log("called game route") 
 
         on_game = true
-        time = {min: 0, sec: 5}
+        time = {min: /*rooms[req.cookies.room].settings.time*/0, sec: 5}
 
         res.sendStatus(200)
     })
@@ -79,6 +85,11 @@ module.exports = (app, io, rooms) => {
                     console.log("what does team slook iek", key.players);
                 }
 
+                setTimeout(() => {
+                    // room.checkForGhosts()
+                    startGame()
+                }, time_until_start)
+
                 //wait for players to connect before starting the game
                 // setTimeout(() => {
                 //     room.checkForGhosts()
@@ -90,6 +101,7 @@ module.exports = (app, io, rooms) => {
                 socket.join(room.key)
             }
             onGameOwnerDisconnect = () => {
+                console.log("game owner disconnected in game");
                 //disconnect and redirect everyone in room
                 io.to(room.key).emit('force-disconnect')
                 
@@ -130,31 +142,92 @@ module.exports = (app, io, rooms) => {
                 }, 1000);
             }
 
-            /*
-            *   Shuffle icons each turn for all players
-            *   TODO: Michelle fill this out thanks
-            */
-            shuffleIcons = (socket) => {
+            iconsInit = () => {
+                let files = assets.readFiles(dir)
+                let enum_icons = assets.enumerateIcons(files)
+                let omitted_icon = assets.omitIcon(files)
 
+                return {files: files, omitted_icon: omitted_icon}
             }
-
+            
             /*
             *   Generate the icon to be inputted on the screen
             */
             generateCurrIcon = () => {
-                return Math.floor(Math.random() * total_icons)
+                let total_icons = iconsInit()
+                return Math.floor(Math.random() * total_icons.files.length)
+            }
+
+            getFiles = () => {
+                let files = assets.readFiles(dir)
+                return files
+            }
+
+            enumerateIcons = (files) => {
+                let enum_icons = assets.enumerateIcons(files)
+                return enum_icons
+            }
+
+            const files = getFiles()
+            const enum_icons = enumerateIcons(files)
+            
+
+            // Shuffle icons for player without matching icon
+            shuffleGeneralIcons = (omit_icon) => {
+                let icons = []
+                icons = assets.generateIcons(omit_icon, enum_icons, files)
+
+                return icons
+            }
+
+            // Shuffle icons for player with matching icon
+            shuffleMatchIcons = (omit_icon) => {
+                let icons = []
+                icons = assets.generateOmittedIcons(omit_icon, enum_icons, files)
+                
+                return icons
+            }
+
+            shuffleTeamsIcons = (team, omit_icon) => {
+                //generate matching icon for random player
+                let rand_num = Math.floor(Math.random() * team.players.length)
+                let match_icons = shuffleMatchIcons(omit_icon)
+                
+                io.to(team.players[rand_num].socketid).emit("new-icons", match_icons)
+
+
+                //generate general icons for everyone else
+                let general_icons = []
+                for(let i = 0; i < team.players.length; i++){
+                    if(i === rand_num) continue
+
+                    general_icons = shuffleGeneralIcons(omit_icon)
+                    io.to(team.players[i].socketid).emit("new-icons", general_icons)
+                }
+            }
+
+            broadcastToTeam = (team, event, msg) => {
+                for(let user of team.players){
+                    io.to(user.socketid).emit(event, msg)
+                }
             }
 
             startGame = () => {
                 startTimer()
-                let curr_icon = generateCurrIcon()
 
-                for(let team of room.teams){
-                    team.curr_icon = curr_icon
+                //generate omitted icon
+                let icons_init = iconsInit()
+                let omitted_icon = icons_init.omitted_icon
+
+                //go through each team and assign curr icon and shuffle icons for each player in team
+                for(let i = 0; i < room.teams.length; i++){
+                    room.teams[i].curr_icon = omitted_icon
+                    shuffleTeamsIcons(room.teams[i], omitted_icon)
+                    broadcastToTeam(room.teams[i], 'game-started', {teams: room.teams, team: i})
                 }
-                io.to(room.key).emit('game-started', room.teams)
+                
+                io.to(room.game_owner).emit('game-started', { teams: room.teams } )
 
-                // socket.emit('game-started', room.teams)
                 console.log("end of clal game");
             }
 
@@ -165,6 +238,8 @@ module.exports = (app, io, rooms) => {
             
             endGame = (team) => {
                 //finish for when game ends
+                const winInfo = {teamNumber : 1 ,players : team.players, score : team.score}
+        		socket.to(room.game_owner).emit('end-game',winInfo)
                 console.log("game has ended");
                 console.log("team has won", team.score);
             }
@@ -181,17 +256,13 @@ module.exports = (app, io, rooms) => {
             
             socket.on('disconnect', () => {
                 if(room){
-                    if(getCookie("game_owner") === "1"){
+                    if(room.game_owner === socket.id){
                         onGameOwnerDisconnect()
                     }else{
                         //if room still exists and player disconnects
                         onPlayerDisconnect()
                     }
                 }
-            })
-
-            socket.on('start-game', () => {
-                startGame()
             })
             
             socket.on('input-command', (msg) => {    
@@ -206,7 +277,8 @@ module.exports = (app, io, rooms) => {
                         if(checkCommand(team.curr_icon, msg.command)){
                             team.score += 1
                             team.curr_icon = generateCurrIcon()
-
+                            
+                            // shuffleTeamsIcons(team)
                             io.to(room.game_owner).emit('correct-command', room.teams)
                         }else{
                             team.score -= 1
@@ -215,6 +287,15 @@ module.exports = (app, io, rooms) => {
                     }
                 }
             })
+
+			socket.on('restart', () => {
+				for (key in room.players){
+					socket.to(room.players[key].socketid).emit('restart')
+				}
+
+				io.to(room.game_owner).emit('GameOwnerRestart')
+			})
+
 
             //wait until everyone is connected before disabling add event listener
             if(game_connected.length === Object.keys(room.players).length +1){

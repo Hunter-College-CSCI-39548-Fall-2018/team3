@@ -16,7 +16,8 @@ class Lobby extends React.Component {
             connected: true,
             start_game: false,
             teamNum: 0,
-            icons: []
+            icons: [],
+            message : ""
         }
         this.game_owner = Cookies.get("game_owner")
         this.socket = false
@@ -121,14 +122,18 @@ class Lobby extends React.Component {
     }
 
     startTimer = () => {
-        const socket = this.state.socket
+    	if (Object.keys(this.state.players).length > 0) {
+	        const socket = this.state.socket
 
-        socket.emit('shuffle-teams')    
+	        socket.emit('shuffle-teams')    
 
-        // Tell the server to start the countdown timer for this room
-        socket.emit("start-time", {room:this.state.code});
+	        // Tell the server to start the countdown timer for this room
+	        socket.emit("start-time", {room:this.state.code});
+	    }
+	    else{
+	    	this.setState({message : "No players are currently in the lobby"})
+	    }
     }
-
 
     startGame = () => {
         // When the room owner is ready to start the game then the new state is set for the redirect
@@ -141,22 +146,28 @@ class Lobby extends React.Component {
         socket.emit('kick', kickPlayer)
     }
 
-    render() {
-        if(this.socket.disconnected){
-            console.log("hey wait you dsiconencted");
+    componentWillUnmount = () => {
+        console.log("unmounted");
+        if(!this.state.start_game){
+            console.log("didsconnect correctly on componet unmount");
+            this.clearCookies()
         }
+    }
 
+    render() {
         //start of game
         if(this.state.start_game){
 
-            return (<Redirect to='/game', state={icons:icons}/>)
+            return (<Redirect to='/game'/>)
         }
 
         //force redirect
-        if(!this.state.connected/* || this.socket.disconnected*/){
+        if(!this.state.connected || (this.socket.disconnected && !this.state.start_game) ){
             console.log("disocinected because of something");
+            this.clearCookies()
             return (<Redirect to='/'/>)
         }
+
 
         if (this.state.connected) {
             return (
@@ -188,13 +199,13 @@ class Lobby extends React.Component {
                                 </span>
                             </span>
                         
-                    )}
-                    <div className="panel panel-default">
-                        <header className="panel-heading">
-                            <h5 className="panel-title"></h5>
-                        </header>
-                    </div>
-                    <footer className="panel-footer">...</footer>
+                        )}
+                        <div className="panel panel-default">
+                            <header className="panel-heading">
+                                <h5 className="panel-title"></h5>
+                            </header>
+                        </div>
+                        <footer className="panel-footer">...</footer>
                     </div>
                 
                     <div>
@@ -216,9 +227,16 @@ class Lobby extends React.Component {
                             <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> 
                         : ""
                     }
-                </div>    
-            )
-        }     
+            
+
+                    <br />
+                    {	this.state.message != "" ?
+                            this.state.message
+                        : ""
+                    }      
+                </div> 
+            )  
+        }    
     }
 }
 export default Lobby

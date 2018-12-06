@@ -6,8 +6,10 @@ class EnterRoom extends React.Component{
         super(props)
         this.room = React.createRef()
         this.handleEnterRoom = this.handleEnterRoom.bind(this)
-
-        this.state = {redirect: false}
+        this.state = {
+        	redirect: false,
+        	error: ""
+        }
     }
 
     handleEnterRoom(event){
@@ -33,13 +35,15 @@ class EnterRoom extends React.Component{
                     //set state (whether or not you should redirect to next page)
                     console.log(body)
                     if (body['gameStart'] === true){
-                        document.getElementById("room-error").innerHTML = "Game already started"
+                        //document.getElementById("room-error").innerHTML = "Game already started"
+                        this.setState({error : "Game already started"})
                     }
                     else if (body['keyValid'] === true){
                         this.setState({redirect: true})
                     }
                     else{
-                        document.getElementById("room-error").innerHTML = "Invalid Key"
+                        //document.getElementById("room-error").innerHTML = "Invalid Key"
+                        this.setState({error : "Invalid Key"})
                     }
                 })
             }
@@ -59,9 +63,7 @@ class EnterRoom extends React.Component{
                     <h1 id="logo" className="display-4">
                         Room Code
                     </h1>
-                    <div id="global-error" className="alert alert-danger" role="alert" style={{visibility:"hidden"}}>
-                        The room does not exist
-                    </div>
+
                     <div className="container">
                         <div className="row">
                             <div className="col-md-4"></div>
@@ -76,11 +78,20 @@ class EnterRoom extends React.Component{
                             </div>
                         </div>
                     </div>
+
                     <br />
+
                     <button id='enter-code' type='button' onClick={this.handleEnterRoom} className="btn btn-success">Next</button>
 
-                </div>
-                
+                    {/*
+                    <div id="global-error" className="alert alert-danger" role="alert" style={{visibility:"hidden"}}>
+                    	This code is invalid
+                    </div>*/}
+                    <div>
+                    	{this.state.error}
+                    </div>
+
+                </div> 
 
             )
         }

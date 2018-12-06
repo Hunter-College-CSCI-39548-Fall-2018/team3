@@ -9,6 +9,7 @@ class EnterName extends React.Component{
 
         this.state = {
             redirct: false,
+            message : ""
         }
     }
 
@@ -17,7 +18,8 @@ class EnterName extends React.Component{
         let obj = {"nickname":name}
 
         if(name.length > 12 || name.length < 3){
-            document.getElementById("name-length").style.display="inline";
+            //document.getElementById("name-length").style.display="inline";
+            this.setState({message : "Nickname needs to be longer than 2 or shorter than 12 character"})
             return;
         }
         
@@ -41,7 +43,8 @@ class EnterName extends React.Component{
                         
                     }
                     else{
-                        document.getElementById("name-taken").style.display="inline";
+                        //document.getElementById("name-taken").style.display="inline";
+                        this.setState({message : "Name already taken"})
                         return;
                     }
                 })
@@ -63,10 +66,7 @@ class EnterName extends React.Component{
                     <h1 id="logo" className="display-4">
                         Enter your nickname
                     </h1>
-    
-                    <div id="global-error" className="alert alert-danger" role="alert" style={{visibility:"hidden"}}>
-                        The nickname is taken
-                    </div>
+
                     <div className="container">
                         <div className="row">
                             <div className="col-md-4"></div>
@@ -87,6 +87,13 @@ class EnterName extends React.Component{
                     <br/>
 
                     <button id='enter-name' type='button' onClick={this.handleEnterName} className="btn btn-success">Next</button>
+
+                    {/*<div id="global-error" className="alert alert-danger" role="alert" style={{visibility:"hidden"}}>
+                        The nickname is taken
+                    </div>*/}
+                    <div>
+                    	{this.state.message}
+                    </div>
                 </div>
                    
 
