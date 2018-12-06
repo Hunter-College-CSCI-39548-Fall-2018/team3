@@ -124,7 +124,6 @@ class Lobby extends React.Component {
     startTimer = () => {
     	if (Object.keys(this.state.players).length >= this.state.teamNum && this.state.teamNum >= 2) {
 	        const socket = this.state.socket
-
 	        socket.emit('shuffle-teams')    
 
 	        // Tell the server to start the countdown timer for this room
@@ -170,12 +169,15 @@ class Lobby extends React.Component {
         
         return (
             <div id="header" className="d-flex align-items-center flex-column justify-content-center h-100 bg-dark text-white">
-                {/* {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""} */}
+                {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""}
                 <h1 id="logo" className="display-4">
                     {this.state.code}
                 </h1>
 
-                {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""}
+                {/* // <div>
+                //     <Music url={'./Winning-Screen.wav'}/>,
+                //     <Music url={"./Firework.mp3"}/>
+                // </div> : ""} */}
 
                 <div id="countdown-timer">Time until start: {this.state.timeRem}</div>
 
@@ -223,7 +225,6 @@ class Lobby extends React.Component {
                 {
                     this.game_owner == '1' ? 
                         <div>
-                            {this.game_owner === '1'? <Music url={"./Lobby.mp3"}/>: ""},
                             <button onClick={this.startTimer} type="button" className="btn btn-success">Start Timer</button> 
                         </div>
                     : ""

@@ -5,6 +5,7 @@ import Music from './Music';
 import GameOwnerControls from './GameOwnerControls'
 import {Redirect} from 'react-router-dom'
 import PlayerControls from './PlayerControls';
+import { timingSafeEqual } from 'crypto';
 
 class Game extends React.Component {
     constructor(props) {
@@ -93,7 +94,10 @@ class Game extends React.Component {
         })
 
         socket.on('correct-command', (teams) => {
-            console.log("you got ir ghti");
+            let url = './Correct.mp3';
+            this.correctAudio = new Audio(url);
+            this.correctAudio.play();
+            console.log("you got it right");
 
             //update the team's current icon and score (+)
             this.setState({ teams: teams })
@@ -101,8 +105,9 @@ class Game extends React.Component {
 
         socket.on('wrong-command', (teams) => {
             //some penalty here
-            console.log("you suck")
-
+            let url = './Wrong.mp3';
+            this.wrongAudio = new Audio(url);
+            this.wrongAudio.play();
             //update team's score (-)
             this.setState({ teams: teams})
         })
@@ -193,7 +198,6 @@ class Game extends React.Component {
 
         return (
             <div>
-
                 {
                 this.game_owner === "1" ? 
                 <div>
@@ -201,7 +205,7 @@ class Game extends React.Component {
                         teams = {this.state.teams}
                         startGame={this.startGame}
                         time= {this.state.time}
-                    />,
+                    />
                     <Music
                         url = {'./Game.wav'}
                     />
