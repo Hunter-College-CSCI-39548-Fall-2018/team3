@@ -185,7 +185,7 @@ class Game extends React.Component {
 			})
         	return (
 	 			<div>
-					<h1> Congratulations Team {teamWon} Won </h1>
+					<h1> Congratulations</h1>
 					<br/>
 					Score: {wonScore}  
 					<br/>
