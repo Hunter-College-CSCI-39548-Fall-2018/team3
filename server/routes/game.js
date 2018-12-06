@@ -49,20 +49,24 @@ module.exports = (app, io, rooms) => {
             }
         }
 
-        
-
         if(on_game){
 
             var room = getCookie("room")
             var name = getCookie("player")
+            var game_owner = getCookie("game_owner")
 
-            if(rooms[room] && (rooms[room].players[name]) ){
-                console.log("checking room", room)
-                console.log("check player name", name)
+            if(rooms[room]){
+                console.log("if room exists")
+                if(game_owner === "0"){ //player
+                    if(rooms[room].players[name]){
+                        console.log("you're ok")
+                    }
+                }
             }else{
-                console.log("invalid credentials")
+                console.log("received invalid credentials")
                 return io.to(socket.id).emit('invalid-credentials')
             }
+
             console.log("called game socket sonncection");
             //get cookie in headers of socket connection
             
