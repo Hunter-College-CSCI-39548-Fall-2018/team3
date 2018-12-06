@@ -22,6 +22,8 @@ class GameScreensTwo extends React.Component {
 
                                         <h1>
                                             Team # {i}
+                                            <br></br>
+                                            Score: {team.score}
                                             
                                         </h1>
 

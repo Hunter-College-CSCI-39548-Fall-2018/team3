@@ -17,7 +17,7 @@ module.exports = (app, io, rooms) => {
         console.log("called game route") 
 
         on_game = true
-        time = {min: /*rooms[req.cookies.room].settings.time*/0, sec: 5}
+        time = {min: rooms[req.cookies.room].settings.time, sec: 5}
 
         res.sendStatus(200)
     })
@@ -63,6 +63,9 @@ module.exports = (app, io, rooms) => {
                 //indicate player has connected
                 game_connected.push(socket.id)
                 let name = getCookie("player")
+
+                console.log("what room's player s look like", room.players)
+                console.log("does player exist", room.players[name])
 
                 //mark that player has connected successfully to the game
                 room.players[name].connected = true

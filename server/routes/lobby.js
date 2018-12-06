@@ -52,8 +52,8 @@ module.exports = (app, io, rooms) => {
                 //get current users in lobby
                 socket.emit('get-curr-users', room.players)
         
-                let player = new Player(name, socket.id)
-                room.addPlayer(name, player)
+                // let player = new Player(name, socket.id)
+                // room.addPlayer(name, player)
         
                 room.setSocketId(name, socket.id)
                 socket.join(room.key)

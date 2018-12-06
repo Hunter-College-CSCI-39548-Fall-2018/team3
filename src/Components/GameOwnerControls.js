@@ -12,13 +12,13 @@ class GameOwnerControls extends React.Component{
 
     render(){
         if(this.props.teams.length === 2){
-            return (<GameScreensTwo teams={this.props.teams}/>)
+            return (<GameScreensTwo time={this.props.time} teams={this.props.teams}/>)
         }
         else if(this.props.teams.length === 3){
-            return (<GameScreensThree teams={this.props.teams}/>)
+            return (<GameScreensThree time={this.props.time} teams={this.props.teams}/>)
         }
         else if(this.props.teams.length === 4){
-            return (<GameScreensFour teams={this.props.teams}/>)
+            return (<GameScreensFour time={this.props.time} teams={this.props.teams}/>)
         }
 
         return(
