@@ -51,18 +51,6 @@ module.exports = {
       }
     ]
   },
-  devServer: {
-  host: 'localhost',
-  port: 5000,
-  contentBase: path.join(__dirname, 'public'),
-  proxy: {
-    "/test/*": {
-      target: "http://localhost:3000",
-      secure: false,
-
-    },
-  },
-},
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html',
