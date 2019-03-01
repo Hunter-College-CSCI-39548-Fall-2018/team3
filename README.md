@@ -2,6 +2,8 @@
 
 The main repo for the Biscuit project.
 
+DEMO: http://woof.synology.me:5000/
+
 Install all dependencies:
 
 ```bash
